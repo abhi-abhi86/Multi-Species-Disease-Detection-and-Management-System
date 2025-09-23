@@ -95,9 +95,13 @@ class MainWindow(QMainWindow):
         symptoms = tab.symptom_input.toPlainText().strip()
         result, confidence, wiki_summary = None, 0, ""
 
-        if image_path:
+        # Prioritize image if both inputs are present
+        if image_path and not symptoms:
             result, confidence, wiki_summary = predict_from_image(image_path, domain, self.database)
         elif symptoms:
+            self.current_image_paths[domain] = None # Clear image path
+            tab.image_label.clear()
+            tab.image_label.setText("Upload an Image") # Reset placeholder
             result, confidence, wiki_summary = predict_from_symptoms(symptoms, domain, self.database)
         else:
             QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
