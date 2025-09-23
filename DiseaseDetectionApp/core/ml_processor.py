@@ -43,7 +43,8 @@ def predict_from_symptoms(symptoms, domain, database):
             best_match = disease
 
     if best_match:
-        confidence = min(1.0, max_score / 10.0)
+        # Normalize confidence against the number of user-provided symptoms
+        confidence = min(1.0, max_score / len(user_symptoms)) if user_symptoms else 0
         wiki_summary = get_wikipedia_summary(best_match['name'])
         return best_match, confidence, wiki_summary
     
