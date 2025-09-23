@@ -3,11 +3,51 @@ from PyQt6.QtWidgets import (
     QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QMenu
 )
 from PyQt6.QtGui import QPixmap, QAction
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from ui.add_disease_dialog import AddNewDiseaseDialog
 from ui.chatbot_dialog import ChatbotDialog
 from core.data_handler import load_database, save_disease
 from core.ml_processor import predict_from_image, predict_from_symptoms
+
+class DropLabel(QLabel):
+    """A custom QLabel that accepts drag and drop for image files."""
+    fileDropped = pyqtSignal(str)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setAcceptDrops(True)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
+        self.setStyleSheet("border: 2px dashed #aaa; background-color: #f0f0f0; border-radius: 8px; color: #555;")
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            # Check if any of the files are valid images
+            for url in event.mimeData().urls():
+                if url.isLocalFile():
+                    file_path = url.toLocalFile()
+                    ext = file_path.split('.')[-1].lower()
+                    if ext in ['png', 'jpg', 'jpeg']:
+                        event.acceptProposedAction()
+                        self.setStyleSheet("border: 2px solid #68b2f8; background-color: #e8f4ff; border-radius: 8px;")
+                        return
+        event.ignore()
+
+    def dragLeaveEvent(self, event):
+        self.setStyleSheet("border: 2px dashed #aaa; background-color: #f0f0f0; border-radius: 8px; color: #555;")
+
+    def dropEvent(self, event):
+        self.setStyleSheet("border: 2px dashed #aaa; background-color: #f0f0f0; border-radius: 8px; color: #555;")
+        if event.mimeData().hasUrls():
+            urls = event.mimeData().urls()
+            if urls:
+                url = urls[0] # Handle the first dropped file
+                if url.isLocalFile():
+                    file_path = url.toLocalFile()
+                    ext = file_path.split('.')[-1].lower()
+                    if ext in ['png', 'jpg', 'jpeg']:
+                        self.fileDropped.emit(file_path)
+                        event.acceptProposedAction()
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -50,11 +90,12 @@ class MainWindow(QMainWindow):
         main_layout = QVBoxLayout()
         input_group = QGroupBox("Input Data")
         input_layout = QGridLayout()
-        image_label = QLabel("Upload an Image")
-        image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        image_label = DropLabel()
         image_label.setFixedSize(256, 256)
-        image_label.setStyleSheet("border: 1px solid gray; background-color: #f0f0f0;")
-        upload_btn = QPushButton("Scan Disease (Upload Image)")
+        image_label.fileDropped.connect(lambda path: self.set_image(path, domain_name))
+
+        upload_btn = QPushButton("Upload Image")
         symptom_input = QTextEdit()
         symptom_input.setPlaceholderText("Or describe the symptoms here...")
         diagnose_btn = QPushButton("Diagnose")
@@ -80,14 +121,19 @@ class MainWindow(QMainWindow):
         diagnose_btn.clicked.connect(lambda: self.run_diagnosis(domain_name))
         return main_widget
 
-    def upload_image(self, domain):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.png *.jpg *.jpeg)")
+    def set_image(self, file_path, domain):
         if file_path:
             tab = self.domain_tabs[domain]
             pixmap = QPixmap(file_path)
             tab.image_label.setPixmap(pixmap.scaled(tab.image_label.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
             self.current_image_paths[domain] = file_path
             tab.symptom_input.clear()
+            tab.result_display.clear()
+
+    def upload_image(self, domain):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.png *.jpg *.jpeg)")
+        if file_path:
+            self.set_image(file_path, domain)
 
     def run_diagnosis(self, domain):
         tab = self.domain_tabs[domain]
@@ -95,14 +141,14 @@ class MainWindow(QMainWindow):
         symptoms = tab.symptom_input.toPlainText().strip()
         result, confidence, wiki_summary = None, 0, ""
 
-        # Prioritize image if both inputs are present
-        if image_path and not symptoms:
-            result, confidence, wiki_summary = predict_from_image(image_path, domain, self.database)
-        elif symptoms:
-            self.current_image_paths[domain] = None # Clear image path
-            tab.image_label.clear()
-            tab.image_label.setText("Upload an Image") # Reset placeholder
+        if symptoms:
+            if self.current_image_paths[domain]:
+                self.current_image_paths[domain] = None 
+                tab.image_label.clear()
+                tab.image_label.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
             result, confidence, wiki_summary = predict_from_symptoms(symptoms, domain, self.database)
+        elif image_path:
+            result, confidence, wiki_summary = predict_from_image(image_path, domain, self.database)
         else:
             QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
             return
@@ -139,3 +185,4 @@ class MainWindow(QMainWindow):
     def open_chatbot(self):
         dialog = ChatbotDialog(self.database, self)
         dialog.exec()
+
