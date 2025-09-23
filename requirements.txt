@@ -1,0 +1,7 @@
+# what to install 
+
+#requirements.txt
+
+PyQt6
+Pillow
+wikipedia
