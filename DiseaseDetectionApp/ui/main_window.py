@@ -7,12 +7,11 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from ui.add_disease_dialog import AddNewDiseaseDialog
 from ui.chatbot_dialog import ChatbotDialog
 from core.data_handler import load_database, save_disease
-from core.ml_processor import predict_from_image, predict_from_symptoms
+# Updated import to use the new MLProcessor class
+from core.ml_processor import MLProcessor, predict_from_symptoms
 
 class DropLabel(QLabel):
-    """A custom QLabel that accepts drag and drop for image files."""
-    fileDropped = pyqtSignal(str)
-
+    # ... existing code ...
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setAcceptDrops(True)
@@ -55,6 +54,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("AI Multi-Species Disease Management System")
         self.resize(800, 700)
         self.database = load_database()
+        
+        # Load the AI model processor when the application starts.
+        # The first time you run this, it will download the model weights (~14MB).
+        self.ml_processor = MLProcessor()
+
         self.current_image_paths = {"Plant": None, "Human": None, "Animal": None}
         self.setup_menu()
         self.tab_widget = QTabWidget()
@@ -65,6 +69,7 @@ class MainWindow(QMainWindow):
             self.domain_tabs[domain] = tab
         self.setCentralWidget(self.tab_widget)
 
+    # ... existing code ...
     def setup_menu(self):
         menubar = QMenuBar(self)
         file_menu = QMenu("File", self)
@@ -148,7 +153,10 @@ class MainWindow(QMainWindow):
                 tab.image_label.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
             result, confidence, wiki_summary = predict_from_symptoms(symptoms, domain, self.database)
         elif image_path:
-            result, confidence, wiki_summary = predict_from_image(image_path, domain, self.database)
+            # Call the new method from our MLProcessor instance
+            tab.result_display.setPlainText("Analyzing image... Please wait.")
+            QApplication.processEvents()  # Update the UI
+            result, confidence, wiki_summary = self.ml_processor.predict_from_image(image_path, domain, self.database)
         else:
             QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
             return
@@ -169,9 +177,10 @@ class MainWindow(QMainWindow):
             )
             tab.result_display.setPlainText(out)
         else:
-            tab.result_display.setPlainText("No diagnosis could be made. The database may be empty for this domain or the input was not specific enough.")
+            tab.result_display.setPlainText("No diagnosis could be made. The AI model could not identify a matching disease in the database for the provided input.")
 
     def open_add_disease_dialog(self):
+        # ... existing code ...
         dialog = AddNewDiseaseDialog(self)
         if dialog.exec():
             data = dialog.get_data()
@@ -183,6 +192,6 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Success", "Disease information saved.")
             
     def open_chatbot(self):
+        # ... existing code ...
         dialog = ChatbotDialog(self.database, self)
         dialog.exec()
-
