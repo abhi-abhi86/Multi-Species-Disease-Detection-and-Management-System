@@ -31,7 +31,10 @@ This repository contains a complete PyQt6 application for scanning, diagnosing, 
 
 ## Installation
 
-1. Clone this repository.
+1. Clone this repository:
+    ```
+    git clone https://github.com/abhi-abhi86/put.git
+    ```
 2. Install dependencies:
     ```
 pip install PyQt6 Pillow
