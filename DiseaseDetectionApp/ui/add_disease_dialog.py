@@ -29,14 +29,24 @@ class AddNewDiseaseDialog(QDialog):
     def get_data(self):
         stages_text = self.stages_edit.toPlainText().strip()
         stages = {}
-        for line in stages_text.splitlines():
-            if ":" in line:
-                k, v = line.split(":", 1)
-                stages[k.strip()] = v.strip()
+        lines = [line for line in stages_text.splitlines() if line.strip()]
+
+        # If any line contains a colon, assume key-value pairs
+        if any(":" in line for line in lines):
+            for i, line in enumerate(lines):
+                if ":" in line:
+                    k, v = line.split(":", 1)
+                    stages[k.strip()] = v.strip()
+                else:
+                    stages[f"Stage {i+1}"] = line.strip()
+        elif lines:
+             stages["General"] = "\n".join(lines)
+
+
         return {
             "domain": self.domain_box.currentText(),
             "name": self.name_edit.text().strip(),
             "description": self.desc_edit.toPlainText().strip(),
-            "stages": stages if stages else {"Stage": stages_text},
+            "stages": stages if stages else {"Info": "Not specified"},
             "solution": self.solution_edit.toPlainText().strip(),
         }
