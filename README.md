@@ -1,6 +1,6 @@
 # AI-Powered Multi-Species Disease Detection and Management System
 
-This repository contains a complete PyQt6 application for scanning, diagnosing, and managing diseases across plants, humans, and animals. Disease data is persisted and instantly available for AI-powered (mock) diagnosis via image or symptom input.
+This repository contains a complete PyQt6 application for scanning, diagnosing, and managing diseases across plants, humans, and animals. Disease data is persisted and instantly available for AI-powered diagnosis and management.
 
 ## Features
 
@@ -31,14 +31,17 @@ This repository contains a complete PyQt6 application for scanning, diagnosing, 
 
 ## Installation
 
-1. Clone this repository.
+1. Clone this repository:
+    ```
+    git clone https://github.com/abhi-abhi86/put.git
+    ```
 2. Install dependencies:
     ```
-pip install PyQt6 Pillow
+    pip install PyQt6 Pillow
     ```
 3. Run the application:
     ```
-python DiseaseDetectionApp/main.py
+    python DiseaseDetectionApp/main.py
     ```
 
 ## Usage
