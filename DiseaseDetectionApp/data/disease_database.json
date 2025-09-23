@@ -1,0 +1,22 @@
+[
+  {
+    "domain": "Plant",
+    "name": "Tomato Late Blight",
+    "description": "Caused by the fungus Phytophthora infestans. Appears as pale green, water-soaked spots on leaves.",
+    "stages": {
+      "Early": "Small, irregular, dark, water-soaked spots.",
+      "Advanced": "Lesions enlarge, turning brown to black, with a white moldy growth on the underside of leaves."
+    },
+    "solution": "Apply fungicides containing mancozeb or chlorothalonil. Ensure proper spacing for air circulation and avoid overhead watering."
+  },
+  {
+    "domain": "Human",
+    "name": "Ringworm (Tinea Corporis)",
+    "description": "A common fungal infection of the skin. Not caused by a worm.",
+    "stages": {
+      "Initial": "A red, itchy, scaly patch on the skin.",
+      "Developed": "The patch develops into a distinct ring-shape with a raised border."
+    },
+    "solution": "Apply over-the-counter antifungal creams, lotions, or powders like clotrimazole or miconazole for 2 to 4 weeks. Keep the skin clean and dry."
+  }
+]
