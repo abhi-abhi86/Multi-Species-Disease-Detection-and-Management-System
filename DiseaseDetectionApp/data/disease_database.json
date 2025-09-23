@@ -3,6 +3,7 @@
     "domain": "Plant",
     "name": "Tomato Late Blight",
     "description": "Caused by the fungus Phytophthora infestans. Appears as pale green, water-soaked spots on leaves.",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Late_blight_on_tomato_leaf.jpg/800px-Late_blight_on_tomato_leaf.jpg",
     "stages": {
       "Early": "Small, irregular, dark, water-soaked spots.",
       "Advanced": "Lesions enlarge, turning brown to black, with a white moldy growth on the underside of leaves."
@@ -13,9 +14,38 @@
     "solution": "Apply fungicides containing mancozeb or chlorothalonil. Ensure proper spacing for air circulation and avoid overhead watering."
   },
   {
+    "domain": "Plant",
+    "name": "Powdery Mildew",
+    "description": "A fungal disease that affects a wide variety of plants, appearing as white powdery spots on leaves and stems.",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Powdery_mildew_on_phlox.jpg/800px-Powdery_mildew_on_phlox.jpg",
+    "stages": {
+        "Initial": "Small, white, powdery spots on the upper surface of leaves.",
+        "Advanced": "The powdery spots spread to cover entire leaves, stems, and sometimes flowers and fruit. Leaves may turn yellow and fall off."
+    },
+    "causes": "Fungi in the order Erysiphales. Spores are spread by wind.",
+    "risk_factors": "High humidity at night and low humidity during the day. Crowded planting and poor air circulation.",
+    "preventive_measures": "Choose resistant varieties, ensure good air circulation, and avoid over-fertilizing with nitrogen.",
+    "solution": "Apply fungicides like potassium bicarbonate, neem oil, or sulfur. Prune affected areas to improve air circulation."
+  },
+  {
+    "domain": "Plant",
+    "name": "Black Spot",
+    "description": "A common fungal disease of roses, characterized by black spots on the leaves.",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Black_spot_on_rose_leaf.jpg/800px-Black_spot_on_rose_leaf.jpg",
+    "stages": {
+        "Initial": "Small black spots with fringed margins appear on the leaves.",
+        "Advanced": "The spots enlarge and the surrounding leaf area turns yellow. Infected leaves often drop prematurely."
+    },
+    "causes": "The fungus Diplocarpon rosae, which overwinters on infected leaves and stems.",
+    "risk_factors": "Wet, humid conditions. Overhead watering that leaves foliage wet for extended periods.",
+    "preventive_measures": "Water at the base of the plant, provide good air circulation, and remove and destroy infected leaves.",
+    "solution": "Apply fungicides containing chlorothalonil or myclobutanil. A mixture of baking soda and horticultural oil can also be effective."
+  },
+  {
     "domain": "Human",
     "name": "Ringworm (Tinea Corporis)",
     "description": "A common fungal infection of the skin. Not caused by a worm.",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Tinea_corporis_in_the_groin.jpg/800px-Tinea_corporis_in_the_groin.jpg",
     "stages": {
       "Initial": "A red, itchy, scaly patch on the skin.",
       "Developed": "The patch develops into a distinct ring-shape with a raised border."
@@ -26,9 +56,40 @@
     "solution": "Apply over-the-counter antifungal creams, lotions, or powders like clotrimazole or miconazole for 2 to 4 weeks. Keep the skin clean and dry."
   },
   {
+    "domain": "Human",
+    "name": "Chickenpox (Varricella)",
+    "description": "A highly contagious viral infection causing an itchy rash with small, fluid-filled blisters.",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Chickenpox_blisters.jpg/800px-Chickenpox_blisters.jpg",
+    "stages": {
+        "Prodromal": "Fever, headache, and sore throat before the rash appears.",
+        "Eruptive": "Rash begins as small red spots that turn into itchy blisters (vesicles).",
+        "Crusting": "Blisters dry out and form scabs, which eventually fall off."
+    },
+    "causes": "Varicella-zoster virus (VZV). Spread through direct contact or by inhaling airborne droplets.",
+    "risk_factors": "Not being vaccinated, having a weakened immune system, or never having had chickenpox.",
+    "preventive_measures": "Vaccination is the most effective prevention.",
+    "solution": "Treatment focuses on relieving symptoms. Calamine lotion and oatmeal baths can soothe itching. Acyclovir may be prescribed for severe cases."
+  },
+  {
+    "domain": "Human",
+    "name": "Common Cold",
+    "description": "A mild viral infection of the nose and throat (upper respiratory tract).",
+    "image_url": "https://placehold.co/256x256/eeeeee/cccccc?text=Common+Cold",
+    "stages": {
+      "Incubation": "1-3 days after exposure to the virus.",
+      "Symptoms": "Runny or stuffy nose, sore throat, cough, congestion, slight body aches or a mild headache, sneezing, low-grade fever.",
+      "Recovery": "Symptoms typically resolve within 7-10 days."
+    },
+    "causes": "Most commonly caused by rhinoviruses. Spread through airborne droplets or contact with infected surfaces.",
+    "risk_factors": "Weakened immune system, exposure to crowds, and being in cold weather (indirectly).",
+    "preventive_measures": "Frequent hand washing, avoiding touching face, and staying away from sick individuals.",
+    "solution": "Rest and fluids are key. Over-the-counter medications like decongestants and pain relievers can help manage symptoms. There is no cure for the common cold."
+  },
+  {
     "domain": "Animal",
     "name": "Canine Distemper",
     "description": "A contagious and serious viral illness with no known cure that affects dogs, and certain species of wildlife.",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Canine_distemper_ocular_manifestations.jpg/800px-Canine_distemper_ocular_manifestations.jpg",
     "stages": {
         "Initial": "Fever, loss of appetite, and watery discharge from the eyes and nose.",
         "Advanced": "Vomiting, diarrhea, and neurological symptoms like seizures and paralysis."
@@ -37,5 +98,36 @@
     "risk_factors": "Unvaccinated puppies and dogs are at the highest risk. Crowded environments like kennels can also increase the risk of transmission.",
     "preventive_measures": "Vaccination is the most effective way to prevent canine distemper. A series of vaccinations is recommended for puppies, followed by regular boosters.",
     "solution": "There is no cure for canine distemper. Treatment is supportive and aimed at managing symptoms, including providing fluids to prevent dehydration and medications to control seizures and vomiting."
+  },
+  {
+    "domain": "Animal",
+    "name": "Rabies",
+    "description": "A deadly viral disease that affects the central nervous system of mammals, including humans.",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Rabid_dog.jpg/800px-Rabid_dog.jpg",
+    "stages": {
+        "Prodromal": "Changes in behavior, fever, and licking at the bite site.",
+        "Furious": "Agitation, aggression, biting, and drooling.",
+        "Paralytic": "Paralysis of the throat and jaw muscles, leading to coma and death."
+    },
+    "causes": "Rabies virus, transmitted through the saliva of an infected animal, usually via a bite.",
+    "risk_factors": "Exposure to wild animals, especially bats, raccoons, skunks, and foxes. Not vaccinating pets.",
+    "preventive_measures": "Vaccinate all pets (dogs, cats, ferrets). Avoid contact with wild animals.",
+    "solution": "There is no cure for rabies once symptoms appear. Post-exposure prophylaxis (PEP), including a series of vaccine shots and rabies immune globulin, can prevent the disease if administered promptly after exposure."
+  },
+  {
+    "domain": "Animal",
+    "name": "Feline Leukemia Virus (FeLV)",
+    "description": "A retrovirus that infects cats and weakens their immune system, making them susceptible to other infections and diseases.",
+    "image_url": "https://placehold.co/256x256/eeeeee/cccccc?text=FeLV",
+    "stages": {
+        "Abortive": "The cat's immune system eliminates the virus.",
+        "Regressive": "The cat's immune system controls the virus, but it remains in the body in an inactive state.",
+        "Progressive": "The virus actively replicates and causes disease."
+    },
+    "causes": "Feline leukemia virus, spread through saliva, nasal secretions, urine, feces, and milk from infected cats.",
+    "risk_factors": "Living with infected cats, outdoor access, and not being vaccinated.",
+    "preventive_measures": "Vaccination, testing new cats before introducing them to a household, and keeping cats indoors.",
+    "solution": "There is no cure for FeLV. Treatment is supportive and focuses on managing secondary infections and symptoms. Antiviral therapies may help in some cases."
   }
 ]
+
