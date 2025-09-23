@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
-    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QMenu
+    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QMenu, QDialog
 )
 from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtCore import Qt
@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
     def open_add_disease_dialog(self):
         dialog = AddNewDiseaseDialog(self)
         result = dialog.exec()
-        if result == dialog.DialogCode.Accepted:
+        if result == QDialog.DialogCode.Accepted:
             data = dialog.get_data()
             save_disease(data)
             self.database = load_database()
