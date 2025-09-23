@@ -7,6 +7,9 @@
       "Early": "Small, irregular, dark, water-soaked spots.",
       "Advanced": "Lesions enlarge, turning brown to black, with a white moldy growth on the underside of leaves."
     },
+    "causes": "High humidity, cool temperatures, and prolonged leaf wetness.",
+    "risk_factors": "Poor air circulation, overhead watering, and leaving infected debris in the soil.",
+    "preventive_measures": "Ensure proper spacing, water at the base of the plant, rotate crops, and remove infected plants promptly.",
     "solution": "Apply fungicides containing mancozeb or chlorothalonil. Ensure proper spacing for air circulation and avoid overhead watering."
   },
   {
@@ -17,6 +20,22 @@
       "Initial": "A red, itchy, scaly patch on the skin.",
       "Developed": "The patch develops into a distinct ring-shape with a raised border."
     },
+    "causes": "Direct contact with an infected person or animal, or contact with contaminated items like towels or clothing.",
+    "risk_factors": "Weakened immune system, excessive sweating, and participating in contact sports.",
+    "preventive_measures": "Keep skin clean and dry, avoid sharing personal items, and wear loose-fitting clothing.",
     "solution": "Apply over-the-counter antifungal creams, lotions, or powders like clotrimazole or miconazole for 2 to 4 weeks. Keep the skin clean and dry."
+  },
+  {
+    "domain": "Animal",
+    "name": "Canine Distemper",
+    "description": "A contagious and serious viral illness with no known cure that affects dogs, and certain species of wildlife.",
+    "stages": {
+        "Initial": "Fever, loss of appetite, and watery discharge from the eyes and nose.",
+        "Advanced": "Vomiting, diarrhea, and neurological symptoms like seizures and paralysis."
+    },
+    "causes": "Caused by the canine distemper virus (CDV), which is spread through airborne exposure or contact with infected bodily fluids.",
+    "risk_factors": "Unvaccinated puppies and dogs are at the highest risk. Crowded environments like kennels can also increase the risk of transmission.",
+    "preventive_measures": "Vaccination is the most effective way to prevent canine distemper. A series of vaccinations is recommended for puppies, followed by regular boosters.",
+    "solution": "There is no cure for canine distemper. Treatment is supportive and aimed at managing symptoms, including providing fluids to prevent dehydration and medications to control seizures and vomiting."
   }
 ]
