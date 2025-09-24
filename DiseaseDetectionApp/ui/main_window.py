@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
-    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QMenu
+    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QMenu, QApplication
 )
 from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -11,7 +11,8 @@ from core.data_handler import load_database, save_disease
 from core.ml_processor import MLProcessor, predict_from_symptoms
 
 class DropLabel(QLabel):
-    # ... existing code ...
+    fileDropped = pyqtSignal(str)
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setAcceptDrops(True)
@@ -69,7 +70,6 @@ class MainWindow(QMainWindow):
             self.domain_tabs[domain] = tab
         self.setCentralWidget(self.tab_widget)
 
-    # ... existing code ...
     def setup_menu(self):
         menubar = QMenuBar(self)
         file_menu = QMenu("File", self)
@@ -144,29 +144,34 @@ class MainWindow(QMainWindow):
         tab = self.domain_tabs[domain]
         image_path = self.current_image_paths[domain]
         symptoms = tab.symptom_input.toPlainText().strip()
-        result, confidence, wiki_summary = None, 0, ""
+        result, confidence, wiki_summary, predicted_stage = None, 0, "", ""
 
         if symptoms:
             if self.current_image_paths[domain]:
                 self.current_image_paths[domain] = None 
                 tab.image_label.clear()
                 tab.image_label.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
-            result, confidence, wiki_summary = predict_from_symptoms(symptoms, domain, self.database)
+            # BUG FIX: Unpack all four values from the function call
+            result, confidence, wiki_summary, predicted_stage = predict_from_symptoms(symptoms, domain, self.database)
         elif image_path:
             # Call the new method from our MLProcessor instance
             tab.result_display.setPlainText("Analyzing image... Please wait.")
-            QApplication.processEvents()  # Update the UI
-            result, confidence, wiki_summary = self.ml_processor.predict_from_image(image_path, domain, self.database)
+            QApplication.processEvents()  # Update the UI to show the message
+            # BUG FIX: Unpack all four values from the function call
+            result, confidence, wiki_summary, predicted_stage = self.ml_processor.predict_from_image(image_path, domain, self.database)
         else:
             QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
             return
 
         if result:
             stages_str = "\n".join([f"  • {k}: {v}" for k, v in result.get("stages", {}).items()])
+            # BUG FIX: Changed confidence format from ':.1%' to ':.1f}%' to correctly display scores from 0-100.
+            # BUG FIX: Added the 'predicted_stage' to the output display.
             out = (
                 f"--- DIAGNOSIS ---\n"
-                f"Confidence: {confidence:.1%}\n"
-                f"Disease Name: {result['name']}\n\n"
+                f"Confidence: {confidence:.1f}%\n"
+                f"Disease Name: {result['name']}\n"
+                f"Predicted Stage: {predicted_stage}\n\n"
                 f"--- WIKIPEDIA SUMMARY ---\n{wiki_summary}\n\n"
                 f"--- DETAILS FROM DATABASE ---\n"
                 f"Description: {result['description']}\n\n"
@@ -180,7 +185,6 @@ class MainWindow(QMainWindow):
             tab.result_display.setPlainText("No diagnosis could be made. The AI model could not identify a matching disease in the database for the provided input.")
 
     def open_add_disease_dialog(self):
-        # ... existing code ...
         dialog = AddNewDiseaseDialog(self)
         if dialog.exec():
             data = dialog.get_data()
@@ -192,6 +196,5 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Success", "Disease information saved.")
             
     def open_chatbot(self):
-        # ... existing code ...
         dialog = ChatbotDialog(self.database, self)
         dialog.exec()
