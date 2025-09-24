@@ -1,19 +1,63 @@
 # ml_processor.py
+import torch
+import torchvision.transforms as transforms
+from torchvision.models import mobilenet_v2
+from PIL import Image
 import numpy as np
 import re
-from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_input, decode_predictions
-from tensorflow.keras.preprocessing import image
+import json
+import os
+import requests
 from core.wikipedia_integration import get_wikipedia_summary
+
+# Path to the ImageNet class index file
+IMAGENET_CLASS_INDEX_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'imagenet_class_index.json')
+
+def get_imagenet_labels():
+    """
+    Downloads and loads the ImageNet class labels if they don't exist locally.
+    """
+    if not os.path.exists(IMAGENET_CLASS_INDEX_PATH):
+        print("Downloading ImageNet class index...")
+        try:
+            url = "https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json"
+            response = requests.get(url)
+            response.raise_for_status() # Raise an exception for bad status codes
+            with open(IMAGENET_CLASS_INDEX_PATH, 'w') as f:
+                f.write(response.text)
+        except requests.exceptions.RequestException as e:
+            print(f"Error downloading ImageNet class index: {e}")
+            return None
+
+    with open(IMAGENET_CLASS_INDEX_PATH) as f:
+        class_idx = json.load(f)
+    # Creates a dictionary mapping the class index (integer) to the class name (string)
+    return {int(k): v[1] for k, v in class_idx.items()}
 
 class MLProcessor:
     """
-    Handles loading the ML model and running predictions.
+    Handles loading the PyTorch model and running predictions.
     The model is loaded once and reused for efficiency.
     """
     def __init__(self):
-        print("Loading AI model (MobileNetV2)... This may take a moment on the first run.")
-        self.model = MobileNetV2(weights='imagenet')
-        print("Model loaded successfully.")
+        print("Loading AI model (MobileNetV2 with PyTorch)... This may take a moment on the first run.")
+        # Load a pre-trained MobileNetV2 model
+        self.model = mobilenet_v2(weights='IMAGENET1K_V1')
+        self.model.eval()  # Set the model to evaluation mode (important for inference)
+        
+        self.labels = get_imagenet_labels()
+        
+        # Define the image transformation pipeline
+        self.transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
+        if self.labels:
+            print("Model loaded successfully.")
+        else:
+            print("Model loaded, but failed to get ImageNet labels. Predictions may not be interpretable.")
 
     def _predict_stage(self, prediction_labels, disease_info):
         """
@@ -22,12 +66,10 @@ class MLProcessor:
         best_stage = "Undetermined"
         max_score = 0
         
-        # Get a set of all keywords from the top AI predictions
         prediction_keywords = set()
         for label in prediction_labels:
             prediction_keywords.update(re.findall(r'\b\w+\b', label.lower()))
 
-        # Compare keywords against each stage's description
         for stage_name, stage_desc in disease_info.get("stages", {}).items():
             stage_words = set(re.findall(r'\b\w+\b', stage_desc.lower()))
             score = len(prediction_keywords.intersection(stage_words))
@@ -40,21 +82,28 @@ class MLProcessor:
 
     def predict_from_image(self, image_path, domain, database):
         """
-        Predicts a disease and its stage from an image.
+        Predicts a disease and its stage from an image using PyTorch.
         """
+        if not self.labels:
+            return None, 0, "ImageNet labels are missing.", "Error"
+            
         try:
-            img = image.load_img(image_path, target_size=(224, 224))
-            img_array = image.img_to_array(img)
-            img_batch = np.expand_dims(img_array, axis=0)
-            img_preprocessed = preprocess_input(img_batch)
-            
-            predictions = self.model.predict(img_preprocessed)
-            decoded_predictions = decode_predictions(predictions, top=5)[0]
-            
-            prediction_labels = [label for _, label, _ in decoded_predictions]
+            img = Image.open(image_path).convert('RGB')
+            img_t = self.transform(img)
+            batch_t = torch.unsqueeze(img_t, 0)
 
-            for _, label, score in decoded_predictions:
-                print(f"Model identified: {label} (Confidence: {score:.2f})")
+            with torch.no_grad(): # Disable gradient calculation for inference
+                out = self.model(batch_t)
+
+            _, indices = torch.sort(out, descending=True)
+            percentages = torch.nn.functional.softmax(out, dim=1)[0]
+            
+            # Get top 5 predictions
+            top_predictions = [(self.labels[idx.item()], percentages[idx.item()].item()) for idx in indices[0][:5]]
+            prediction_labels = [label for label, _ in top_predictions]
+
+            for label, score in top_predictions:
+                print(f"Model identified: {label} (Confidence: {score:.2%})")
                 label_words = set(re.findall(r'\b\w+\b', label.lower()))
 
                 for disease in database:
@@ -62,22 +111,23 @@ class MLProcessor:
                         disease_text = (disease.get('name', '') + ' ' + disease.get('description', '')).lower()
                         disease_words = set(re.findall(r'\b\w+\b', disease_text))
                         
+                        # Check for intersection of keywords
                         if not label_words.isdisjoint(disease_words):
                             print(f"Match found: '{label}' matches '{disease['name']}'")
                             wiki_summary = get_wikipedia_summary(disease['name'])
-                            # Predict the stage based on keywords
                             predicted_stage = self._predict_stage(prediction_labels, disease)
-                            return disease, score, wiki_summary, predicted_stage
+                            # Return confidence as a percentage score (0-100)
+                            return disease, score * 100, wiki_summary, predicted_stage
 
         except Exception as e:
             print(f"An error occurred during image prediction: {e}")
             return None, 0, "Error processing the image.", "Error"
             
-        return None, 0, "", "Not applicable"
+        return None, 0, "No matching disease found in the database for the top predictions.", "Not applicable"
 
 def predict_from_symptoms(symptoms, domain, database):
     """
-    Predicts from symptoms using keyword matching.
+    Predicts from symptoms using keyword matching. (No changes needed here)
     """
     candidates = [d for d in database if d.get("domain", "").lower() == domain.lower()]
     if not candidates:
@@ -104,10 +154,10 @@ def predict_from_symptoms(symptoms, domain, database):
             best_match = disease
 
     if best_match:
-        confidence = min(1.0, max_score / len(user_symptoms)) if user_symptoms else 0
+        # Normalize confidence score based on the number of matching keywords
+        confidence = (max_score / len(user_symptoms)) * 100 if user_symptoms else 0
         wiki_summary = get_wikipedia_summary(best_match['name'])
         predicted_stage = "Based on provided symptoms"
         return best_match, confidence, wiki_summary, predicted_stage
     
     return None, 0, "", "Not applicable"
-
