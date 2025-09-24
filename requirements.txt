@@ -1,7 +1,12 @@
-# what to install 
+
 
 #requirements.txt
 
 PyQt6
 Pillow
 wikipedia
+torch
+torchvision
+requests
+
+'''# what to install 
