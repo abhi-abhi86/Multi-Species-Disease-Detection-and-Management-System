@@ -5,3 +5,5 @@
 PyQt6
 Pillow
 wikipedia
+torch
+torchvision
