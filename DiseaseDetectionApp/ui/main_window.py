@@ -144,6 +144,7 @@ class MainWindow(QMainWindow):
         tab = self.domain_tabs[domain]
         image_path = self.current_image_paths[domain]
         symptoms = tab.symptom_input.toPlainText().strip()
+        # BUG FIX: Initialize all four variables that will be returned by the prediction functions.
         result, confidence, wiki_summary, predicted_stage = None, 0, "", ""
 
         if symptoms:
@@ -151,13 +152,12 @@ class MainWindow(QMainWindow):
                 self.current_image_paths[domain] = None 
                 tab.image_label.clear()
                 tab.image_label.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
-            # BUG FIX: Unpack all four values from the function call
+            # BUG FIX: Unpack all four values from the function call to prevent a crash.
             result, confidence, wiki_summary, predicted_stage = predict_from_symptoms(symptoms, domain, self.database)
         elif image_path:
-            # Call the new method from our MLProcessor instance
             tab.result_display.setPlainText("Analyzing image... Please wait.")
             QApplication.processEvents()  # Update the UI to show the message
-            # BUG FIX: Unpack all four values from the function call
+            # BUG FIX: Unpack all four values from the function call to prevent a crash.
             result, confidence, wiki_summary, predicted_stage = self.ml_processor.predict_from_image(image_path, domain, self.database)
         else:
             QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
@@ -198,3 +198,4 @@ class MainWindow(QMainWindow):
     def open_chatbot(self):
         dialog = ChatbotDialog(self.database, self)
         dialog.exec()
+
