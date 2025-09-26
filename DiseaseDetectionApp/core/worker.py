@@ -7,10 +7,11 @@ class DiagnosisWorker(QObject):
     Worker object to run the diagnosis in a separate thread.
     """
     # Signal to emit when diagnosis is complete
-    # Emits: result_dict, confidence_float, wiki_summary_str, predicted_stage_str
-    finished = pyqtSignal(dict, float, str, str)
+    # Emits: result_dict, confidence_float, wiki_summary_str, predicted_stage_str, domain_str
+    finished = pyqtSignal(dict, float, str, str, str)
     # Signal to emit if an error occurs
-    error = pyqtSignal(str)
+    # Emits: error_message_str, domain_str
+    error = pyqtSignal(str, str)
     # Signal to emit progress updates
     progress = pyqtSignal(str)
 
@@ -40,23 +41,18 @@ class DiagnosisWorker(QObject):
                 )
             else:
                 # This case should ideally be caught in the UI, but we handle it here too.
-                self.error.emit("No input provided (image or symptoms).")
+                self.error.emit("No input provided (image or symptoms).", self.domain)
                 return
 
             if self.is_running:
                 if result:
-                    self.finished.emit(result, confidence, wiki, stage)
+                    self.finished.emit(result, confidence, wiki, stage, self.domain)
                 else:
-                    self.error.emit("No diagnosis could be made. The AI model could not identify a matching disease.")
+                    self.error.emit("No diagnosis could be made. The AI model could not identify a matching disease.", self.domain)
 
         except Exception as e:
-            self.error.emit(f"An unexpected error occurred: {e}")
+            self.error.emit(f"An unexpected error occurred: {e}", self.domain)
 
     def stop(self):
         self.is_running = False
-
-
-
-
-
 
