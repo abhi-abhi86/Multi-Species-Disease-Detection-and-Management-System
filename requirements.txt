@@ -1,12 +1,13 @@
-
-
-#requirements.txt
-
+GUI Framework
 PyQt6
+
+Image Processing
 Pillow
-wikipedia
+
+Machine Learning
 torch
 torchvision
-requests
 
-'''# what to install 
+Web Requests and APIs
+requests
+wikipedia
