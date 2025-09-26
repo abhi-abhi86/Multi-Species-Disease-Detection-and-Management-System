@@ -6,6 +6,7 @@ from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtCore import Qt, pyqtSignal
 from ui.add_disease_dialog import AddNewDiseaseDialog
 from ui.chatbot_dialog import ChatbotDialog
+from ui.image_search_dialog import ImageSearchDialog
 from core.data_handler import load_database, save_disease
 # Updated import to use the new MLProcessor class
 from core.ml_processor import MLProcessor, predict_from_symptoms
@@ -88,6 +89,14 @@ class MainWindow(QMainWindow):
         file_menu.addSeparator()
         file_menu.addAction(exit_action)
         menubar.addMenu(file_menu)
+
+        # New "Tools" menu for image search
+        tools_menu = QMenu("Tools", self)
+        search_image_action = QAction("Search Disease Image...", self)
+        search_image_action.triggered.connect(self.open_image_search_dialog)
+        tools_menu.addAction(search_image_action)
+        menubar.addMenu(tools_menu)
+
         self.setMenuBar(menubar)
 
     def create_domain_tab(self, domain_name):
@@ -144,20 +153,27 @@ class MainWindow(QMainWindow):
         tab = self.domain_tabs[domain]
         image_path = self.current_image_paths[domain]
         symptoms = tab.symptom_input.toPlainText().strip()
-        # BUG FIX: Initialize all four variables that will be returned by the prediction functions.
         result, confidence, wiki_summary, predicted_stage = None, 0, "", ""
 
-        if symptoms:
-            if self.current_image_paths[domain]:
-                self.current_image_paths[domain] = None 
-                tab.image_label.clear()
-                tab.image_label.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
-            # BUG FIX: Unpack all four values from the function call to prevent a crash.
+        use_symptoms = bool(symptoms)
+        use_image = bool(image_path)
+
+        # If both image and symptoms are provided, ask the user which to use
+        if use_symptoms and use_image:
+            reply = QMessageBox.question(self, 'Confirm Diagnosis Method',
+                                         "Both an image and symptoms are provided. Do you want to diagnose based on symptoms? (Choosing 'No' will use the image).",
+                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                         QMessageBox.StandardButton.Yes)
+            if reply == QMessageBox.StandardButton.No:
+                use_symptoms = False # User wants to use the image
+            else:
+                use_image = False # User wants to use symptoms
+
+        if use_symptoms:
             result, confidence, wiki_summary, predicted_stage = predict_from_symptoms(symptoms, domain, self.database)
-        elif image_path:
+        elif use_image:
             tab.result_display.setPlainText("Analyzing image... Please wait.")
             QApplication.processEvents()  # Update the UI to show the message
-            # BUG FIX: Unpack all four values from the function call to prevent a crash.
             result, confidence, wiki_summary, predicted_stage = self.ml_processor.predict_from_image(image_path, domain, self.database)
         else:
             QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
@@ -165,8 +181,6 @@ class MainWindow(QMainWindow):
 
         if result:
             stages_str = "\n".join([f"  • {k}: {v}" for k, v in result.get("stages", {}).items()])
-            # BUG FIX: Changed confidence format from ':.1%' to ':.1f}%' to correctly display scores from 0-100.
-            # BUG FIX: Added the 'predicted_stage' to the output display.
             out = (
                 f"--- DIAGNOSIS ---\n"
                 f"Confidence: {confidence:.1f}%\n"
@@ -199,3 +213,7 @@ class MainWindow(QMainWindow):
         dialog = ChatbotDialog(self.database, self)
         dialog.exec()
 
+    def open_image_search_dialog(self):
+        """Opens the image search dialog."""
+        dialog = ImageSearchDialog(self.database, self)
+        dialog.exec()
