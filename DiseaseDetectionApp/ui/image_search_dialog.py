@@ -57,11 +57,14 @@ class ImageSearchDialog(QDialog):
             self.image_label.setText(f"No image path found for {disease_name}.")
             return
 
-        # Construct the full path to the image relative to the 'data' directory
-        # This makes the path independent of where the main script is run from
+        # Construct the full path to the image relative to the main 'DiseaseDetectionApp' directory
         try:
-            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+            # Go up two levels from ui -> DiseaseDetectionApp, then into the data directory
+            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data'))
             image_path = os.path.join(base_path, disease_info['image_url'])
+            
+            # Normalize path separators for the current OS (e.g., \ on Windows, / on Linux)
+            image_path = os.path.normpath(image_path)
 
             if not os.path.exists(image_path):
                 self.image_label.setText(f"Image file not found.\nExpected at: {image_path}")
