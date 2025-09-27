@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QPixmap, QAction, QFont, QColor, QCursor
 from PyQt6.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer
+import os # Import the os module
 
 from ui.add_disease_dialog import AddNewDiseaseDialog
 from ui.chatbot_dialog import ChatbotDialog
@@ -134,6 +135,11 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("🦠 Multi-Species Disease Diagnosis (Animated)")
         self.resize(950, 760)
         self.setStyleSheet("background: #f5f7fb;")
+        
+        # --- NEW: Define base path for the application to find resources like images ---
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.app_base_dir = os.path.abspath(os.path.join(self.script_dir, '..'))
+        
         self.database = load_database()
         self.ml_processor = MLProcessor()
         self.current_image_paths = {"Plant": None, "Human": None, "Animal": None}
@@ -240,14 +246,34 @@ class MainWindow(QMainWindow):
             QGroupBox:title { top: -10px; left: 14px; padding: 0 8px;}
         """)
 
-        result_layout = QVBoxLayout()
+        # --- MODIFICATION: Use a QGridLayout for better result layout ---
+        result_layout = QGridLayout()
+        
         result_display = AnimatedTextEdit()
         result_display.setReadOnly(True)
         result_display.setStyleSheet(result_display.styleSheet() + """
             QTextEdit { background: #eafff1; color: #1c4034; font-weight: 500;}
         """)
+
+        # --- NEW: Add a label for the reference image from the database ---
+        reference_image_label = QLabel("Reference image will appear here.")
+        reference_image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        reference_image_label.setWordWrap(True)
+        reference_image_label.setFixedSize(220, 220)
+        reference_image_label.setStyleSheet("""
+            border: 1px solid #00b894;
+            background-color: #eafff1;
+            border-radius: 10px;
+            color: #1c4034;
+        """)
+        
         result_fader = FadeWidget(result_display)
-        result_layout.addWidget(result_display)
+        
+        # Add widgets to the new grid layout
+        result_layout.addWidget(reference_image_label, 0, 0)
+        result_layout.addWidget(result_display, 0, 1)
+        result_layout.setColumnStretch(1, 1) # Make the text column expand
+
         result_group.setLayout(result_layout)
 
         main_layout.addWidget(result_group)
@@ -256,6 +282,8 @@ class MainWindow(QMainWindow):
         main_widget.image_label = image_label
         main_widget.symptom_input = symptom_input
         main_widget.result_display = result_display
+        # --- NEW: Add reference_image_label to the tab's widget dictionary ---
+        main_widget.reference_image_label = reference_image_label
         main_widget.location_input = location_input
         main_widget.diagnose_btn = diagnose_btn
         main_widget.progress_bar = progress_bar
@@ -353,6 +381,28 @@ class MainWindow(QMainWindow):
         tab.result_display.setHtml(output_html)
         tab.result_fader.fade_in()
 
+        # --- NEW FEATURE: Load and display the reference image from the database ---
+        # Check for both 'image' and 'image_url' keys for compatibility
+        relative_image_path = result.get('image') or result.get('image_url')
+        
+        if relative_image_path:
+            # Construct the full path to the image relative to the application's base directory
+            full_image_path = os.path.join(self.app_base_dir, relative_image_path)
+            
+            if os.path.exists(full_image_path):
+                pixmap = QPixmap(full_image_path)
+                tab.reference_image_label.setPixmap(pixmap.scaled(
+                    tab.reference_image_label.size(),
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation
+                ))
+            else:
+                print(f"Reference image not found at: {full_image_path}")
+                tab.reference_image_label.setText(f"Image not found:\n{relative_image_path}")
+        else:
+            tab.reference_image_label.setText("No reference image in database.")
+        # --- END NEW FEATURE ---
+
         location = tab.location_input.text().strip()
         if location and result:
             self.diagnosis_locations.append({
@@ -418,3 +468,4 @@ class MainWindow(QMainWindow):
             """)
         else:
             self.setStyleSheet("background: #f5f7fb;")
+
