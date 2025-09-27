@@ -163,6 +163,7 @@ class MainWindow(QMainWindow):
             tab.result_display.clear()
 
     def upload_image(self, domain):
+        # Added a file filter for a better user experience
         file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Images (*.png *.jpg *.jpeg)")
         if file_path:
             self.set_image(file_path, domain)
@@ -231,7 +232,6 @@ class MainWindow(QMainWindow):
             f"--- DIAGNOSIS ---\n"
             f"Confidence: {confidence:.1f}%\n"
             f"Disease Name: {result['name']}\n"
-...
             f"Predicted Stage: {predicted_stage}\n\n"
             f"--- WIKIPEDIA SUMMARY ---\n{wiki_summary}\n\n"
             f"--- DETAILS FROM DATABASE ---\n"
