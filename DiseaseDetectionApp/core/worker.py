@@ -6,8 +6,11 @@ from core.ncbi_integration import get_pubmed_summary # Import the new function
 class DiagnosisWorker(QObject):
     """
     Worker object to run the diagnosis in a separate thread.
-    Now also fetches research data from PubMed.
+    Now includes caching for PubMed results and more robust network error handling.
     """
+    # Class-level cache to store PubMed results across different worker instances
+    pubmed_cache = {}
+    
     # Signal to emit when diagnosis is complete
     # Emits: result_dict, confidence_float, wiki_summary_str, predicted_stage_str, pubmed_summary_str, domain_str
     finished = pyqtSignal(dict, float, str, str, str, str)
@@ -28,7 +31,8 @@ class DiagnosisWorker(QObject):
 
     def run(self):
         """
-        Starts the diagnosis process and fetches research data upon completion.
+        Starts the diagnosis process, fetches research data upon completion,
+        and utilizes a cache to avoid redundant network requests.
         """
         try:
             result, confidence, wiki, stage = None, 0, "", ""
@@ -47,9 +51,25 @@ class DiagnosisWorker(QObject):
                 return
 
             if self.is_running and result:
-                # After a successful diagnosis, fetch PubMed data
-                self.progress.emit("Fetching recent research from PubMed...")
-                pubmed_summary = get_pubmed_summary(result['name'])
+                disease_name = result['name']
+                pubmed_summary = ""
+
+                # Check cache first
+                if disease_name in self.pubmed_cache:
+                    self.progress.emit("Fetching research from cache...")
+                    pubmed_summary = self.pubmed_cache[disease_name]
+                else:
+                    # If not in cache, fetch from network with error handling
+                    self.progress.emit("Fetching recent research from PubMed...")
+                    try:
+                        # This is the actual network call
+                        pubmed_summary = get_pubmed_summary(disease_name)
+                        # Store result in cache for next time
+                        self.pubmed_cache[disease_name] = pubmed_summary
+                    except Exception as e:
+                        # If network fails, provide a graceful message instead of crashing
+                        print(f"Network error while fetching from PubMed: {e}")
+                        pubmed_summary = "Could not retrieve online research data. Please check your internet connection."
                 
                 if self.is_running: # Check again in case the process was stopped
                     self.finished.emit(result, confidence, wiki, stage, pubmed_summary, self.domain)
@@ -62,3 +82,4 @@ class DiagnosisWorker(QObject):
 
     def stop(self):
         self.is_running = False
+
