@@ -1,7 +1,8 @@
 # ml_processor.py
 import torch
 import torchvision.transforms as transforms
-from torchvision.models import mobilenet_v2
+# Updated import for model weights
+from torchvision.models import mobilenet_v2, MobileNet_V2_Weights
 from PIL import Image
 import numpy as np
 import re
@@ -27,12 +28,20 @@ def get_imagenet_labels():
                 f.write(response.text)
         except requests.exceptions.RequestException as e:
             print(f"Error downloading ImageNet class index: {e}")
+            # Create an empty file to avoid repeated download attempts
+            with open(IMAGENET_CLASS_INDEX_PATH, 'w') as f:
+                json.dump({}, f)
             return None
 
-    with open(IMAGENET_CLASS_INDEX_PATH) as f:
-        class_idx = json.load(f)
-    # Creates a dictionary mapping the class index (integer) to the class name (string)
-    return {int(k): v[1] for k, v in class_idx.items()}
+    try:
+        with open(IMAGENET_CLASS_INDEX_PATH) as f:
+            class_idx = json.load(f)
+        # Creates a dictionary mapping the class index (integer) to the class name (string)
+        return {int(k): v[1] for k, v in class_idx.items()}
+    except (json.JSONDecodeError, IndexError) as e:
+        print(f"Error reading or parsing ImageNet class index file: {e}")
+        return None
+
 
 class MLProcessor:
     """
@@ -41,8 +50,8 @@ class MLProcessor:
     """
     def __init__(self):
         print("Loading AI model (MobileNetV2 with PyTorch)... This may take a moment on the first run.")
-        # Load a pre-trained MobileNetV2 model
-        self.model = mobilenet_v2(weights='IMAGENET1K_V1')
+        # Load a pre-trained MobileNetV2 model using the recommended weights API
+        self.model = mobilenet_v2(weights=MobileNet_V2_Weights.IMAGENET1K_V1)
         self.model.eval()  # Set the model to evaluation mode (important for inference)
         
         self.labels = get_imagenet_labels()
@@ -57,7 +66,7 @@ class MLProcessor:
         if self.labels:
             print("Model loaded successfully.")
         else:
-            print("Model loaded, but failed to get ImageNet labels. Predictions may not be interpretable.")
+            print("Warning: Model loaded, but failed to get ImageNet labels. Predictions may not be interpretable.")
 
     def _predict_stage(self, prediction_labels, disease_info):
         """
@@ -85,7 +94,7 @@ class MLProcessor:
         Predicts a disease and its stage from an image using PyTorch.
         """
         if not self.labels:
-            return None, 0, "ImageNet labels are missing.", "Error"
+            return None, 0, "ImageNet labels are missing or corrupted.", "Error"
             
         try:
             img = Image.open(image_path).convert('RGB')
@@ -99,7 +108,7 @@ class MLProcessor:
             percentages = torch.nn.functional.softmax(out, dim=1)[0]
             
             # Get top 5 predictions
-            top_predictions = [(self.labels[idx.item()], percentages[idx.item()].item()) for idx in indices[0][:5]]
+            top_predictions = [(self.labels.get(idx.item(), "unknown"), percentages[idx.item()].item()) for idx in indices[0][:5]]
             prediction_labels = [label for label, _ in top_predictions]
 
             for label, score in top_predictions:
@@ -121,13 +130,13 @@ class MLProcessor:
 
         except Exception as e:
             print(f"An error occurred during image prediction: {e}")
-            return None, 0, "Error processing the image.", "Error"
+            return None, 0, f"Error processing the image: {e}", "Error"
             
         return None, 0, "No matching disease found in the database for the top predictions.", "Not applicable"
 
 def predict_from_symptoms(symptoms, domain, database):
     """
-    Predicts from symptoms using keyword matching. (No changes needed here)
+    Predicts from symptoms using keyword matching.
     """
     candidates = [d for d in database if d.get("domain", "").lower() == domain.lower()]
     if not candidates:
@@ -158,6 +167,6 @@ def predict_from_symptoms(symptoms, domain, database):
         confidence = (max_score / len(user_symptoms)) * 100 if user_symptoms else 0
         wiki_summary = get_wikipedia_summary(best_match['name'])
         predicted_stage = "Based on provided symptoms"
-        return best_match, confidence, wiki_summary, predicted_stage
+        return best_match, min(confidence, 100.0), wiki_summary, predicted_stage # Cap confidence at 100
     
     return None, 0, "", "Not applicable"
