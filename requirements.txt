@@ -1,13 +1,16 @@
 GUI Framework
-PyQt6
+PyQt6==6.6.1
 
 Image Processing
-Pillow
+Pillow==10.1.0
 
 Machine Learning
-torch
-torchvision
+torch==2.1.0
+torchvision==0.16.0
 
 Web Requests and APIs
-requests
-wikipedia
+requests==2.31.0
+wikipedia==1.4.0
+
+Geocoding for Map Feature
+geopy==2.4.0
