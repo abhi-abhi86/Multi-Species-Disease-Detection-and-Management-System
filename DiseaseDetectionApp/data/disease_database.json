@@ -3,7 +3,7 @@
     "domain": "Plant",
     "name": "Tomato Late Blight",
     "description": "Caused by the fungus Phytophthora infestans. Appears as pale green, water-soaked spots on leaves.",
-    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Late_blight_on_tomato_leaf.jpg/800px-Late_blight_on_tomato_leaf.jpg",
+    "image_url": "images/Tomato_Late_Blight.jpg",
     "stages": {
       "Early": "Small, irregular, dark, water-soaked spots.",
       "Advanced": "Lesions enlarge, turning brown to black, with a white moldy growth on the underside of leaves."
@@ -17,7 +17,7 @@
     "domain": "Plant",
     "name": "Powdery Mildew",
     "description": "A fungal disease that affects a wide variety of plants, appearing as white powdery spots on leaves and stems.",
-    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Powdery_mildew_on_phlox.jpg/800px-Powdery_mildew_on_phlox.jpg",
+    "image_url": "images/Powdery_Mildew.jpg",
     "stages": {
         "Initial": "Small, white, powdery spots on the upper surface of leaves.",
         "Advanced": "The powdery spots spread to cover entire leaves, stems, and sometimes flowers and fruit. Leaves may turn yellow and fall off."
@@ -31,7 +31,7 @@
     "domain": "Human",
     "name": "Ringworm (Tinea Corporis)",
     "description": "A common fungal infection of the skin. Not caused by a worm.",
-    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Tinea_corporis_in_the_groin.jpg/800px-Tinea_corporis_in_the_groin.jpg",
+    "image_url": "images/Ringworm.jpg",
     "stages": {
       "Initial": "A red, itchy, scaly patch on the skin.",
       "Developed": "The patch develops into a distinct ring-shape with a raised border."
@@ -42,3 +42,4 @@
     "solution": "Apply over-the-counter antifungal creams, lotions, or powders like clotrimazole or miconazole for 2 to 4 weeks. Keep the skin clean and dry."
   }
 ]
+
