@@ -1,19 +1,56 @@
 # DiseaseDetectionApp/ui/image_search_dialog.py
 from PyQt6.QtWidgets import (
-    QDialog, QVBoxLayout, QComboBox, QLabel, QPushButton, QMessageBox, QApplication
+    QDialog, QVBoxLayout, QComboBox, QLabel, QPushButton, QApplication
 )
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QObject, QThread, pyqtSignal
 import requests
+
+class ImageFetcher(QObject):
+    """
+    Worker object to fetch an image from a URL in a separate thread.
+    """
+    finished = pyqtSignal(QPixmap)
+    error = pyqtSignal(str)
+
+    def __init__(self, url):
+        super().__init__()
+        self.url = url
+
+    def run(self):
+        """Fetches the image and emits a signal with the result."""
+        try:
+            response = requests.get(self.url, timeout=15)
+            response.raise_for_status()  # Raises an HTTPError for bad responses (4xx or 5xx)
+
+            pixmap = QPixmap()
+            if not pixmap.loadFromData(response.content):
+                self.error.emit("Invalid image data received from the URL.")
+                return
+
+            self.finished.emit(pixmap)
+
+        except requests.exceptions.Timeout:
+            self.error.emit("The request timed out. The server is taking too long to respond.")
+        except requests.exceptions.HTTPError as http_err:
+            self.error.emit(f"HTTP error occurred: {http_err.response.status_code} {http_err.response.reason}")
+        except requests.exceptions.RequestException as e:
+            self.error.emit(f"A network error occurred.\nPlease check your connection.\nDetails: {e}")
+        except Exception as e:
+            self.error.emit(f"An unexpected error occurred: {e}")
+
 
 class ImageSearchDialog(QDialog):
     """
     A dialog that allows users to search for and view images of diseases
-    from the database.
+    from the database, with non-blocking image loading.
     """
     def __init__(self, database, parent=None):
         super().__init__(parent)
         self.database = database
+        self.worker_thread = None
+        self.current_pixmap = None
+
         self.setWindowTitle("Search Disease Image")
         self.setMinimumSize(400, 400)
 
@@ -21,7 +58,7 @@ class ImageSearchDialog(QDialog):
 
         self.disease_combo = QComboBox()
         self.disease_combo.addItems(["Select a disease..."] + [d['name'] for d in self.database])
-        self.disease_combo.currentIndexChanged.connect(self.display_image)
+        self.disease_combo.currentIndexChanged.connect(self.start_image_fetch)
 
         self.image_label = QLabel("Select a disease to see its image.")
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -32,52 +69,85 @@ class ImageSearchDialog(QDialog):
         self.close_button.clicked.connect(self.accept)
 
         self.layout.addWidget(self.disease_combo)
-        self.layout.addWidget(self.image_label, 1) # Give it stretch factor
+        self.layout.addWidget(self.image_label, 1)
         self.layout.addWidget(self.close_button)
 
-    def display_image(self, index):
+    def start_image_fetch(self, index):
         """
-        Fetches and displays the image for the selected disease.
+        Initiates the image fetching process in a background thread.
         """
+        self.current_pixmap = None # Reset current pixmap
+        self.image_label.setPixmap(QPixmap()) # Clear previous image
+
         if index == 0:
             self.image_label.setText("Select a disease to see its image.")
-            self.image_label.setPixmap(QPixmap()) # Clear pixmap
             return
 
         disease_name = self.disease_combo.currentText()
         disease_info = next((d for d in self.database if d['name'] == disease_name), None)
 
-        if disease_info and 'image_url' in disease_info and disease_info['image_url']:
-            url = disease_info['image_url']
-            self.image_label.setText("Loading image...")
-            QApplication.processEvents()
-            try:
-                response = requests.get(url, timeout=10)
-                response.raise_for_status()
-
-                pixmap = QPixmap()
-                pixmap.loadFromData(response.content)
-
-                if not pixmap.isNull():
-                    self.image_label.setPixmap(pixmap.scaled(self.image_label.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
-                    self.image_label.setText("")
-                else:
-                    self.image_label.setText(f"Could not load image for {disease_name}.\nURL may be invalid or the image format is not supported.")
-
-            except requests.exceptions.RequestException as e:
-                self.image_label.setText(f"Failed to download image for {disease_name}.\nError: {e}")
-        else:
+        if not (disease_info and disease_info.get('image_url')):
             self.image_label.setText(f"No image URL found for {disease_name}.")
-            self.image_label.setPixmap(QPixmap())
+            return
+
+        url = disease_info['image_url']
+        self.image_label.setText("Loading image...")
+        self.set_controls_enabled(False)
+
+        # Setup and start the worker thread
+        self.worker_thread = QThread()
+        fetcher = ImageFetcher(url)
+        fetcher.moveToThread(self.worker_thread)
+
+        self.worker_thread.started.connect(fetcher.run)
+        fetcher.finished.connect(self.on_image_loaded)
+        fetcher.error.connect(self.on_fetch_error)
+
+        # Clean up the thread once it's done
+        fetcher.finished.connect(self.worker_thread.quit)
+        fetcher.error.connect(self.worker_thread.quit)
+        fetcher.finished.connect(fetcher.deleteLater)
+        fetcher.error.connect(fetcher.deleteLater)
+        self.worker_thread.finished.connect(self.worker_thread.deleteLater)
+
+        self.worker_thread.start()
+
+    def on_image_loaded(self, pixmap):
+        """Handles the successful download of an image."""
+        self.current_pixmap = pixmap
+        self.image_label.setText("")
+        self.display_scaled_image()
+        self.set_controls_enabled(True)
+
+    def on_fetch_error(self, error_message):
+        """Displays an error message if the image fails to load."""
+        disease_name = self.disease_combo.currentText()
+        self.image_label.setText(f"Failed to load image for {disease_name}.\n\nReason: {error_message}")
+        self.set_controls_enabled(True)
+
+    def set_controls_enabled(self, enabled):
+        """Enables or disables UI controls during fetching."""
+        self.disease_combo.setEnabled(enabled)
+        self.close_button.setEnabled(enabled)
+
+    def display_scaled_image(self):
+        """Scales and displays the current pixmap."""
+        if self.current_pixmap:
+            self.image_label.setPixmap(self.current_pixmap.scaled(
+                self.image_label.size(),
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation
+            ))
 
     def resizeEvent(self, event):
-        """
-        Handles window resize events to rescale the displayed image.
-        """
+        """Handles window resize to rescale the image."""
         super().resizeEvent(event)
-        # Rescale pixmap when window is resized
-        if self.disease_combo.currentIndex() > 0:
-            # Re-trigger image display to scale it correctly
-            current_pixmap = self.image_label.pixmap()
-            if current_pixmap and not current_pixmap.isNull():
-                 self.image_label.setPixmap(current_pixmap.scaled(self.image_label.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        self.display_scaled_image()
+
+    def closeEvent(self, event):
+        """Ensures the worker thread is terminated if the dialog is closed."""
+        if self.worker_thread and self.worker_thread.isRunning():
+            self.worker_thread.quit()
+            self.worker_thread.wait() # Wait for the thread to finish
+        event.accept()
+
