@@ -1,16 +1,18 @@
 from PyQt6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
-    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QMenu, QApplication
+    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QMenu, QApplication,
+    QLineEdit
 )
 from PyQt6.QtGui import QPixmap, QAction
 from PyQt6.QtCore import Qt, pyqtSignal
 from ui.add_disease_dialog import AddNewDiseaseDialog
 from ui.chatbot_dialog import ChatbotDialog
 from ui.image_search_dialog import ImageSearchDialog
+from ui.map_dialog import MapDialog # Import the new map dialog
 from core.data_handler import load_database, save_disease
-# Updated import to use the new MLProcessor class
 from core.ml_processor import MLProcessor, predict_from_symptoms
 
+# ... (DropLabel class remains the same) ...
 class DropLabel(QLabel):
     fileDropped = pyqtSignal(str)
     
@@ -50,18 +52,17 @@ class DropLabel(QLabel):
                         self.fileDropped.emit(file_path)
                         event.acceptProposedAction()
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("AI Multi-Species Disease Management System")
         self.resize(800, 700)
         self.database = load_database()
-        
-        # Load the AI model processor when the application starts.
-        # The first time you run this, it will download the model weights (~14MB).
         self.ml_processor = MLProcessor()
-
         self.current_image_paths = {"Plant": None, "Human": None, "Animal": None}
+        self.diagnosis_locations = [] # To store locations of diagnoses
+
         self.setup_menu()
         self.tab_widget = QTabWidget()
         self.domain_tabs = {}
@@ -90,11 +91,15 @@ class MainWindow(QMainWindow):
         file_menu.addAction(exit_action)
         menubar.addMenu(file_menu)
 
-        # New "Tools" menu for image search
         tools_menu = QMenu("Tools", self)
         search_image_action = QAction("Search Disease Image...", self)
         search_image_action.triggered.connect(self.open_image_search_dialog)
+        
+        map_action = QAction("View Disease Map", self) # New map action
+        map_action.triggered.connect(self.open_map_dialog)
+
         tools_menu.addAction(search_image_action)
+        tools_menu.addAction(map_action)
         menubar.addMenu(tools_menu)
 
         self.setMenuBar(menubar)
@@ -112,25 +117,36 @@ class MainWindow(QMainWindow):
         upload_btn = QPushButton("Upload Image")
         symptom_input = QTextEdit()
         symptom_input.setPlaceholderText("Or describe the symptoms here...")
+        
+        location_input = QLineEdit() # New location input
+        location_input.setPlaceholderText("Optional: Enter location (e.g., City, Country)")
+
         diagnose_btn = QPushButton("Diagnose")
-        input_layout.addWidget(image_label, 0, 0, 2, 1)
-        input_layout.addWidget(upload_btn, 2, 0)
+        input_layout.addWidget(image_label, 0, 0, 3, 1)
+        input_layout.addWidget(upload_btn, 3, 0)
         input_layout.addWidget(QLabel("Symptoms Description:"), 0, 1)
         input_layout.addWidget(symptom_input, 1, 1, 1, 2)
-        input_layout.addWidget(diagnose_btn, 2, 1, 1, 2)
+        input_layout.addWidget(QLabel("Location:"), 2, 1) # Label for location
+        input_layout.addWidget(location_input, 2, 2) # Add location input to grid
+        input_layout.addWidget(diagnose_btn, 3, 1, 1, 2)
         input_group.setLayout(input_layout)
+        
         result_group = QGroupBox("Diagnosis Results")
         result_layout = QVBoxLayout()
         result_display = QTextEdit()
         result_display.setReadOnly(True)
         result_layout.addWidget(result_display)
         result_group.setLayout(result_layout)
+        
         main_layout.addWidget(input_group)
         main_layout.addWidget(result_group)
         main_widget.setLayout(main_layout)
+        
         main_widget.image_label = image_label
         main_widget.symptom_input = symptom_input
         main_widget.result_display = result_display
+        main_widget.location_input = location_input # Store reference
+
         upload_btn.clicked.connect(lambda: self.upload_image(domain_name))
         diagnose_btn.clicked.connect(lambda: self.run_diagnosis(domain_name))
         return main_widget
@@ -153,33 +169,39 @@ class MainWindow(QMainWindow):
         tab = self.domain_tabs[domain]
         image_path = self.current_image_paths[domain]
         symptoms = tab.symptom_input.toPlainText().strip()
-        result, confidence, wiki_summary, predicted_stage = None, 0, "", ""
+        location = tab.location_input.text().strip() # Get location data
 
+        # ... (Diagnosis logic remains the same) ...
+
+        result, confidence, wiki_summary, predicted_stage = None, 0, "", ""
         use_symptoms = bool(symptoms)
         use_image = bool(image_path)
-
-        # If both image and symptoms are provided, ask the user which to use
         if use_symptoms and use_image:
             reply = QMessageBox.question(self, 'Confirm Diagnosis Method',
                                          "Both an image and symptoms are provided. Do you want to diagnose based on symptoms? (Choosing 'No' will use the image).",
                                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                                          QMessageBox.StandardButton.Yes)
             if reply == QMessageBox.StandardButton.No:
-                use_symptoms = False # User wants to use the image
+                use_symptoms = False
             else:
-                use_image = False # User wants to use symptoms
-
+                use_image = False
         if use_symptoms:
             result, confidence, wiki_summary, predicted_stage = predict_from_symptoms(symptoms, domain, self.database)
         elif use_image:
             tab.result_display.setPlainText("Analyzing image... Please wait.")
-            QApplication.processEvents()  # Update the UI to show the message
+            QApplication.processEvents()
             result, confidence, wiki_summary, predicted_stage = self.ml_processor.predict_from_image(image_path, domain, self.database)
         else:
             QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
             return
 
         if result:
+            # Add to location list if location was provided
+            if location:
+                self.diagnosis_locations.append({'disease': result['name'], 'location': location})
+                QMessageBox.information(self, "Location Saved", f"Diagnosis location '{location}' has been recorded.")
+
+            # Updated display format with new fields
             stages_str = "\n".join([f"  • {k}: {v}" for k, v in result.get("stages", {}).items()])
             out = (
                 f"--- DIAGNOSIS ---\n"
@@ -188,9 +210,11 @@ class MainWindow(QMainWindow):
                 f"Predicted Stage: {predicted_stage}\n\n"
                 f"--- WIKIPEDIA SUMMARY ---\n{wiki_summary}\n\n"
                 f"--- DETAILS FROM DATABASE ---\n"
-                f"Description: {result['description']}\n\n"
+                f"Description: {result.get('description', 'N/A')}\n\n"
                 f"Known Stages:\n{stages_str if stages_str else '  • N/A'}\n\n"
                 f"Common Causes:\n  • {result.get('causes', 'N/A')}\n\n"
+                f"Risk Factors:\n  • {result.get('risk_factors', 'N/A')}\n\n"
+                f"Preventive Measures:\n  • {result.get('preventive_measures', 'N/A')}\n\n"
                 f"--- RECOMMENDATIONS ---\n"
                 f"Solution/Cure:\n  • {result.get('solution', 'N/A')}"
             )
@@ -214,6 +238,9 @@ class MainWindow(QMainWindow):
         dialog.exec()
 
     def open_image_search_dialog(self):
-        """Opens the image search dialog."""
         dialog = ImageSearchDialog(self.database, self)
+        dialog.exec()
+
+    def open_map_dialog(self): # New method to open map
+        dialog = MapDialog(self.diagnosis_locations, self)
         dialog.exec()
