@@ -11,6 +11,7 @@ torchvision==0.16.0
 Web Requests and APIs
 requests==2.31.0
 wikipedia==1.4.0
+beautifulsoup4==4.12.3
 
 Geocoding for Map Feature
 geopy==2.4.0
