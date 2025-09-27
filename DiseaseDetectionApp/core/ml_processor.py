@@ -14,6 +14,10 @@ from core.wikipedia_integration import get_wikipedia_summary
 # Path to the ImageNet class index file
 IMAGENET_CLASS_INDEX_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'imagenet_class_index.json')
 
+# A threshold for how similar the prediction must be to a disease description to be considered a match.
+# This value (e.g., 0.1 means 10% similarity) can be adjusted to make matching stricter or more lenient.
+SIMILARITY_THRESHOLD = 0.1
+
 def get_imagenet_labels():
     """
     Downloads and loads the ImageNet class labels if they don't exist locally.
@@ -93,6 +97,7 @@ class MLProcessor:
     def predict_from_image(self, image_path, domain, database):
         """
         Predicts a disease and its stage from an image using PyTorch.
+        Refined to use Jaccard similarity for more accurate matching.
         """
         if not self.labels:
             return None, 0, "ImageNet labels are missing or corrupted.", "Error"
@@ -108,7 +113,6 @@ class MLProcessor:
             _, indices = torch.sort(out, descending=True)
             percentages = torch.nn.functional.softmax(out, dim=1)[0]
             
-            # Get top 5 predictions
             top_predictions = [(self.labels.get(idx.item(), "unknown"), percentages[idx.item()].item()) for idx in indices[0][:5]]
             prediction_labels = [label for label, _ in top_predictions]
 
@@ -121,9 +125,14 @@ class MLProcessor:
                         disease_text = (disease.get('name', '') + ' ' + disease.get('description', '')).lower()
                         disease_words = set(re.findall(r'\b\w+\b', disease_text))
                         
-                        # Check for intersection of keywords
-                        if not label_words.isdisjoint(disease_words):
-                            print(f"Match found: '{label}' matches '{disease['name']}'")
+                        # Calculate Jaccard similarity (intersection over union)
+                        intersection = len(label_words.intersection(disease_words))
+                        union = len(label_words.union(disease_words))
+                        similarity = intersection / union if union > 0 else 0
+
+                        # Check if similarity exceeds the defined threshold
+                        if similarity > SIMILARITY_THRESHOLD:
+                            print(f"Match found with similarity {similarity:.2f}: '{label}' matches '{disease['name']}'")
                             wiki_summary = get_wikipedia_summary(disease['name'])
                             predicted_stage = self._predict_stage(prediction_labels, disease)
                             # Return confidence as a percentage score (0-100)
@@ -171,3 +180,4 @@ def predict_from_symptoms(symptoms, domain, database):
         return best_match, min(confidence, 100.0), wiki_summary, predicted_stage # Cap confidence at 100
     
     return None, 0, "", "Not applicable"
+
