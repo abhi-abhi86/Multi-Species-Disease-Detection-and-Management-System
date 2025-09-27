@@ -313,15 +313,11 @@ class MainWindow(QMainWindow):
         self.diagnosis_worker.moveToThread(self.worker_thread)
         self.worker_thread.started.connect(self.diagnosis_worker.run)
         
-        # --- BUG FIX: Corrected signal/slot connections ---
-        # The worker's signals already emit all the necessary information, including the domain.
-        # The original lambda functions were causing TypeErrors by passing arguments incorrectly.
         self.diagnosis_worker.finished.connect(self.on_diagnosis_complete)
         self.diagnosis_worker.error.connect(self.on_diagnosis_error)
         
         self.diagnosis_worker.progress.connect(lambda msg: tab.result_display.setPlainText(msg))
         self.diagnosis_worker.finished.connect(self.stop_worker)
-        # BUG FIX: Also connect the error signal to the stop_worker slot to ensure cleanup on failure.
         self.diagnosis_worker.error.connect(self.stop_worker)
         self.worker_thread.start()
 
@@ -335,10 +331,12 @@ class MainWindow(QMainWindow):
             self.worker_thread = None
             self.diagnosis_worker = None
 
-    def on_diagnosis_complete(self, result, confidence, wiki_summary, predicted_stage, domain):
+    def on_diagnosis_complete(self, result, confidence, wiki_summary, predicted_stage, pubmed_summary, domain):
         tab = self.domain_tabs[domain]
         stages_str = "\n".join([f"  • {k}: {v}" for k, v in result.get("stages", {}).items()])
-        out = (
+        
+        # --- FIX: Added PubMed summary to the final output display ---
+        output_html = (
             f"<b>Confidence:</b> <span style='color:#00b894'>{confidence:.1f}%</span><br>"
             f"<b>Disease Name:</b> {result['name']}<br>"
             f"<b>Predicted Stage:</b> {predicted_stage}<br><br>"
@@ -348,13 +346,13 @@ class MainWindow(QMainWindow):
             f"<b>Common Causes:</b> {result.get('causes', 'N/A')}<br>"
             f"<b>Risk Factors:</b> {result.get('risk_factors', 'N/A')}<br>"
             f"<b>Preventive Measures:</b> {result.get('preventive_measures', 'N/A')}<br><br>"
-            f"<b>Solution/Cure:</b> <span style='color:#0984e3'>{result.get('solution', 'N/A')}</span>"
+            f"<b><h3 style='color:#0984e3;'>Solution/Cure:</h3></b><p style='color:#0984e3;'>{result.get('solution', 'N/A')}</p><br>"
+            f"<b><h3 style='color:#6c5ce7;'>Recent Research (PubMed):</h3></b><p>{pubmed_summary}</p>"
         )
-        tab.result_display.setHtml(out)
+        
+        tab.result_display.setHtml(output_html)
         tab.result_fader.fade_in()
 
-        # --- FEATURE FIX: Implement location logging ---
-        # The original code collected location data but never used it.
         location = tab.location_input.text().strip()
         if location and result:
             self.diagnosis_locations.append({
@@ -379,9 +377,15 @@ class MainWindow(QMainWindow):
             if not all([data['name'], data['description'], data['solution']]):
                 QMessageBox.warning(self, "Incomplete Data", "Please fill in at least the Name, Description, and Solution.")
                 return
-            save_disease(data)
-            self.database = load_database()
-            QMessageBox.information(self, "Success", "Disease information saved.")
+            
+            # --- FIX: Use the new save_disease function and handle its return value ---
+            success, error_msg = save_disease(data)
+            if success:
+                self.database = load_database() # Reload the database to include the new entry
+                QMessageBox.information(self, "Success", f"Disease '{data['name']}' saved successfully.")
+            else:
+                QMessageBox.critical(self, "Error", f"Failed to save disease: {error_msg}")
+
 
     def open_chatbot(self):
         dialog = ChatbotDialog(self.database, self)
