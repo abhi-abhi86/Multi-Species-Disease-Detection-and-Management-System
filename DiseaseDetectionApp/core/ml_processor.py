@@ -21,6 +21,7 @@ SIMILARITY_THRESHOLD = 0.1
 def get_imagenet_labels():
     """
     Downloads and loads the ImageNet class labels if they don't exist locally.
+    Now specifies UTF-8 encoding for file operations.
     """
     if not os.path.exists(IMAGENET_CLASS_INDEX_PATH):
         print("Downloading ImageNet class index...")
@@ -29,21 +30,23 @@ def get_imagenet_labels():
             # Added a timeout to the request
             response = requests.get(url, timeout=10)
             response.raise_for_status() # Raise an exception for bad status codes
-            with open(IMAGENET_CLASS_INDEX_PATH, 'w') as f:
+            # Write with explicit UTF-8 encoding
+            with open(IMAGENET_CLASS_INDEX_PATH, 'w', encoding='utf-8') as f:
                 f.write(response.text)
         except requests.exceptions.RequestException as e:
             print(f"Error downloading ImageNet class index: {e}")
             # Create an empty file to avoid repeated download attempts
-            with open(IMAGENET_CLASS_INDEX_PATH, 'w') as f:
+            with open(IMAGENET_CLASS_INDEX_PATH, 'w', encoding='utf-8') as f:
                 json.dump({}, f)
             return None
 
     try:
-        with open(IMAGENET_CLASS_INDEX_PATH) as f:
+        # Read with explicit UTF-8 encoding
+        with open(IMAGENET_CLASS_INDEX_PATH, 'r', encoding='utf-8') as f:
             class_idx = json.load(f)
         # Creates a dictionary mapping the class index (integer) to the class name (string)
         return {int(k): v[1] for k, v in class_idx.items()}
-    except (json.JSONDecodeError, IndexError) as e:
+    except (json.JSONDecodeError, IndexError, FileNotFoundError) as e:
         print(f"Error reading or parsing ImageNet class index file: {e}")
         return None
 
@@ -180,4 +183,3 @@ def predict_from_symptoms(symptoms, domain, database):
         return best_match, min(confidence, 100.0), wiki_summary, predicted_stage # Cap confidence at 100
     
     return None, 0, "", "Not applicable"
-
