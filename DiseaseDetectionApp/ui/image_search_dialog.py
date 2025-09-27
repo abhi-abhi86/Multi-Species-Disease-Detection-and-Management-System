@@ -1,33 +1,66 @@
 # DiseaseDetectionApp/ui/image_search_dialog.py
-import os
+import requests
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QComboBox, QLabel, QPushButton
 )
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QObject, QThread, pyqtSignal
+
+from core.google_search import search_google_images
+
+class ImageFetchWorker(QObject):
+    """
+    Worker to fetch an image from a URL in the background.
+    """
+    finished = pyqtSignal(bytes)
+    error = pyqtSignal(str)
+
+    def __init__(self, disease_name):
+        super().__init__()
+        self.disease_name = disease_name
+
+    def run(self):
+        try:
+            # Search for the image URL
+            image_url = search_google_images(self.disease_name)
+            
+            if not image_url:
+                self.error.emit(f"No image found online for '{self.disease_name}'.")
+                return
+
+            # Fetch the image data
+            response = requests.get(image_url, timeout=10)
+            response.raise_for_status()
+            self.finished.emit(response.content)
+
+        except requests.exceptions.RequestException as e:
+            self.error.emit(f"Network error: {e}")
+        except Exception as e:
+            self.error.emit(f"An unexpected error occurred: {e}")
 
 
 class ImageSearchDialog(QDialog):
     """
     A dialog that allows users to search for and view images of diseases
-    from the local database.
+    by fetching them from Google Images.
     """
-
     def __init__(self, database, parent=None):
         super().__init__(parent)
         self.database = database
         self.current_pixmap = None
+        self.worker_thread = None
+        self.worker = None
 
-        self.setWindowTitle("Search Disease Image")
+        self.setWindowTitle("Search Disease Image Online")
         self.setMinimumSize(400, 400)
 
         self.layout = QVBoxLayout(self)
 
         self.disease_combo = QComboBox()
         self.disease_combo.addItems(["Select a disease..."] + [d['name'] for d in self.database])
-        self.disease_combo.currentIndexChanged.connect(self.display_image)
+        self.disease_combo.currentIndexChanged.connect(self.start_image_search)
 
-        self.image_label = QLabel("Select a disease to see its image.")
+        self.image_label = QLabel("Select a disease to search for its image.")
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.image_label.setWordWrap(True)
         self.image_label.setStyleSheet("border: 1px solid #ccc; background-color: #f0f0f0; border-radius: 8px;")
@@ -39,46 +72,57 @@ class ImageSearchDialog(QDialog):
         self.layout.addWidget(self.image_label, 1)
         self.layout.addWidget(self.close_button)
 
-    def display_image(self, index):
+    def start_image_search(self, index):
         """
-        Loads and displays the selected disease image from a local path.
+        Initiates the image search in a background thread.
         """
         self.current_pixmap = None
-        self.image_label.setPixmap(QPixmap())  # Clear previous image
+        self.image_label.setPixmap(QPixmap())
+
+        if self.worker_thread and self.worker_thread.isRunning():
+            self.worker_thread.quit()
+            self.worker_thread.wait()
 
         if index == 0:
-            self.image_label.setText("Select a disease to see its image.")
+            self.image_label.setText("Select a disease to search for its image.")
             return
 
         disease_name = self.disease_combo.currentText()
-        disease_info = next((d for d in self.database if d['name'] == disease_name), None)
+        self.image_label.setText(f"Searching for images of '{disease_name}'...")
 
-        if not (disease_info and disease_info.get('image_url')):
-            self.image_label.setText(f"No image path found for {disease_name}.")
-            return
+        self.worker_thread = QThread()
+        self.worker = ImageFetchWorker(disease_name)
+        self.worker.moveToThread(self.worker_thread)
 
-        # Construct the full path to the image relative to the main 'DiseaseDetectionApp' directory
-        try:
-            # Go up two levels from ui -> DiseaseDetectionApp, then into the data directory
-            base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data'))
-            image_path = os.path.join(base_path, disease_info['image_url'])
-            
-            # Normalize path separators for the current OS (e.g., \ on Windows, / on Linux)
-            image_path = os.path.normpath(image_path)
-
-            if not os.path.exists(image_path):
-                self.image_label.setText(f"Image file not found.\nExpected at: {image_path}")
-                print(f"Debug: Failed to find image at {image_path}")
-                return
-
-            self.current_pixmap = QPixmap(image_path)
-            self.image_label.setText("")
-            self.display_scaled_image()
+        self.worker_thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.on_search_finished)
+        self.worker.error.connect(self.on_search_error)
         
-        except Exception as e:
-            self.image_label.setText(f"An error occurred while loading the image:\n{e}")
-            print(f"Debug: Error loading image - {e}")
+        # Clean up the thread
+        self.worker.finished.connect(self.cleanup_thread)
+        self.worker.error.connect(self.cleanup_thread)
+        
+        self.worker_thread.start()
 
+    def on_search_finished(self, image_data):
+        self.current_pixmap = QPixmap()
+        self.current_pixmap.loadFromData(image_data)
+        
+        if self.current_pixmap.isNull():
+            self.image_label.setText("Failed to load the downloaded image data.")
+        else:
+            self.image_label.setText("")  # Clear loading text
+            self.display_scaled_image()
+
+    def on_search_error(self, error_message):
+        self.image_label.setText(f"Search Failed:\n{error_message}")
+
+    def cleanup_thread(self):
+        if self.worker_thread:
+            self.worker_thread.quit()
+            self.worker_thread.wait()
+            self.worker_thread = None
+            self.worker = None
 
     def display_scaled_image(self):
         """Scales and displays the current pixmap."""
@@ -93,3 +137,8 @@ class ImageSearchDialog(QDialog):
         """Handles window resize to rescale the image."""
         super().resizeEvent(event)
         self.display_scaled_image()
+    
+    def closeEvent(self, event):
+        """Ensures the worker thread is stopped when the dialog is closed."""
+        self.cleanup_thread()
+        super().closeEvent(event)
