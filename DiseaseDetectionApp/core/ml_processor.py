@@ -22,7 +22,8 @@ def get_imagenet_labels():
         print("Downloading ImageNet class index...")
         try:
             url = "https://s3.amazonaws.com/deep-learning-models/image-models/imagenet_class_index.json"
-            response = requests.get(url)
+            # Added a timeout to the request
+            response = requests.get(url, timeout=10)
             response.raise_for_status() # Raise an exception for bad status codes
             with open(IMAGENET_CLASS_INDEX_PATH, 'w') as f:
                 f.write(response.text)
