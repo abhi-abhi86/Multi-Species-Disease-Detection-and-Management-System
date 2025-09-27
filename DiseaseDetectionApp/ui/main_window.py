@@ -312,10 +312,16 @@ class MainWindow(QMainWindow):
         self.diagnosis_worker = DiagnosisWorker(self.ml_processor, worker_image_path, worker_symptoms, domain, self.database)
         self.diagnosis_worker.moveToThread(self.worker_thread)
         self.worker_thread.started.connect(self.diagnosis_worker.run)
-        self.diagnosis_worker.finished.connect(lambda *args: self.on_diagnosis_complete(*args, domain=domain))
-        self.diagnosis_worker.error.connect(lambda msg: self.on_diagnosis_error(msg, domain=domain))
+        
+        # --- BUG FIX: Corrected signal/slot connections ---
+        # The worker's signals already emit all the necessary information, including the domain.
+        # The original lambda functions were causing TypeErrors by passing arguments incorrectly.
+        self.diagnosis_worker.finished.connect(self.on_diagnosis_complete)
+        self.diagnosis_worker.error.connect(self.on_diagnosis_error)
+        
         self.diagnosis_worker.progress.connect(lambda msg: tab.result_display.setPlainText(msg))
         self.diagnosis_worker.finished.connect(self.stop_worker)
+        # BUG FIX: Also connect the error signal to the stop_worker slot to ensure cleanup on failure.
         self.diagnosis_worker.error.connect(self.stop_worker)
         self.worker_thread.start()
 
@@ -331,7 +337,6 @@ class MainWindow(QMainWindow):
 
     def on_diagnosis_complete(self, result, confidence, wiki_summary, predicted_stage, domain):
         tab = self.domain_tabs[domain]
-        # Smooth fade in for results
         stages_str = "\n".join([f"  • {k}: {v}" for k, v in result.get("stages", {}).items()])
         out = (
             f"<b>Confidence:</b> <span style='color:#00b894'>{confidence:.1f}%</span><br>"
@@ -347,16 +352,24 @@ class MainWindow(QMainWindow):
         )
         tab.result_display.setHtml(out)
         tab.result_fader.fade_in()
-        QTimer.singleShot(200, lambda: tab.progress_bar.setVisible(False))
-        tab.diagnose_btn.setEnabled(True)
-        self.status_bar.showMessage("Diagnosis complete", 2500)
+
+        # --- FEATURE FIX: Implement location logging ---
+        # The original code collected location data but never used it.
+        location = tab.location_input.text().strip()
+        if location and result:
+            self.diagnosis_locations.append({
+                "disease": result['name'],
+                "location": location
+            })
+            self.status_bar.showMessage(f"Diagnosis complete. Location '{location}' logged.", 4000)
+            tab.location_input.clear()
+        else:
+            self.status_bar.showMessage("Diagnosis complete", 2500)
 
     def on_diagnosis_error(self, error_message, domain):
         tab = self.domain_tabs[domain]
         tab.result_display.setPlainText(f"Diagnosis Failed:\n{error_message}")
         tab.result_fader.fade_in()
-        QTimer.singleShot(200, lambda: tab.progress_bar.setVisible(False))
-        tab.diagnose_btn.setEnabled(True)
         self.status_bar.showMessage("Diagnosis failed", 3500)
 
     def open_add_disease_dialog(self):
