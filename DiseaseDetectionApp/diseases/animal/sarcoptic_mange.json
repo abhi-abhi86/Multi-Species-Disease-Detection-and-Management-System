@@ -1,3 +1,5 @@
-{"name": "Sarcoptic Mange", "type": "animal", "image": "images/dog.jpg", "description": "The image displays a dog suffering from a severe dermatological condition, characterized by extensive hair loss (alopecia), crusted and thickened skin, and visible signs of inflammation and irritation. This suggests a potentially painful and itchy condition requiring prompt veterinary diagnosis and treatment."}
-
-{"name": "Sarcoptic Mange", "type": "animal", "image": "images/dog.jpg", "description": "A contagious skin disease caused by a mite."}
+{
+  "name": "Sarcoptic Mange",
+  "description": "A contagious skin infection caused by mites. It often affects dogs and other animals.",
+  "image": "dog.jpg"
+}
