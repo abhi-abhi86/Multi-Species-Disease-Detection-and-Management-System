@@ -15,3 +15,10 @@ beautifulsoup4==4.12.3
 
 Geocoding for Map Feature
 geopy==2.4.0
+
+Chatbot Functionality (Added)
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.25.0
+
+PDF Report Generation (Added)
+reportlab==4.1.0
