@@ -1,24 +1,24 @@
-GUI Framework
+# GUI Framework
 PyQt6==6.6.1
 
-Image Processing
+# Image Processing
 Pillow==10.1.0
 
-Machine Learning
-torch==2.1.0
-torchvision==0.16.0
+# Machine Learning
+torch>=2.0.0
+torchvision>=0.15.0
 
-Web Requests and APIs
+# Web Requests and APIs
 requests==2.31.0
 wikipedia==1.4.0
 beautifulsoup4==4.12.3
 
-Geocoding for Map Feature
+# Geocoding for Map Feature
 geopy==2.4.0
 
-Chatbot Functionality (Added)
+# Chatbot Functionality (Added)
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.25.0
 
-PDF Report Generation (Added)
+# PDF Report Generation (Added)
 reportlab==4.1.0
