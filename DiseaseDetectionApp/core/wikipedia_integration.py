@@ -1,30 +1,35 @@
-#wikipedia_integration.py
+# DiseaseDetectionApp/core/wikipedia_integration.py
 import wikipedia
-from core.google_search import search_google_for_summary
+import requests
 
 def get_wikipedia_summary(disease_name):
     """
-    Fetches a summary of the given disease from Wikipedia.
-    If Wikipedia fails, it falls back to a Google search for a summary.
+    Fetches a concise summary of the given disease from Wikipedia.
+    Includes robust error handling for common issues like disambiguation or page not found.
     """
     try:
-        # Try Wikipedia first, auto_suggest=False to prevent incorrect matches
-        summary = wikipedia.summary(disease_name, sentences=3, auto_suggest=False)
+        # `auto_suggest=False` prevents Wikipedia from guessing a different page, which can be wrong.
+        # `redirect=True` allows it to follow simple page redirects (e.g., "Mange" -> "Sarcoptic mange").
+        summary = wikipedia.summary(disease_name, sentences=4, auto_suggest=False, redirect=True)
         return summary
     except wikipedia.exceptions.PageError:
-        print(f"No Wikipedia page for '{disease_name}'. Falling back to Google search.")
-        summary = search_google_for_summary(disease_name + " disease")
-        return summary if summary else "No Wikipedia page found, and Google search returned no summary."
+        print(f"No direct Wikipedia page found for '{disease_name}'.")
+        return "No Wikipedia page was found for this specific topic."
     except wikipedia.exceptions.DisambiguationError as e:
+        # If the term is ambiguous (e.g., "Ringworm"), try the first option provided.
         try:
-            # Try the first option from disambiguation
-            summary = wikipedia.summary(e.options[0], sentences=3)
+            first_option = e.options[0]
+            print(f"'{disease_name}' was ambiguous. Trying first option: '{first_option}'")
+            summary = wikipedia.summary(first_option, sentences=4, auto_suggest=False)
             return summary
-        except Exception:
-            print(f"Could not resolve Wikipedia disambiguation for '{disease_name}'. Falling back to Google search.")
-            summary = search_google_for_summary(disease_name + " disease")
-            return summary if summary else "Could not resolve Wikipedia disambiguation, and Google search returned no summary."
+        except Exception as inner_e:
+            print(f"Could not resolve Wikipedia disambiguation for '{disease_name}': {inner_e}")
+            return "This term is ambiguous and a specific Wikipedia page could not be determined."
+    except requests.exceptions.RequestException as e:
+        # Handle network-related errors (no internet, DNS issues).
+        print(f"Network error while fetching from Wikipedia: {e}")
+        return "Could not connect to Wikipedia. Please check your internet connection."
     except Exception as e:
-        print(f"An error occurred with Wikipedia: {e}. Falling back to Google search.")
-        summary = search_google_for_summary(disease_name + " disease")
-        return summary if summary else f"An error occurred while fetching from Wikipedia, and Google search also failed."
+        # Catch any other unexpected errors from the wikipedia library.
+        print(f"An unexpected error occurred with the Wikipedia library: {e}")
+        return "An error occurred while trying to fetch data from Wikipedia."
