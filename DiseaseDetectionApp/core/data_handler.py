@@ -11,9 +11,9 @@ IMAGES_DIR = os.path.join(os.path.dirname(__file__), '..', 'image')
 
 IMAGE_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp')
 
-def find_disease_images_in_disease_folder(disease_json_path, disease_name):
+def find_images_near_json(disease_json_path, disease_name):
     """
-    Look for image files in the same directory (and subdirectories) as the disease JSON file.
+    Looks for image files in the same directory (and subdirectories) as the disease JSON file.
     Returns a list of image paths (relative to project root).
     """
     images = []
@@ -22,17 +22,17 @@ def find_disease_images_in_disease_folder(disease_json_path, disease_name):
     for root, _, files in os.walk(base_dir):
         for file in files:
             if file.lower().endswith(IMAGE_EXTENSIONS):
-                # Match by file name (optionally by disease name)
+                # Optionally, match files that have the safe_name substring
                 if safe_name in file.lower():
                     rel_path = os.path.relpath(os.path.join(root, file), os.path.join(os.path.dirname(__file__), '..'))
                     images.append(rel_path)
     return images
 
-def find_disease_images(disease_name, domain=None):
+def find_images_in_image_folder(disease_name, domain=None):
     """
     Finds image files related to a disease in the generic image directory.
     Looks for images named after the disease or inside a domain subdirectory.
-    Returns a list of image file paths (relative to IMAGES_DIR).
+    Returns a list of image file paths (relative to project root).
     """
     images = []
     safe_name = re.sub(r'[^a-z0-9_]', '', disease_name.lower().replace(' ', '_'))
@@ -47,17 +47,17 @@ def find_disease_images(disease_name, domain=None):
         if os.path.exists(search_dir):
             for file in os.listdir(search_dir):
                 if file.lower().startswith(safe_name) and file.lower().endswith(IMAGE_EXTENSIONS):
-                    images.append(os.path.relpath(os.path.join(search_dir, file), IMAGES_DIR))
-    # Return paths relative to project root for consistency
-    return [os.path.join('image', img) for img in images]
+                    images.append(os.path.join('image', os.path.relpath(os.path.join(search_dir, file), IMAGES_DIR)))
+    return images
 
 def load_database():
     """
-    Loads all disease information from the 'diseases' directory, including images found
-    in both the disease folder and the generic 'image' folder, and supplements with 'data' if needed.
+    Loads all disease information from the 'diseases' directory and supplements
+    with the legacy 'disease_database.json'. Attaches images from both the disease
+    folder and the 'image' folder.
     """
     database = []
-    loaded_names = set() # To avoid duplicates
+    loaded_names = set()
 
     # 1. Prioritize loading from the modular 'diseases' directory
     print(f"Searching for disease files in: {DISEASES_DIR}")
@@ -74,9 +74,9 @@ def load_database():
                                 domain = disease_info.get('domain', None)
                                 if disease_name not in loaded_names:
                                     # Attach images from the disease folder
-                                    images = find_disease_images_in_disease_folder(file_path, disease_name)
+                                    images = find_images_near_json(file_path, disease_name)
                                     # Also attach images from the generic images folder
-                                    images += find_disease_images(disease_name, domain)
+                                    images += find_images_in_image_folder(disease_name, domain)
                                     if images:
                                         disease_info["images"] = images
                                     database.append(disease_info)
@@ -97,8 +97,7 @@ def load_database():
                         disease_name = disease_info['name']
                         domain = disease_info.get('domain', None)
                         if disease_name not in loaded_names:
-                            # Only attach images from the generic images folder for legacy data
-                            images = find_disease_images(disease_name, domain)
+                            images = find_images_in_image_folder(disease_name, domain)
                             if images:
                                 disease_info["images"] = images
                             database.append(disease_info)
