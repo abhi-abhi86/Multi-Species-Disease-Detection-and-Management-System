@@ -1,0 +1,16 @@
+{
+    "_comment": "ringworm.json",
+    "domain": "Human",
+    "name": "Ringworm (Tinea Corporis)",
+    "description": "A common fungal infection of the human skin. Despite its name, it is not caused by a worm. It is a condition affecting human skin.",
+    "image_url": "images/Ringworm.jpg",
+    "stages": {
+      "Initial": "A red, itchy, scaly patch on the skin.",
+      "Developed": "The patch develops into a distinct ring-shape with a raised, scaly border and a clearer center."
+    },
+    "causes": "Dermatophyte fungi, commonly transmitted through direct contact with an infected person or animal, or contaminated objects.",
+    "risk_factors": "Weakened immune system, excessive sweating, participating in contact sports, and sharing contaminated items like towels.",
+    "preventive_measures": "Keep skin clean and dry, avoid sharing personal items, and wear loose-fitting clothing.",
+    "solution": "Apply over-the-counter antifungal creams, lotions, or powders like clotrimazole or miconazole for 2 to 4 weeks. Keep the affected skin clean and dry."
+  }
+
