@@ -6,15 +6,58 @@ import re
 DISEASES_DIR = os.path.join(os.path.dirname(__file__), '..', 'diseases')
 # Fallback/supplementary database file.
 DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'disease_database.json')
+# Directory where generic disease images are stored.
+IMAGES_DIR = os.path.join(os.path.dirname(__file__), '..', 'image')
+
+IMAGE_EXTENSIONS = ('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp')
+
+def find_disease_images_in_disease_folder(disease_json_path, disease_name):
+    """
+    Look for image files in the same directory (and subdirectories) as the disease JSON file.
+    Returns a list of image paths (relative to project root).
+    """
+    images = []
+    safe_name = re.sub(r'[^a-z0-9_]', '', disease_name.lower().replace(' ', '_'))
+    base_dir = os.path.dirname(disease_json_path)
+    for root, _, files in os.walk(base_dir):
+        for file in files:
+            if file.lower().endswith(IMAGE_EXTENSIONS):
+                # Match by file name (optionally by disease name)
+                if safe_name in file.lower():
+                    rel_path = os.path.relpath(os.path.join(root, file), os.path.join(os.path.dirname(__file__), '..'))
+                    images.append(rel_path)
+    return images
+
+def find_disease_images(disease_name, domain=None):
+    """
+    Finds image files related to a disease in the generic image directory.
+    Looks for images named after the disease or inside a domain subdirectory.
+    Returns a list of image file paths (relative to IMAGES_DIR).
+    """
+    images = []
+    safe_name = re.sub(r'[^a-z0-9_]', '', disease_name.lower().replace(' ', '_'))
+    domain = domain.lower() if domain else None
+
+    search_dirs = []
+    if domain:
+        search_dirs.append(os.path.join(IMAGES_DIR, domain))
+    search_dirs.append(IMAGES_DIR)
+
+    for search_dir in search_dirs:
+        if os.path.exists(search_dir):
+            for file in os.listdir(search_dir):
+                if file.lower().startswith(safe_name) and file.lower().endswith(IMAGE_EXTENSIONS):
+                    images.append(os.path.relpath(os.path.join(search_dir, file), IMAGES_DIR))
+    # Return paths relative to project root for consistency
+    return [os.path.join('image', img) for img in images]
 
 def load_database():
     """
-    Dynamically loads all disease information from the 'diseases' directory and
-    supplements it with any unique entries from the legacy 'disease_database.json'.
-    This makes the loading process more robust.
+    Loads all disease information from the 'diseases' directory, including images found
+    in both the disease folder and the generic 'image' folder, and supplements with 'data' if needed.
     """
     database = []
-    loaded_names = set() # Keep track of loaded disease names to avoid duplicates
+    loaded_names = set() # To avoid duplicates
 
     # 1. Prioritize loading from the modular 'diseases' directory
     print(f"Searching for disease files in: {DISEASES_DIR}")
@@ -27,9 +70,17 @@ def load_database():
                         with open(file_path, 'r', encoding='utf-8') as f:
                             disease_info = json.load(f)
                             if disease_info and 'name' in disease_info:
-                                if disease_info['name'] not in loaded_names:
+                                disease_name = disease_info['name']
+                                domain = disease_info.get('domain', None)
+                                if disease_name not in loaded_names:
+                                    # Attach images from the disease folder
+                                    images = find_disease_images_in_disease_folder(file_path, disease_name)
+                                    # Also attach images from the generic images folder
+                                    images += find_disease_images(disease_name, domain)
+                                    if images:
+                                        disease_info["images"] = images
                                     database.append(disease_info)
-                                    loaded_names.add(disease_info['name'])
+                                    loaded_names.add(disease_name)
                             else:
                                 print(f"Warning: Skipped empty or invalid JSON: {file_path}")
                     except (json.JSONDecodeError, Exception) as e:
@@ -43,9 +94,15 @@ def load_database():
                 legacy_database = json.load(f)
                 for disease_info in legacy_database:
                     if disease_info and 'name' in disease_info:
-                        if disease_info['name'] not in loaded_names:
+                        disease_name = disease_info['name']
+                        domain = disease_info.get('domain', None)
+                        if disease_name not in loaded_names:
+                            # Only attach images from the generic images folder for legacy data
+                            images = find_disease_images(disease_name, domain)
+                            if images:
+                                disease_info["images"] = images
                             database.append(disease_info)
-                            loaded_names.add(disease_info['name'])
+                            loaded_names.add(disease_name)
         except (json.JSONDecodeError, Exception) as e:
             print(f"Error reading or parsing legacy database '{DB_PATH}': {e}")
     
@@ -61,24 +118,19 @@ def save_disease(disease_data):
     This keeps the data organized and easy to manage.
     """
     domain = disease_data.get("domain", "general").lower()
-    
-    # Create a safe filename from the disease name
     disease_name = disease_data.get("name", "unnamed_disease")
     safe_filename = re.sub(r'[^a-z0-9_]', '', disease_name.lower().replace(' ', '_')) + ".json"
     
     if not safe_filename or safe_filename == ".json":
         safe_filename = "new_disease.json"
 
-    # Determine the directory path and create it if it doesn't exist
     domain_dir = os.path.join(DISEASES_DIR, domain)
     os.makedirs(domain_dir, exist_ok=True)
-    
     file_path = os.path.join(domain_dir, safe_filename)
     
     print(f"Saving new disease to: {file_path}")
     try:
         with open(file_path, 'w', encoding='utf-8') as f:
-            # Save with indentation for readability
             json.dump(disease_data, f, indent=4, ensure_ascii=False)
         return True, None
     except Exception as e:
