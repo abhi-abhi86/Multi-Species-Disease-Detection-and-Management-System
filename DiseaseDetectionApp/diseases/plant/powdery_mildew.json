@@ -1,0 +1,16 @@
+{
+    "_comment": "powdery_mildew.json",
+    "domain": "Plant",
+    "name": "Powdery Mildew",
+    "description": "A fungal disease that affects a wide variety of plants, appearing as white powdery spots on leaves and stems. It is a common disease on many types of plant leaf.",
+    "image_url": "images/Powdery_Mildew.jpg",
+    "stages": {
+        "Initial": "Small, white, powdery spots on the upper surface of plant leaves.",
+        "Advanced": "The powdery spots spread to cover entire leaves, stems, and sometimes flowers and fruit. Leaves may turn yellow and fall off."
+    },
+    "causes": "Various species of fungi in the order Erysiphales. Spores are spread by wind.",
+    "risk_factors": "High humidity at night, low humidity during the day, poor air circulation, and crowded planting.",
+    "preventive_measures": "Choose resistant varieties, ensure good air circulation, and avoid over-fertilizing with nitrogen.",
+    "solution": "Apply fungicides like potassium bicarbonate, neem oil, or sulfur. Prune affected areas to improve air circulation."
+}
+
