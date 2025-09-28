@@ -81,23 +81,28 @@ class AnimatedButton(QPushButton):
         self._primary_color = primary_color
         self._hover_color = hover_color
         self._setup_style(self._primary_color)
+    
     def _setup_style(self, color):
-        self.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {color};
-                color: white;
-                border: none;
-                padding: 10px;
-                border-radius: 5px;
-                font-weight: bold;
-            }}
-        """)
+        # Using implicit string concatenation to avoid potential multiline string parsing issues.
+        self.setStyleSheet(
+            f'QPushButton {{'
+            f'  background-color: {color};'
+            f'  color: white;'
+            f'  border: none;'
+            f'  padding: 10px;'
+            f'  border-radius: 5px;'
+            f'  font-weight: bold;'
+            f'}}'
+        )
+
     def enterEvent(self, event):
         self._setup_style(self._hover_color)
         super().enterEvent(event)
+
     def leaveEvent(self, event):
         self._setup_style(self._primary_color)
         super().leaveEvent(event)
+        
     def mousePressEvent(self, event):
         self._setup_style("#003366")
         QTimer.singleShot(100, lambda: self._setup_style(self._hover_color if self.underMouse() else self._primary_color))
@@ -109,18 +114,18 @@ class SpinnerLabel(QLabel):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         spinner_path = os.path.join(current_dir, "spinner.gif")
         if os.path.exists(spinner_path):
-            self.movie = QMovie(spinner_path)
-            self.setMovie(self.movie)
+            movie = QMovie(spinner_path)
+            self.setMovie(movie)
         else:
             self.setText("...")
         self.setVisible(False)
     def start(self):
         self.setVisible(True)
-        if hasattr(self, 'movie'):
-            self.movie.start()
+        if self.movie():
+            self.movie().start()
     def stop(self):
-        if hasattr(self, 'movie'):
-            self.movie.stop()
+        if self.movie():
+            self.movie().stop()
         self.setVisible(False)
 
 class CustomDropLabel(QLabel):
@@ -206,18 +211,19 @@ class MainWindow(QMainWindow):
 
     def apply_theme(self, theme):
         if theme == "Dark":
-            self.setStyleSheet("""
-                QMainWindow { background-color: #232629; color: #eee; }
-                QGroupBox { font-size: 14px; font-weight: bold; border: 1px solid #444; border-radius: 8px; margin-top: 10px; color: #eee;}
-                QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 10px; background-color: #232629;}
-                QLabel, QLineEdit, QTextEdit { color: #eee; }
-            """)
+            # Using implicit string concatenation to avoid potential multiline string parsing issues.
+            self.setStyleSheet(
+                'QMainWindow { background-color: #232629; color: #eee; }'
+                'QGroupBox { font-size: 14px; font-weight: bold; border: 1px solid #444; border-radius: 8px; margin-top: 10px; color: #eee;}'
+                'QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 10px; background-color: #232629;}'
+                'QLabel, QLineEdit, QTextEdit { color: #eee; }'
+            )
         else:
-            self.setStyleSheet("""
-                QMainWindow { background-color: #fdfdff; }
-                QGroupBox { font-size: 14px; font-weight: bold; border: 1px solid #d3d3d3; border-radius: 8px; margin-top: 10px;}
-                QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 10px; background-color: #fdfdff;}
-            """)
+            self.setStyleSheet(
+                'QMainWindow { background-color: #fdfdff; }'
+                'QGroupBox { font-size: 14px; font-weight: bold; border: 1px solid #d3d3d3; border-radius: 8px; margin-top: 10px;}'
+                'QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 10px; background-color: #fdfdff;}'
+            )
 
     def create_domain_tab(self, domain_name):
         main_widget = QWidget()
@@ -517,3 +523,4 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
         event.accept()
+
