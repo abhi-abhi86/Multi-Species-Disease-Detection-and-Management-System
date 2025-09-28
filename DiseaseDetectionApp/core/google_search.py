@@ -1,78 +1,66 @@
 # DiseaseDetectionApp/core/google_search.py
+import os
 import requests
-from bs4 import BeautifulSoup
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+# --- IMPORTANT ---
+# You must set up a Google Custom Search Engine (CSE) and get an API key.
+# See the README-API.md file for instructions.
+# Store your credentials as environment variables for security.
+API_KEY = os.environ.get("GOOGLE_API_KEY")
+CSE_ID = os.environ.get("GOOGLE_CSE_ID")
+
+def _google_search_api_call(query, **kwargs):
+    """A helper function to perform a Google Custom Search API call."""
+    if not API_KEY or not CSE_ID:
+        error_message = "API_KEY or CSE_ID environment variables not set."
+        print(f"Error: {error_message}")
+        return {"error": error_message}
+    try:
+        service = build("customsearch", "v1", developerKey=API_KEY)
+        result = service.cse().list(q=query, cx=CSE_ID, **kwargs).execute()
+        return result
+    except HttpError as e:
+        print(f"An HTTP error occurred during Google search: {e}")
+        return {"error": f"HTTP Error {e.resp.status}: {e.reason}"}
+    except Exception as e:
+        print(f"An unexpected error occurred during Google search: {e}")
+        return {"error": str(e)}
 
 def search_google_images(query):
     """
-    Searches Google Images for the given query and returns the URL of a relevant image.
-    NOTE: This function relies on scraping Google's search results page, which is
-    unstable and may break if Google changes its page layout. This version uses a more
-    robust method than the original but is still subject to breaking.
+    Searches Google Images for the given query using the official API and returns the URL of the first image.
     """
-    search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}&tbm=isch"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    }
+    print(f"Performing API image search for: '{query}'")
+    # searchType='image' specifies an image search.
+    # num=1 requests only one result.
+    results = _google_search_api_call(query, searchType='image', num=1)
+    
+    if "error" in results:
+        return None
 
-    try:
-        response = requests.get(search_url, headers=headers, timeout=15)
-        response.raise_for_status()
-
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Find all image tags. We look for images that are likely to be search results.
-        # Google often uses specific classes for its main image results.
-        # Note: These class names ('rg_i', 'YQ4gaf') can change.
-        image_tags = soup.find_all('img', class_=['rg_i', 'YQ4gaf'])
-
-        for img in image_tags:
-            # The actual URL is often in 'data-src' for lazy-loaded images,
-            # but we also check 'src' as a fallback.
-            src = img.get('data-src') or img.get('src')
-            if src and src.startswith('http'):
-                return src
-
-        # If the specific class search fails, try a more general search for any image tag.
-        print("Warning: Specific image class search failed. Using broader search.")
-        all_images = soup.find_all("img")
-        for img in all_images:
-            src = img.get("src")
-            if src and src.startswith("https://"):
-                # Avoid small base64 encoded images or UI icons from gstatic
-                if 'base64' not in src and 'gstatic' not in src:
-                    return src
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching image search results: {e}")
-    except Exception as e:
-        print(f"An error occurred during image scraping: {e}")
-
+    # Extract the image link from the first item, if it exists.
+    if 'items' in results and len(results['items']) > 0:
+        return results['items'][0].get('link')
+    
+    print(f"No image results found for '{query}'.")
     return None
-
 
 def search_google_for_summary(query):
     """
-    Performs a Google search and attempts to find a summary snippet.
-    NOTE: This is based on scraping and may break if Google changes its HTML structure.
+    Performs a Google search using the official API and returns the summary snippet of the first result.
     """
-    search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    }
+    print(f"Performing API summary search for: '{query}'")
+    # We request one result (num=1).
+    results = _google_search_api_call(query, num=1)
 
-    try:
-        response = requests.get(search_url, headers=headers, timeout=10)
-        response.raise_for_status()
+    if "error" in results:
+        return f"Could not perform search. Please check API setup. Error: {results['error']}"
 
-        soup = BeautifulSoup(response.content, 'html.parser')
+    # Extract the descriptive snippet from the first item.
+    if 'items' in results and len(results['items']) > 0:
+        return results['items'][0].get('snippet')
         
-        # Look for a "knowledge panel" or "featured snippet" which often has these classes.
-        # This selector is more general and might be more resilient to changes.
-        description_tag = soup.find("div", class_=["BNeawe", "s3v9rd", "AP7Wnd"])
-        if description_tag:
-            return description_tag.get_text()
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error during Google search for summary: {e}")
-    
-    return None
+    print(f"No text results found for '{query}'.")
+    return "No summary could be found for this topic."
