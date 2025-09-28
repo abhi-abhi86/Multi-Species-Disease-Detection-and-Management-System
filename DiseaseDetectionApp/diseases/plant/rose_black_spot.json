@@ -1,1 +1,14 @@
-{"name": "Rose Black Spot", "type": "plant", "image": "images/rose_black_spot.jpg", "description": "A fungal disease that affects roses."}
+{
+    "domain": "Plant",
+    "name": "Rose Black Spot",
+    "description": "A common fungal disease that affects the leaf of a rose plant. It manifests as black spots on the leaves, which eventually turn yellow and drop off.",
+    "image_url": "images/rose_black_spot.jpg",
+    "stages": {
+        "Initial": "Small black spots with fringed margins appear on the upper surface of the rose leaf.",
+        "Advanced": "Spots enlarge and merge, and the surrounding leaf area turns yellow. The affected leaf often falls off the plant prematurely."
+    },
+    "causes": "The fungus Diplocarpon rosae, which overwinters on infected leaves and stems.",
+    "risk_factors": "Wet, humid conditions. Overhead watering that leaves moisture on the rose foliage.",
+    "preventive_measures": "Plant resistant rose varieties. Ensure good air circulation. Water at the base of the plant. Clean up and destroy fallen leaves.",
+    "solution": "Apply fungicides containing myclobutanil or tebuconazole. Prune affected canes during the dormant season."
+}
