@@ -1,14 +1,15 @@
 {
   "domain": "Animal",
   "name": "Sarcoptic Mange",
-  "description": "A highly contagious skin disease caused by the Sarcoptes scabiei mite. It leads to intense itching, hair loss, and crusted skin.",
+  "description": "A highly contagious skin disease in a dog, caused by the Sarcoptes scabiei mite. It leads to intense itching, hair loss, and crusted skin, and requires veterinary treatment.",
   "image": "diseases/animal/dog.jpg",
   "stages": {
-    "Early": "Red bumps and intense scratching, typically on ears, elbows, and belly.",
-    "Advanced": "Widespread hair loss, thickened and crusted skin, and potential for secondary bacterial infections."
+    "Early": "Red bumps and intense scratching, typically on a dog's ears, elbows, and belly.",
+    "Advanced": "Widespread hair loss, thickened and crusted skin on the dog, and potential for secondary bacterial infections."
   },
   "causes": "Direct contact with an infected animal or contaminated bedding.",
-  "risk_factors": "Exposure to stray animals, crowded living conditions (like shelters), and a weakened immune system.",
-  "preventive_measures": "Avoid contact with infected animals and their environment. Regular veterinary check-ups.",
-  "solution": "Veterinarian-prescribed medications such as selamectin, ivermectin, or moxidectin. Medicated baths may also be recommended to soothe the skin."
+  "risk_factors": "Exposure to stray animals, crowded living conditions (like shelters), and a weakened immune system in the dog.",
+  "preventive_measures": "Avoid contact with infected animals and their environment. Regular veterinary check-ups for your dog.",
+  "solution": "Veterinarian-prescribed medications such as selamectin, ivermectin, or moxidectin are used to treat the affected dog. Medicated baths may also be recommended to soothe the skin."
 }
+
