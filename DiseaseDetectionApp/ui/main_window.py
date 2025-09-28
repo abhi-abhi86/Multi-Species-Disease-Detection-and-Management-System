@@ -316,25 +316,26 @@ class MainWindow(QMainWindow):
         tab.progress_bar.setMaximum(0)  # Indeterminate/Animated
         tab.result_fader.fade_out()
 
-        if not image_path and not symptoms:
-            QMessageBox.warning(self, "Input Missing", "Please upload an image or describe symptoms.")
+        # --- MODIFIED LOGIC: Prioritize image over symptoms ---
+        if image_path:
+            use_symptoms = False
+            if symptoms:
+                # Log to console that image is being prioritized, but don't bother the user with a popup
+                print("Both image and symptoms provided. Prioritizing image for diagnosis.")
+        elif symptoms:
+            use_symptoms = True
+        else:
+            QMessageBox.warning(self, "Input Missing", "Please upload an image or describe the symptoms.")
             tab.progress_bar.setVisible(False)
             return
+        # --- END MODIFIED LOGIC ---
 
         tab.diagnose_btn.setEnabled(False)
         tab.result_display.setPlainText("Starting diagnosis...")
 
-        use_symptoms = bool(symptoms)
-        if use_symptoms and image_path:
-            reply = QMessageBox.question(
-                self, 'Confirm Diagnosis Method',
-                "Both image and symptoms are provided. Diagnose with symptoms? (No uses the image).",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.Yes)
-            if reply == QMessageBox.StandardButton.No:
-                use_symptoms = False
-
         self.worker_thread = QThread()
-        worker_image_path = None if use_symptoms else image_path
+        # Correctly assign paths and symptoms based on the chosen method
+        worker_image_path = image_path if not use_symptoms else None
         worker_symptoms = symptoms if use_symptoms else ""
 
         self.diagnosis_worker = DiagnosisWorker(self.ml_processor, worker_image_path, worker_symptoms, domain, self.database)
@@ -468,4 +469,3 @@ class MainWindow(QMainWindow):
             """)
         else:
             self.setStyleSheet("background: #f5f7fb;")
-
