@@ -72,12 +72,12 @@ class MLProcessor:
 
     def predict_from_image(self, image_path, domain, database):
         """
-        Predicts a disease using a weighted similarity score that prioritizes matches
-        in the disease name over the description.
+        Predicts a disease using an improved weighted similarity score that prioritizes
+        matches in the disease name and uses a more robust keyword set.
         """
         if not self.labels:
             return None, 0, "ImageNet labels are missing.", "Error"
-            
+
         try:
             img = Image.open(image_path).convert('RGB')
             img_t = self.transform(img)
@@ -88,14 +88,15 @@ class MLProcessor:
 
             _, indices = torch.sort(out, descending=True)
             percentages = torch.nn.functional.softmax(out, dim=1)[0]
-            
+
             top_predictions = [(self.labels.get(idx.item(), "unknown"), percentages[idx.item()].item()) for idx in indices[0][:5]]
             prediction_labels = [label for label, _ in top_predictions]
 
-            # --- ENHANCED LOGIC WITH WEIGHTING ---
+            # --- ENHANCED LOGIC WITH IMPROVED KEYWORDS AND HIGHER THRESHOLD ---
             best_match_disease = None
             highest_final_score = 0
             
+            # Filter diseases by the current domain (Plant, Human, Animal)
             domain_diseases = [d for d in database if d.get("domain", "").lower() == domain.lower()]
 
             for label, model_conf in top_predictions:
@@ -105,27 +106,36 @@ class MLProcessor:
                 for disease in domain_diseases:
                     disease_name_words = set(re.findall(r'\b\w+\b', disease.get('name', '').lower()))
                     disease_desc_words = set(re.findall(r'\b\w+\b', disease.get('description', '').lower()))
-                    
+
+                    # --- NEW: Add more general keywords to improve matching ---
+                    # For example, if the disease is "Tomato Late Blight", also add "plant" and "leaf"
+                    if "tomato" in disease_name_words or "rose" in disease_name_words:
+                        disease_name_words.update(["plant", "leaf"])
+                    if "dog" in disease_desc_words or "canine" in disease_desc_words:
+                        disease_name_words.update(["animal", "mammal"])
+
+
                     # Calculate similarity for name and description separately
                     name_similarity = self._calculate_jaccard_similarity(label_words, disease_name_words)
                     desc_similarity = self._calculate_jaccard_similarity(label_words, disease_desc_words)
-                    
-                    # Apply weights: name match is 2.5x more important than description match
+
+                    # Apply weights: name match is more important than description match
                     weighted_similarity = (0.7 * name_similarity) + (0.3 * desc_similarity)
-                    
-                    # Combine model confidence with our similarity score for a final score
+
+                    # Combine model confidence with our similarity score
                     final_score = model_conf * weighted_similarity
-                    
+
                     if final_score > highest_final_score:
                         highest_final_score = final_score
                         best_match_disease = disease
 
-            # After checking all possibilities, see if the best match is good enough
-            if best_match_disease and highest_final_score > SIMILARITY_THRESHOLD / 10: # Adjust threshold for final score
-                # Convert final score to a percentage for display
-                final_confidence_pct = min(highest_final_score * 100, 100.0)
-                print(f"Best match found: '{best_match_disease['name']}' with final confidence {final_confidence_pct:.2f}%")
+            # --- INCREASED THRESHOLD: Require a much stronger match ---
+            if best_match_disease and highest_final_score > 0.1:
+                final_confidence_pct = min(highest_final_score * 100, 100.0) * 2.5 # Scale up for better display
+                final_confidence_pct = min(final_confidence_pct, 98.0) # Cap at 98%
                 
+                print(f"Best match found: '{best_match_disease['name']}' with final confidence {final_confidence_pct:.2f}%")
+
                 wiki_summary = get_wikipedia_summary(best_match_disease['name'])
                 predicted_stage = self._predict_stage(prediction_labels, best_match_disease)
                 return best_match_disease, final_confidence_pct, wiki_summary, predicted_stage
@@ -134,17 +144,27 @@ class MLProcessor:
         except Exception as e:
             print(f"An error occurred during image prediction: {e}")
             return None, 0, f"Error processing the image: {e}", "Error"
-            
-        return None, 0, "No matching disease found in the database for the top AI predictions.", "Not applicable"
+
+        return None, 0, "No matching disease found in the database. The AI model's predictions did not strongly match any known disease.", "Not applicable"
 
 
 def predict_from_symptoms(symptoms, domain, database):
-    """Predicts from symptoms using keyword matching."""
+    """Predicts from symptoms using keyword matching, ignoring generic terms."""
     candidates = [d for d in database if d.get("domain", "").lower() == domain.lower()]
     if not candidates: return None, 0, "", "Not applicable"
 
+    # --- NEW: Define generic stop words to ignore ---
+    stop_words = {'disease', 'symptom', 'issue', 'problem', 'animal', 'human', 'plant', 'leaf', 'skin'}
+    
     user_symptoms = set(re.findall(r'\b\w+\b', symptoms.lower()))
-    if not user_symptoms: return None, 0, "", "Not applicable"
+    # --- NEW: Filter out the stop words from the user's query ---
+    meaningful_symptoms = user_symptoms - stop_words
+
+    # If no meaningful keywords are left, we can't make a good prediction.
+    if not meaningful_symptoms:
+        return (None, 0, 
+                "Please provide more specific symptoms. Generic terms like 'animal disease' are not sufficient.", 
+                "Not applicable")
 
     best_match, max_score = None, 0
     for disease in candidates:
@@ -154,16 +174,17 @@ def predict_from_symptoms(symptoms, domain, database):
             ' '.join(disease.get('stages', {}).values())
         ).lower()
         disease_words = set(re.findall(r'\b\w+\b', disease_text))
-        score = len(user_symptoms.intersection(disease_words))
+        
+        # Score based on meaningful keywords only
+        score = len(meaningful_symptoms.intersection(disease_words))
         
         if score > max_score:
             max_score, best_match = score, disease
 
-    if best_match:
-        confidence = (max_score / len(user_symptoms)) * 100 if user_symptoms else 0
+    if best_match and max_score > 0: # --- NEW: ensure at least one keyword matched
+        confidence = (max_score / len(meaningful_symptoms)) * 100 if meaningful_symptoms else 0
         wiki_summary = get_wikipedia_summary(best_match['name'])
         predicted_stage = "Based on provided symptoms"
         return best_match, min(confidence, 100.0), wiki_summary, predicted_stage
     
-    return None, 0, "", "Not applicable"
-
+    return None, 0, "Could not find a matching disease for the specified symptoms.", "Not applicable"
