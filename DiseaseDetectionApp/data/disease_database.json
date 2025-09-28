@@ -1,45 +1,16 @@
 [
   {
     "domain": "Plant",
-    "name": "Tomato Late Blight",
-    "description": "Caused by the fungus Phytophthora infestans. Appears as pale green, water-soaked spots on leaves.",
-    "image_url": "images/Tomato_Late_Blight.jpg",
+    "name": "Uncategorized Plant Fungus",
+    "description": "A general category for fungal infections on plants that may not be specifically identified. Symptoms often include spots, lesions, or powdery growth on leaves.",
+    "image_url": "dataset/fungus/fungus1.png",
     "stages": {
-      "Early": "Small, irregular, dark, water-soaked spots.",
-      "Advanced": "Lesions enlarge, turning brown to black, with a white moldy growth on the underside of leaves."
+      "Initial": "Small spots or discolored patches on leaves.",
+      "Advanced": "Spots enlarge, merge, and can lead to leaf yellowing and drop."
     },
-    "causes": "The oomycete Phytophthora infestans, which thrives in cool, moist conditions.",
-    "risk_factors": "High humidity (>90%), cool temperatures (60-70°F / 15-21°C), and prolonged leaf wetness.",
-    "preventive_measures": "Ensure proper spacing for air circulation, water at the base of plants, use resistant varieties, and rotate crops.",
-    "solution": "Apply fungicides containing mancozeb or chlorothalonil. Ensure proper spacing for air circulation and avoid overhead watering."
-  },
-  {
-    "domain": "Plant",
-    "name": "Powdery Mildew",
-    "description": "A fungal disease that affects a wide variety of plants, appearing as white powdery spots on leaves and stems.",
-    "image_url": "images/Powdery_Mildew.jpg",
-    "stages": {
-        "Initial": "Small, white, powdery spots on the upper surface of leaves.",
-        "Advanced": "The powdery spots spread to cover entire leaves, stems, and sometimes flowers and fruit. Leaves may turn yellow and fall off."
-    },
-    "causes": "Various species of fungi in the order Erysiphales. Spores are spread by wind.",
-    "risk_factors": "High humidity at night, low humidity during the day, poor air circulation, and crowded planting.",
-    "preventive_measures": "Choose resistant varieties, ensure good air circulation, and avoid over-fertilizing with nitrogen.",
-    "solution": "Apply fungicides like potassium bicarbonate, neem oil, or sulfur. Prune affected areas to improve air circulation."
-  },
-  {
-    "domain": "Human",
-    "name": "Ringworm (Tinea Corporis)",
-    "description": "A common fungal infection of the skin. Not caused by a worm.",
-    "image_url": "images/Ringworm.jpg",
-    "stages": {
-      "Initial": "A red, itchy, scaly patch on the skin.",
-      "Developed": "The patch develops into a distinct ring-shape with a raised border."
-    },
-    "causes": "Dermatophyte fungi, commonly transmitted through direct contact with an infected person or animal.",
-    "risk_factors": "Weakened immune system, excessive sweating, participating in contact sports, and sharing contaminated items like towels.",
-    "preventive_measures": "Keep skin clean and dry, avoid sharing personal items, and wear loose-fitting clothing.",
-    "solution": "Apply over-the-counter antifungal creams, lotions, or powders like clotrimazole or miconazole for 2 to 4 weeks. Keep the skin clean and dry."
+    "causes": "Various fungal pathogens that thrive in humid and moist conditions.",
+    "risk_factors": "Poor air circulation, overhead watering, and high humidity.",
+    "preventive_measures": "Ensure proper plant spacing, water at the base of plants, and remove infected leaves promptly.",
+    "solution": "Application of general-purpose fungicides. Improve air circulation through pruning."
   }
 ]
-
