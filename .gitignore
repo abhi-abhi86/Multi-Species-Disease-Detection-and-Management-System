@@ -205,3 +205,14 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Disease Classifier Models and Datasets
+models/
+*.pth
+dataset/
+disease_dataset/
+*_diseases/
+training_history_*.png
+
+# Test outputs
+test_pipeline_results.json
