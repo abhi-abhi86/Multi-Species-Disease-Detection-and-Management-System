@@ -1,0 +1,14 @@
+{
+    "domain": "Human",
+    "name": "Psoriasis (Plaque Psoriasis)",
+    "description": "A chronic autoimmune disease that causes the rapid build-up of skin cells. This buildup of cells causes scaling on the skin's surface. Inflammation and redness around the scales are common. Psoriatic scales are typically whitish-silver and develop in thick, red patches. Sometimes, these patches will crack and bleed.",
+    "image_url": "images/Psoriasis.jpg",
+    "stages": {
+      "Mild": "Small, red, scaly patches or papules appear on the skin, often on the elbows, knees, scalp, or lower back.",
+      "Severe": "The patches grow larger and merge, forming distinct, raised plaques with thick, silvery-white scales. The skin can become very itchy, painful, and may crack or bleed, as shown in the image."
+    },
+    "causes": "Psoriasis is an immune system problem. The exact cause is not fully understood, but it involves the immune system mistakenly attacking healthy skin cells, which accelerates the life cycle of skin cells. Both genetics and environmental factors play a role.",
+    "risk_factors": "A family history of psoriasis, high levels of stress, smoking, heavy alcohol consumption, and certain infections (e.g., strep throat).",
+    "preventive_measures": "While there is no cure, flare-ups can be managed by avoiding personal triggers, managing stress, maintaining a healthy weight, keeping skin moisturized, and avoiding smoking and excessive alcohol.",
+    "solution": "Treatment aims to stop skin cells from growing so quickly and to remove scales. Options include topical creams and ointments (corticosteroids, vitamin D analogues like Calcipotriol, retinoids like Tazarotene), phototherapy (light therapy), and systemic medications for severe cases (e.g., Methotrexate, biologics)."
+}
