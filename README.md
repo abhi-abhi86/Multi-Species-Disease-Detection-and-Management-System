@@ -23,23 +23,109 @@ Location Logging: Option to log the geographical location of a diagnosis to help
 
 Simple Chatbot: An informational chatbot to quickly look up disease descriptions from the database.
 
-Installation
-Clone the repository:
-
+Setup and Installation
+1. Clone the Repository
 git clone [https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System.git](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System.git)
-
-Navigate to the project directory:
-
 cd Multi-Species-Disease-Detection-and-Management-System
 
-Install the required dependencies:
+2. Create a Virtual Environment
+It is highly recommended to use a virtual environment to manage dependencies.
+
+# For Windows
+python -m venv venv
+venv\Scripts\activate
+
+# For macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
+
+3. Install Dependencies
+Install all the required Python packages using the requirements.txt file.
 
 pip install -r requirements.txt
 
+4. Set Up Google API Credentials (Optional)
+The application can use the Google Custom Search API to fetch images and summaries online. This is optional but enhances functionality.
+
+Create a Google Custom Search Engine (CSE):
+
+Go to the Custom Search Engine control panel.
+
+Create a new search engine. You can enable "Search the entire web".
+
+Once created, find your Search engine ID (CX).
+
+Get a Google API Key:
+
+Go to the Google Cloud Console.
+
+Create a new project or select an existing one.
+
+Go to APIs & Services > Credentials.
+
+Click Create Credentials > API key.
+
+Important: Restrict your API key to only be used for the "Custom Search API".
+
+Set Environment Variables:
+You need to set the API Key and CSE ID as environment variables so the application can access them securely.
+
+Windows (Command Prompt):
+
+setx GOOGLE_API_KEY "YOUR_API_KEY"
+setx GOOGLE_CSE_ID "YOUR_CSE_ID"
+
+(You may need to restart your terminal for these to take effect).
+
+Windows (PowerShell):
+
+$env:GOOGLE_API_KEY="YOUR_API_KEY"
+$env:GOOGLE_CSE_ID="YOUR_CSE_ID"
+
+macOS/Linux:
+
+export GOOGLE_API_KEY="YOUR_API_KEY"
+export GOOGLE_CSE_ID="YOUR_CSE_ID"
+
+(Add these lines to your ~/.bashrc, ~/.zshrc, or shell configuration file to make them permanent).
+
+5. Prepare the Image Dataset
+The AI model needs to be trained on a dataset of images. The training script expects the images to be organized in the following structure:
+
+Multi-Species-Disease-Detection-and-Management-System/
+└── DiseaseDetectionApp/
+    └── dataset/
+        ├── disease_one/
+        │   ├── image001.jpg
+        │   └── image002.png
+        ├── disease_two/
+        │   ├── image003.jpg
+        │   └── image004.jpeg
+        └── ...
+
+I have created the dataset directory and moved the existing images into it for you. You can add more images to these folders or create new folders for other diseases. The folder names should be lowercase and use underscores instead of spaces (e.g., rose_black_spot).
+
+6. Train the AI Model
+Before running the main application, you must train the model on your dataset.
+
+python DiseaseDetectionApp/train_disease_classifier.py
+
+This script will:
+
+Read the images from the DiseaseDetectionApp/dataset directory.
+
+Train the MobileNetV2 model.
+
+Create two essential files in the DiseaseDetectionApp directory:
+
+disease_model.pt: The trained model weights.
+
+class_to_name.json: A mapping of model output to disease names.
+
 Usage
-Navigate to the application's root directory and run the main.py script:
+After you have successfully trained the model, you can run the main application.
 
 python DiseaseDetectionApp/main.py
 
 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the LICENSE file for details.
