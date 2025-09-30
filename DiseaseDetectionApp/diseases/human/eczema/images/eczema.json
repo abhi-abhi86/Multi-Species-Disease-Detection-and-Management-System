@@ -1,14 +1,14 @@
 {
     "domain": "Human",
-    "name": "Psoriasis (Plaque Psoriasis)",
-    "description": "A chronic autoimmune disease that causes the rapid build-up of skin cells. This buildup of cells causes scaling on the skin's surface. Inflammation and redness around the scales are common. Psoriatic scales are typically whitish-silver and develop in thick, red patches. Sometimes, these patches will crack and bleed.",
-    "image_url": "images/Psoriasis.jpg",
+    "name": "Eczema",
+    "description": "A chronic condition that causes the skin to become itchy, red, dry and cracked. Atopic dermatitis is the most common form of eczema, and it primarily affects children but can continue into adulthood.",
+    "image_url": "diseases/human/eczema/images/eczema.jpg.png",
     "stages": {
-      "Mild": "Small, red, scaly patches or papules appear on the skin, often on the elbows, knees, scalp, or lower back.",
-      "Severe": "The patches grow larger and merge, forming distinct, raised plaques with thick, silvery-white scales. The skin can become very itchy, painful, and may crack or bleed, as shown in the image."
+      "Acute": "Characterized by intensely itchy, red, and bumpy skin that may weep clear fluid.",
+      "Chronic": "Leads to thickened, cracked, and scaly skin from persistent scratching and rubbing. The skin may also darken in color."
     },
-    "causes": "Psoriasis is an immune system problem. The exact cause is not fully understood, but it involves the immune system mistakenly attacking healthy skin cells, which accelerates the life cycle of skin cells. Both genetics and environmental factors play a role.",
-    "risk_factors": "A family history of psoriasis, high levels of stress, smoking, heavy alcohol consumption, and certain infections (e.g., strep throat).",
-    "preventive_measures": "While there is no cure, flare-ups can be managed by avoiding personal triggers, managing stress, maintaining a healthy weight, keeping skin moisturized, and avoiding smoking and excessive alcohol.",
-    "solution": "Treatment aims to stop skin cells from growing so quickly and to remove scales. Options include topical creams and ointments (corticosteroids, vitamin D analogues like Calcipotriol, retinoids like Tazarotene), phototherapy (light therapy), and systemic medications for severe cases (e.g., Methotrexate, biologics)."
+    "causes": "The exact cause of eczema is unknown, but it's thought to be linked to a combination of genetic and environmental factors. It often occurs in people who have allergies like hay fever or asthma.",
+    "risk_factors": "A family history of eczema, allergies, or asthma. Living in urban areas or climates with low humidity.",
+    "preventive_measures": "Moisturize skin frequently, avoid known triggers (like certain soaps, fabrics, or foods), take shorter, lukewarm baths, and gently pat the skin dry.",
+    "solution": "Treatment focuses on healing the damaged skin and relieving symptoms. This includes moisturizers (emollients), topical corticosteroids to reduce inflammation and itching, and antihistamines to help with sleep and reduce scratching at night. A doctor should guide treatment."
 }
