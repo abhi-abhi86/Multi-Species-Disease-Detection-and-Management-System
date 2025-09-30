@@ -1,36 +1,41 @@
+# DiseaseDetectionApp/ui/main_window.py
 import os
 import re
-import traceback
 import sys
-
+import traceback
 from PyQt6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
     QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar,
-    QLineEdit, QProgressBar, QStatusBar, QDialog, QHBoxLayout, QGraphicsOpacityEffect,
+    QLineEdit, QStatusBar, QDialog, QHBoxLayout, QGraphicsOpacityEffect,
     QFormLayout, QComboBox
 )
-from PyQt6.QtGui import QPixmap, QAction, QFont, QCursor, QColor, QMovie
-from PyQt6.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QEvent, QObject, QTimer, QSettings
+from PyQt6.QtGui import QPixmap, QAction, QFont, QCursor, QMovie
+from PyQt6.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings
 
 # --- Import local modules ---
-from ui.add_disease_dialog import AddNewDiseaseDialog
-from ui.chatbot_dialog import ChatbotDialog
-from ui.image_search_dialog import ImageSearchDialog
-from ui.map_dialog import MapDialog
-from core.data_handler import load_database, save_disease
-from core.ml_processor import MLProcessor
-from core.worker import DiagnosisWorker
-from core.report_generator import generate_pdf_report
+from .add_disease_dialog import AddNewDiseaseDialog
+from .chatbot_dialog import ChatbotDialog
+from .image_search_dialog import ImageSearchDialog
+from .map_dialog import MapDialog
+from ..core.data_handler import load_database, save_disease
+from ..core.ml_processor import MLProcessor
+from ..core.worker import DiagnosisWorker
+from ..core.report_generator import generate_pdf_report
+
 
 def show_exception_box(exc_type, exc_value, exc_tb):
     err_msg = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
     dlg = QMessageBox(QMessageBox.Icon.Critical, "Unexpected Error", f"An unexpected error occurred:\n\n{exc_value}")
     dlg.setDetailedText(err_msg)
     dlg.exec()
+
+
 sys.excepthook = show_exception_box
+
 
 class SettingsDialog(QDialog):
     """A dialog for user preferences/settings, using QSettings for persistence."""
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Settings")
@@ -74,6 +79,7 @@ class SettingsDialog(QDialog):
             }
         return None
 
+
 class AnimatedButton(QPushButton):
     def __init__(self, text, primary_color="#007bff", hover_color="#0056b3"):
         super().__init__(text)
@@ -81,9 +87,8 @@ class AnimatedButton(QPushButton):
         self._primary_color = primary_color
         self._hover_color = hover_color
         self._setup_style(self._primary_color)
-    
+
     def _setup_style(self, color):
-        # Using implicit string concatenation to avoid potential multiline string parsing issues.
         self.setStyleSheet(
             f'QPushButton {{'
             f'  background-color: {color};'
@@ -102,11 +107,13 @@ class AnimatedButton(QPushButton):
     def leaveEvent(self, event):
         self._setup_style(self._primary_color)
         super().leaveEvent(event)
-        
+
     def mousePressEvent(self, event):
         self._setup_style("#003366")
-        QTimer.singleShot(100, lambda: self._setup_style(self._hover_color if self.underMouse() else self._primary_color))
+        QTimer.singleShot(100,
+                          lambda: self._setup_style(self._hover_color if self.underMouse() else self._primary_color))
         super().mousePressEvent(event)
+
 
 class SpinnerLabel(QLabel):
     def __init__(self):
@@ -119,17 +126,21 @@ class SpinnerLabel(QLabel):
         else:
             self.setText("...")
         self.setVisible(False)
+
     def start(self):
         self.setVisible(True)
         if self.movie():
             self.movie().start()
+
     def stop(self):
         if self.movie():
             self.movie().stop()
         self.setVisible(False)
 
+
 class CustomDropLabel(QLabel):
     fileDropped = pyqtSignal(str)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setAcceptDrops(True)
@@ -140,6 +151,7 @@ class CustomDropLabel(QLabel):
         self.hover_style = "border: 2px solid #0056b3; background-color: #e9ecef; border-radius: 10px; color: #0056b3;"
         self.setStyleSheet(self.base_style)
         self.setMinimumHeight(180)
+
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
             for url in event.mimeData().urls():
@@ -148,8 +160,10 @@ class CustomDropLabel(QLabel):
                     self.setStyleSheet(self.hover_style)
                     return
         event.ignore()
+
     def dragLeaveEvent(self, event):
         self.setStyleSheet(self.base_style)
+
     def dropEvent(self, event):
         self.setStyleSheet(self.base_style)
         if event.mimeData().hasUrls():
@@ -158,6 +172,7 @@ class CustomDropLabel(QLabel):
                     self.fileDropped.emit(url.toLocalFile())
                     event.acceptProposedAction()
                     return
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -211,7 +226,6 @@ class MainWindow(QMainWindow):
 
     def apply_theme(self, theme):
         if theme == "Dark":
-            # Using implicit string concatenation to avoid potential multiline string parsing issues.
             self.setStyleSheet(
                 'QMainWindow { background-color: #232629; color: #eee; }'
                 'QGroupBox { font-size: 14px; font-weight: bold; border: 1px solid #444; border-radius: 8px; margin-top: 10px; color: #eee;}'
@@ -330,7 +344,8 @@ class MainWindow(QMainWindow):
 
     def upload_image(self, domain):
         image_folder = self.settings.value("image_folder", os.path.expanduser("~"))
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", image_folder, "Image Files (*.png *.jpg *.jpeg)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", image_folder,
+                                                   "Image Files (*.png *.jpg *.jpeg)")
         if file_path:
             self.set_image(file_path, domain)
 
@@ -343,14 +358,14 @@ class MainWindow(QMainWindow):
             size_bytes = os.path.getsize(file_path)
             max_size = 5 * 1024 * 1024  # 5MB
             if size_bytes > max_size:
-                return False, f"Image is too large ({size_bytes//1024} KB). Max allowed size: {max_size//1024} KB."
+                return False, f"Image is too large ({size_bytes // 1024} KB). Max allowed size: {max_size // 1024} KB."
             pixmap = QPixmap(file_path)
             if pixmap.isNull():
                 return False, "Failed to load image file."
             width = pixmap.width()
             height = pixmap.height()
-            meta = f"Preview: {os.path.basename(file_path)}\n" \
-                   f"Dimensions: {width} x {height} px | Size: {size_bytes//1024} KB | Format: {os.path.splitext(file_path)[-1][1:].upper()}"
+            meta = (f"Preview: {os.path.basename(file_path)}\n"
+                    f"Dimensions: {width} x {height} px | Size: {size_bytes // 1024} KB | Format: {os.path.splitext(file_path)[-1][1:].upper()}")
             return True, meta
         except Exception as ex:
             return False, f"Error reading image: {ex}"
@@ -364,7 +379,7 @@ class MainWindow(QMainWindow):
             self.apply_theme(result.get("theme", "Light"))
             # Optionally: update file dialogs' default folder on next use
 
-    # --- REST OF THE CODE (UNMODIFIED) ---
+    # --- DIAGNOSIS LOGIC ---
     def run_diagnosis(self, domain):
         if self.worker_thread and self.worker_thread.isRunning():
             QMessageBox.warning(self, "Busy", "A diagnosis is already in progress. Please wait or cancel it.")
@@ -398,6 +413,7 @@ class MainWindow(QMainWindow):
         self.worker_thread.finished.connect(self.worker_thread.deleteLater)
         self.diagnosis_worker.error.connect(self.worker_thread.quit)
         self.worker_thread.start()
+
     def animate_result_fade_in(self, tab):
         tab.result_group.setVisible(True)
         animation = QPropertyAnimation(tab.result_opacity_effect, b"opacity")
@@ -407,6 +423,7 @@ class MainWindow(QMainWindow):
         animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
         animation.start()
         self.result_animation = animation
+
     def cancel_diagnosis(self, domain):
         if self.worker_thread and self.worker_thread.isRunning():
             try:
@@ -415,20 +432,22 @@ class MainWindow(QMainWindow):
             except Exception:
                 pass
             self.cleanup_worker_and_ui(domain, canceled=True)
+
     def on_diagnosis_complete(self, result, confidence, wiki_summary, predicted_stage, pubmed_summary, domain):
         self.cleanup_worker_and_ui(domain)
         tab = self.domain_tabs[domain]
-        tab.diagnosis_data = {**result, 'confidence': confidence, 'stage': predicted_stage, 'image_path': self.current_image_paths[domain]}
+        tab.diagnosis_data = {**result, 'confidence': confidence, 'stage': predicted_stage,
+                              'image_path': self.current_image_paths[domain]}
         stages_str = "\n".join([f"  • <b>{k}:</b> {v}" for k, v in result.get("stages", {}).items()])
         output_html = (
-            f"<h3 style='font-family: Arial; font-size: 16px;'>Diagnosis: {result.get('name','N/A')}</h3>"
-            f"<b>Confidence Score:</b> <span style='color:#28a745; font-weight:bold;'>{confidence:.1f}%</span><br>"
-            f"<b>Predicted Stage:</b> {predicted_stage}<br><br>"
-            f"<b>Description:</b><br>{result.get('description', 'N/A')}<br><br>"
-            f"<b>Wikipedia Summary:</b><br>{wiki_summary}<br><br>"
-            f"<b>Known Stages:</b><br>{stages_str if stages_str else 'N/A'}<br><br>"
-            f"<b style='color:#17a2b8;'>Solution/Cure:</b><br><span style='color:#17a2b8;'>{result.get('solution', 'N/A')}</span><br><br>"
-            f"<b>Recent Research (PubMed):</b><br>{pubmed_summary}"
+            f"<h3 style='font-family: Arial; font-size: 16px;'>Diagnosis: {result.get('name', 'N/A')}</h3>"
+            f"<p><b>Confidence Score:</b> <span style='color:#28a745; font-weight:bold;'>{confidence:.1f}%</span></p>"
+            f"<p><b>Predicted Stage:</b> {predicted_stage}</p>"
+            f"<p><b>Description:</b><br>{result.get('description', 'N/A')}</p>"
+            f"<p><b>Wikipedia Summary:</b><br>{wiki_summary}</p>"
+            f"<p><b>Known Stages:</b><br>{stages_str if stages_str else 'N/A'}</p>"
+            f"<p><b style='color:#17a2b8;'>Solution/Cure:</b><br><span style='color:#17a2b8;'>{result.get('solution', 'N/A')}</span></p>"
+            f"<p><b>Recent Research (PubMed):</b><br>{pubmed_summary}</p>"
         )
         tab.result_display.setHtml(output_html)
         tab.pdf_button.setEnabled(True)
@@ -437,7 +456,9 @@ class MainWindow(QMainWindow):
             full_image_path = os.path.join(self.base_app_dir, relative_image_path)
             if os.path.exists(full_image_path):
                 pixmap = QPixmap(full_image_path)
-                tab.reference_image_label.setPixmap(pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+                tab.reference_image_label.setPixmap(
+                    pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
+                                  Qt.TransformationMode.SmoothTransformation))
             else:
                 tab.reference_image_label.setText(f"Image not found:\n{relative_image_path}")
         else:
@@ -446,16 +467,18 @@ class MainWindow(QMainWindow):
         location = tab.location_input.text().strip()
         if location:
             tab.location_input.clear()
-            self.diagnosis_locations.append({"disease": result.get('name','N/A'), "location": location})
+            self.diagnosis_locations.append({"disease": result.get('name', 'N/A'), "location": location})
             self.status_bar.showMessage(f"Diagnosis complete. Location '{location}' logged.", 5000)
         else:
             self.status_bar.showMessage("Diagnosis complete.", 3000)
+
     def on_diagnosis_error(self, error_message, domain):
         self.cleanup_worker_and_ui(domain)
         tab = self.domain_tabs[domain]
         tab.result_display.setHtml(f"<h3 style='color:red;'>Diagnosis Failed</h3><p>{error_message}</p>")
         self.animate_result_fade_in(tab)
         self.status_bar.showMessage("Diagnosis failed.", 4000)
+
     def cleanup_worker_and_ui(self, domain, canceled=False):
         tab = self.domain_tabs[domain]
         tab.spinner.stop()
@@ -471,27 +494,31 @@ class MainWindow(QMainWindow):
             self.worker_thread.wait(2000)
         self.worker_thread = None
         self.diagnosis_worker = None
+
     def open_add_disease_dialog(self):
         dialog = AddNewDiseaseDialog(self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             data = dialog.get_data()
             if not all([data.get('name'), data.get('description'), data.get('solution')]):
-                QMessageBox.warning(self, "Incomplete Data", "Please fill in at least the Name, Description, and Solution fields.")
+                QMessageBox.warning(self, "Incomplete Data",
+                                    "Please fill in at least the Name, Description, and Solution fields.")
                 return
             success, error_msg = save_disease(data)
             if success:
                 self.database = load_database()
-                QMessageBox.information(self, "Success", f"Disease '{data.get('name','')}' has been saved successfully.")
+                QMessageBox.information(self, "Success",
+                                        f"Disease '{data.get('name', '')}' has been saved successfully.")
             else:
                 QMessageBox.critical(self, "Save Error", f"Failed to save the disease:\n{error_msg}")
         dialog.deleteLater()
+
     def save_report_as_pdf(self, domain):
         tab = self.domain_tabs[domain]
         if not tab.diagnosis_data:
             QMessageBox.warning(self, "No Data", "Please run a diagnosis before saving a report.")
             return
         pdf_folder = self.settings.value("pdf_folder", os.path.expanduser("~"))
-        safe_name = re.sub(r'[\s/:*?"<>|]+', '_', tab.diagnosis_data.get('name','')).lower()
+        safe_name = re.sub(r'[\s/:*?"<>|]+', '_', tab.diagnosis_data.get('name', '')).lower()
         default_path = os.path.join(pdf_folder, f"{safe_name}_report.pdf")
         file_path, _ = QFileDialog.getSaveFileName(self, "Save PDF Report", default_path, "PDF Files (*.pdf)")
         if file_path:
@@ -500,18 +527,22 @@ class MainWindow(QMainWindow):
                 QMessageBox.information(self, "Success", f"Report saved successfully to:\n{file_path}")
             else:
                 QMessageBox.critical(self, "PDF Error", f"Failed to generate PDF report:\n{error_msg}")
+
     def open_chatbot(self):
         dialog = ChatbotDialog(self.database, self)
         dialog.exec()
         dialog.deleteLater()
+
     def open_image_search_dialog(self):
         dialog = ImageSearchDialog(self.database, self)
         dialog.exec()
         dialog.deleteLater()
+
     def open_map_dialog(self):
         dialog = MapDialog(self.diagnosis_locations, self)
         dialog.exec()
         dialog.deleteLater()
+
     def closeEvent(self, event):
         try:
             if self.worker_thread and self.worker_thread.isRunning():
