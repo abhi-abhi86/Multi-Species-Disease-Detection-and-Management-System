@@ -1,0 +1,14 @@
+{
+    "domain": "Animal",
+    "name": "Sarcoptic Mange",
+    "description": "A severe skin disease in dogs caused by parasitic mites. Sarcoptic mange, or canine scabies, is caused by the Sarcoptes scabiei mite, which burrows into the skin, causing intense itching, inflammation, and hair loss.",
+    "image_url": "diseases/animal/sarcoptic_mange/images/dog.jpg",
+    "stages": {
+      "Initial": "Intense scratching and itching, red bumps or pustules, and localized hair loss, often starting on the ears, elbows, and belly.",
+      "Developed": "Widespread hair loss, severe crusting, thickened and wrinkled skin, and secondary bacterial or yeast infections, leading to a poor overall condition."
+    },
+    "causes": "The microscopic mite Sarcoptes scabiei var. canis. It is highly contagious and easily transmitted between dogs through direct contact or shared bedding.",
+    "risk_factors": "Contact with infected animals, stray or shelter environments, poor nutrition, and a compromised immune system.",
+    "preventive_measures": "Avoid contact with infected animals, maintain good hygiene and grooming, provide a balanced diet to support the immune system, and ensure regular veterinary check-ups.",
+    "solution": "Treatment must be prescribed by a veterinarian. It typically involves antiparasitic medications such as Ivermectin, Selamectin, or Fluralaner, administered as topical treatments, injections, or oral tablets. Medicated baths may also be used to soothe the skin and treat secondary infections."
+}
