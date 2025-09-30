@@ -5,8 +5,8 @@ import json
 import re
 from PIL import Image
 from torchvision import models, transforms
-from .wikipedia_integration import get_wikipedia_summary # --- IMPORT FOR WEB SEARCH ---
-from .google_search import search_google_for_summary # --- IMPORT FOR WEB SEARCH ---
+from .wikipedia_integration import get_wikipedia_summary  # --- IMPORT FOR WEB SEARCH ---
+from .google_search import search_google_for_summary  # --- IMPORT FOR WEB SEARCH ---
 
 # --- Import fuzzywuzzy for better text matching ---
 try:
@@ -24,8 +24,8 @@ IMG_SIZE = 224
 # --- Confidence Thresholds & Special Classes ---
 # You can adjust these values to make the diagnosis stricter or more lenient.
 IMAGE_CONFIDENCE_THRESHOLD = 0.50  # Minimum confidence (0.0 to 1.0) for a confident diagnosis.
-SYMPTOM_CONFIDENCE_THRESHOLD_STRONG = 75 # Score (out of 100) for a symptom match to be strong.
-SYMPTOM_CONFIDENCE_THRESHOLD_WEAK = 60   # Minimum score for a symptom match to be considered.
+SYMPTOM_CONFIDENCE_THRESHOLD_STRONG = 75  # Score (out of 100) for a symptom match to be strong.
+SYMPTOM_CONFIDENCE_THRESHOLD_WEAK = 60  # Minimum score for a symptom match to be considered.
 # Add names of folders that represent a healthy state. This is crucial for avoiding false positives.
 HEALTHY_CLASS_NAMES = ('healthy', 'normal', 'clear_skin')
 
@@ -44,8 +44,10 @@ def get_custom_labels():
         print(f"Error reading or parsing class mapping file: {e}")
         return None
 
+
 class MLProcessor:
     """Handles loading the model and running predictions with advanced confidence checks."""
+
     def __init__(self):
         print("Initializing custom AI model processor...")
         self.labels = get_custom_labels()
@@ -95,10 +97,10 @@ class MLProcessor:
                 logits = self.model(batch_t)
                 probabilities = torch.nn.functional.softmax(logits, dim=1)[0]
                 top_prob, top_idx = torch.max(probabilities, 0)
-            
+
             primary_confidence = top_prob.item()
             predicted_class_name = self.labels.get(top_idx.item(), "Unknown")
-            
+
             num_top_predictions = min(3, self.num_classes)
 
             if predicted_class_name.lower() in HEALTHY_CLASS_NAMES:
@@ -118,7 +120,7 @@ class MLProcessor:
                     weak_name = self.labels.get(top_k_indices[i].item(), "Unknown")
                     if weak_conf > 0.05:
                         other_possibilities.append(f"{weak_name} ({weak_conf:.1%})")
-                
+
                 uncertain_result = {
                     'name': 'No Confident Match Found',
                     'description': 'The AI model could not identify a known disease with high confidence.',
@@ -127,17 +129,23 @@ class MLProcessor:
                 }
                 return uncertain_result, primary_confidence * 100, "No specific disease was identified.", "Uncertain"
 
-            best_match_disease = next((d for d in database if d.get("name", "").lower() == predicted_class_name.lower()), None)
-            
+            # --- FIX: Filter by domain to prevent species mismatch ---
+            best_match_disease = next((d for d in database if
+                                       d.get("domain", "").lower() == domain.lower() and d.get("name",
+                                                                                               "").lower() == predicted_class_name.lower()),
+                                      None)
+
             if best_match_disease:
                 _, top_k_indices = torch.topk(probabilities, num_top_predictions)
-                other_possibilities = [f"{self.labels.get(idx.item(), 'Unknown')} ({probabilities[idx].item():.1%})" for idx in top_k_indices[1:]]
+                other_possibilities = [f"{self.labels.get(idx.item(), 'Unknown')} ({probabilities[idx].item():.1%})" for
+                                       idx in top_k_indices[1:]]
                 best_match_disease['other_possibilities'] = other_possibilities
                 wiki_summary = get_wikipedia_summary(best_match_disease['name'])
                 return best_match_disease, primary_confidence * 100, wiki_summary, "Detected from Image"
             else:
                 # --- NEW: WEB SEARCH FALLBACK ---
-                print(f"AI prediction '{predicted_class_name}' not in local DB. Attempting web search...")
+                print(
+                    f"AI prediction '{predicted_class_name}' not in local DB for domain '{domain}'. Attempting web search...")
                 google_summary = search_google_for_summary(predicted_class_name)
                 wiki_summary = get_wikipedia_summary(predicted_class_name)
 
@@ -150,15 +158,16 @@ class MLProcessor:
                     }
                     return web_result, primary_confidence * 100, wiki_summary, "Found via Web Search"
                 else:
-                    error_msg = f"AI's prediction '{predicted_class_name}' was not found in the local database, and an online search failed."
+                    error_msg = f"AI's prediction '{predicted_class_name}' was not found in the local database for the '{domain}' domain, and an online search failed."
                     return None, 0, error_msg, "Database Mismatch"
 
         except Exception as e:
             if "selected index k out of range" in str(e):
-                 error_msg = f"Model has only been trained on {self.num_classes} diseases, but code tried to fetch more."
-                 return None, 0, error_msg, "Model Configuration Error"
+                error_msg = f"Model has only been trained on {self.num_classes} diseases, but code tried to fetch more."
+                return None, 0, error_msg, "Model Configuration Error"
             print(f"Unexpected error during image prediction: {e}")
             return None, 0, f"An error occurred while processing the image: {e}", "Processing Error"
+
 
 def predict_from_symptoms(symptoms, domain, database):
     """Predicts a disease from symptoms with graded confidence levels."""
@@ -169,9 +178,11 @@ def predict_from_symptoms(symptoms, domain, database):
     if not domain_candidates:
         return None, 0, f"No diseases found for the '{domain}' domain.", "Not applicable"
 
-    choices = {name: f"{name} {data.get('description', '')} {' '.join(data.get('stages', {}).values())} {data.get('causes', '')}".lower() for name, data in domain_candidates.items()}
+    choices = {
+        name: f"{name} {data.get('description', '')} {' '.join(data.get('stages', {}).values())} {data.get('causes', '')}".lower()
+        for name, data in domain_candidates.items()}
     results = process.extract(symptoms.lower(), choices, limit=3)
-    
+
     if not results or results[0][1] < SYMPTOM_CONFIDENCE_THRESHOLD_WEAK:
         return None, 0, "Could not find a strong match for the specified symptoms.", "Not applicable"
 
@@ -180,10 +191,9 @@ def predict_from_symptoms(symptoms, domain, database):
 
     other_possibilities = [f"{name} ({score}%)" for name, score, _ in results[1:] if score > 50]
     best_match_disease['other_possibilities'] = other_possibilities
-    
-    wiki_summary = get_wikipedia_summary(best_match_disease['name'])
-    
-    predicted_stage = "Uncertain (Possible Match)" if primary_confidence < SYMPTOM_CONFIDENCE_THRESHOLD_STRONG else "Inferred from Symptoms"
-        
-    return best_match_disease, primary_confidence, wiki_summary, predicted_stage
 
+    wiki_summary = get_wikipedia_summary(best_match_disease['name'])
+
+    predicted_stage = "Uncertain (Possible Match)" if primary_confidence < SYMPTOM_CONFIDENCE_THRESHOLD_STRONG else "Inferred from Symptoms"
+
+    return best_match_disease, primary_confidence, wiki_summary, predicted_stage
