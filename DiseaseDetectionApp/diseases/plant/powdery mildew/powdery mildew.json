@@ -1,0 +1,14 @@
+{
+  "domain": "plant",
+  "name": "Powdery Mildew",
+  "description": "A common fungal disease that affects a wide variety of plants, identified by its characteristic white, powdery spots on leaves and stems. It hinders photosynthesis, causing stress and potentially reducing plant vigor and crop yields.",
+  "image_url": "diseases/plant/powdery_mildew/images/powdery_mildew.jpg",
+  "stages": {
+    "initial_infection": "Begins as small, white to grayish, circular powdery spots on the upper surface of leaves or on stems. These spots are often sparse and can be easily overlooked.",
+    "advanced_infection": "The fungal spots enlarge and merge, eventually covering entire leaves, stems, and sometimes buds or fruit. Affected leaves may turn yellow, become distorted, dry out, and drop prematurely, weakening the plant."
+  },
+  "causes": "Caused by various species of fungi in the order Erysiphales. Unlike many other fungi, these spores do not require water to germinate and are spread by wind. The disease thrives in conditions with high humidity at night and warm, dry days.",
+  "risk_factors": "Crowded plantings with poor air circulation, shady locations, high humidity, and moderate temperatures (20-30°C) create an ideal environment for the fungus to grow and spread.",
+  "preventive_measures": "Choose resistant plant varieties. Ensure good air circulation by providing adequate spacing between plants. Plant in sunny areas. Water the soil directly and avoid wetting the foliage. Avoid excessive nitrogen fertilizer.",
+  "solution": "For mild cases, remove and destroy infected leaves. Sprays made from neem oil, potassium bicarbonate, or a diluted milk solution can be effective organic treatments. For severe infections, horticultural oils and commercial fungicides can be applied according to the product's instructions. Early detection is key for effective control."
+}

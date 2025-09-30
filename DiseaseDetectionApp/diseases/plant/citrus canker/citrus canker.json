@@ -1,0 +1,14 @@
+{
+  "domain": "plant",
+  "name": "Citrus Canker",
+  "description": "A contagious bacterial infection affecting citrus trees, caused by Xanthomonas citri. It produces characteristic raised, corky lesions on fruit, leaves, and stems, severely impacting fruit quality and marketability.",
+  "image_url": "diseases/plant/citrus_canker/images/citrus_canker.jpg",
+  "stages": {
+    "initial_infection": "Appears as small, slightly raised, blister-like spots on leaves and fruit. On leaves, these spots are often surrounded by a distinct, oily-looking yellow halo.",
+    "advanced_infection": "The lesions grow larger, becoming brown, raised, and corky with a rough, crater-like texture, as seen in the image. The yellow halo may disappear. The infection can lead to premature leaf and fruit drop and dieback of twigs."
+  },
+  "causes": "Caused by the bacterium Xanthomonas citri. It spreads through wind-driven rain, overhead irrigation, and contaminated gardening tools, clothing, or equipment. The bacteria enter the plant through natural pores (stomata) or wounds, especially those created by the citrus leafminer insect.",
+  "risk_factors": "Warm, wet, and windy weather conditions create the perfect storm for infection and spread. High humidity and rainfall are major contributors. Young, new growth is the most susceptible to infection.",
+  "preventive_measures": "Plant certified disease-free trees. Use windbreaks to protect groves from wind-driven rain. Control citrus leafminer populations to reduce wounds. Sanitize all pruning tools between trees. Applying protective copper-based bactericide sprays before the rainy season can help protect new growth.",
+  "solution": "There is no cure for Citrus Canker once a tree is infected; management focuses on preventing its spread. Prune and destroy infected branches during dry weather to reduce bacterial load. Regularly apply copper-based sprays to protect healthy tissue. In many commercial growing regions, infected trees are legally required to be removed and destroyed to protect nearby groves."
+}

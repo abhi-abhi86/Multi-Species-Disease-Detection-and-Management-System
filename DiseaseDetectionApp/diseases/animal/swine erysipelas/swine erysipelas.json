@@ -1,0 +1,14 @@
+{
+  "domain": "Animal",
+  "name": "Swine Erysipelas",
+  "description": "An infectious bacterial disease primarily affecting pigs, commonly known as 'Diamond Skin Disease' due to its characteristic skin lesions. It can cause sudden death, fever, arthritis, and heart problems, leading to economic losses in swine production.",
+  "image_url": "diseases/animal/swine_erysipelas/images/diamond_skin_disease.jpg",
+  "stages": {
+    "Acute": "Characterized by a sudden high fever, lethargy, and loss of appetite. Within 2-3 days, pathognomonic raised, diamond-shaped, red to purple skin lesions appear on the back and sides.",
+    "Chronic": "Develops in animals that survive the acute phase without adequate treatment. The bacteria localize in the joints, causing painful arthritis and persistent lameness, or in the heart valves, leading to endocarditis and potential heart failure."
+  },
+  "causes": "Caused by the bacterium Erysipelothrix rhusiopathiae. The bacteria can survive for long periods in the environment (soil, water) and are spread through contact with the feces or oronasal secretions of infected or carrier pigs.",
+  "risk_factors": "Unvaccinated herds are at the highest risk. Other factors include poor sanitation, contaminated pens, sudden changes in feed or weather, and general stress on the animals.",
+  "preventive_measures": "Vaccination is the most effective method of prevention and control. Maintaining strict hygiene in pens, implementing all-in/all-out systems, and good biosecurity to prevent the introduction of carrier animals are also crucial.",
+  "solution": "As a bacterial disease, it is treatable with antibiotics, with penicillin being highly effective. Treatment should be initiated as early as possible. Supportive care, including providing a comfortable environment and easy access to food and water, aids recovery."
+}

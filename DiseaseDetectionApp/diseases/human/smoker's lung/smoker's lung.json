@@ -1,0 +1,14 @@
+{
+  "domain": "human",
+  "name": "Smoker's Lung",
+  "description": "A general term describing the appearance of lungs severely damaged by long-term inhalation of tobacco smoke. It is not a single disease, but a manifestation of multiple conditions like COPD (emphysema, chronic bronchitis) and lung cancer.",
+  "image_url": "diseases/human/smokers_lung/images/smokers_lung.jpg",
+  "stages": {
+    "early_to_moderate_damage": "Characterized by chronic inflammation of the airways, increased mucus production ('smoker's cough'), and the gradual destruction of the lung's cleaning mechanisms (cilia). Lung function begins to decline, but symptoms may be mild.",
+    "severe_damage": "Represents extensive and largely irreversible damage. This includes widespread emphysema (destruction of air sacs), severe chronic bronchitis, fibrosis (scarring), and often the presence of cancerous tumors. Results in extreme shortness of breath, chronic coughing, and a severely reduced quality of life."
+  },
+  "causes": "The primary cause is long-term exposure to the thousands of toxic chemicals and carcinogens found in tobacco smoke. These substances paralyze and destroy cilia, inflame airways, damage air sacs, and trigger mutations in cells that can lead to cancer.",
+  "risk_factors": "The most significant risk factor is the duration and intensity of smoking (measured in 'pack-years'). Starting smoking at a young age, heavy exposure to secondhand smoke, and a genetic predisposition to respiratory diseases also increase the risk.",
+  "preventive_measures": "The most effective preventive measure is to never start smoking. For those who smoke, quitting is the best way to halt the progression of damage and reduce the risk of developing associated diseases. Avoiding exposure to secondhand smoke is also crucial.",
+  "solution": "The damage is often permanent and irreversible, so the 'solution' focuses on management and preventing further harm. The first and most critical step is smoking cessation. Medical treatment is aimed at managing the underlying conditions, such as using bronchodilators and steroids for COPD, oxygen therapy for low blood oxygen, and surgery, chemotherapy, or radiation for lung cancer. Pulmonary rehabilitation can also help improve quality of life."
+}
