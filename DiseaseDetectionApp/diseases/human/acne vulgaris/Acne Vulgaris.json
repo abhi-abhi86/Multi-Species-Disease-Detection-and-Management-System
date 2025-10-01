@@ -2,7 +2,7 @@
   "domain": "human",
   "name": "Acne Vulgaris",
   "description": "A chronic inflammatory skin condition that occurs when hair follicles become clogged with oil and dead skin cells. It is characterized by lesions like pimples, blackheads, whiteheads, and deeper lumps (cysts or nodules), primarily on the face, neck, chest, back, and shoulders.",
-  "image_url": "diseases/human/acne_vulgaris/images/acne.jpg",
+  "image_url": "diseases/human/acne vulgaris/images/Acne Vulgaris.png",
   "stages": {
     "mild": "Characterized mainly by comedones (blackheads and whiteheads) with a few scattered papules and pustules (inflamed pimples).",
     "moderate_to_severe": "Involves a greater number of inflamed papules and pustules. Deeper, painful nodules and cysts may be present, as suggested in the image, which carries a much higher risk of causing permanent scarring."
