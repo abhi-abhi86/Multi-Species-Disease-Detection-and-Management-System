@@ -2,7 +2,7 @@
   "domain": "Animal",
   "name": "Swine Erysipelas",
   "description": "An infectious bacterial disease primarily affecting pigs, commonly known as 'Diamond Skin Disease' due to its characteristic skin lesions. It can cause sudden death, fever, arthritis, and heart problems, leading to economic losses in swine production.",
-  "image_url": "diseases/animal/swine_erysipelas/images/diamond_skin_disease.jpg",
+  "image_url": "diseases/animal/swine erysipelas/images/swine erysipelas.jpg",
   "stages": {
     "Acute": "Characterized by a sudden high fever, lethargy, and loss of appetite. Within 2-3 days, pathognomonic raised, diamond-shaped, red to purple skin lesions appear on the back and sides.",
     "Chronic": "Develops in animals that survive the acute phase without adequate treatment. The bacteria localize in the joints, causing painful arthritis and persistent lameness, or in the heart valves, leading to endocarditis and potential heart failure."
