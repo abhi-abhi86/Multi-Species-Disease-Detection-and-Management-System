@@ -10,8 +10,8 @@ This project is made possible by the contributions of the following individuals:
 
 | Contributor | Commits | Contribution % |
 |-------------|---------|----------------|
-| ABHISHEK M G | 1 | 50.0% |
-| copilot-swe-agent[bot] | 1 | 50.0% |
+| ABHISHEK M G | 1 | 94.0% |
+| copilot-swe-agent[bot] | 1 | 6.0% |
 
 **Total Commits:** 2
 
