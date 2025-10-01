@@ -2,7 +2,7 @@
   "domain": "plant",
   "name": "Powdery Mildew",
   "description": "A common fungal disease that affects a wide variety of plants, identified by its characteristic white, powdery spots on leaves and stems. It hinders photosynthesis, causing stress and potentially reducing plant vigor and crop yields.",
-  "image_url": "diseases/plant/powdery_mildew/images/powdery_mildew.jpg",
+  "image_url": "diseases/plant/powdery mildew/images/powdery mildew.jpg",
   "stages": {
     "initial_infection": "Begins as small, white to grayish, circular powdery spots on the upper surface of leaves or on stems. These spots are often sparse and can be easily overlooked.",
     "advanced_infection": "The fungal spots enlarge and merge, eventually covering entire leaves, stems, and sometimes buds or fruit. Affected leaves may turn yellow, become distorted, dry out, and drop prematurely, weakening the plant."
