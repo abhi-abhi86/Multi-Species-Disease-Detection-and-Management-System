@@ -4,6 +4,19 @@ This project is a desktop application developed in Python that uses a pre-traine
 Description
 The application provides a user-friendly interface built with PyQt6 where users can either upload an image of an affected specimen or describe its symptoms. The system then uses an AI model (MobileNetV2) for image-based analysis or a keyword-matching algorithm for symptom-based analysis to provide a potential diagnosis, detailed information from a local database, and a summary from Wikipedia.
 
+## Contributors
+
+This project is made possible by the contributions of the following individuals:
+
+| Contributor | Commits | Contribution % |
+|-------------|---------|----------------|
+| ABHISHEK M G | 1 | 50.0% |
+| copilot-swe-agent[bot] | 1 | 50.0% |
+
+**Total Commits:** 2
+
+We appreciate all contributions to this project! 🎉
+
 Features
 Multi-Domain Diagnosis: Supports separate tabs for Plants, Humans, and Animals.
 
