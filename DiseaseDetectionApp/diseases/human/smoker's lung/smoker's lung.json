@@ -2,7 +2,7 @@
   "domain": "human",
   "name": "Smoker's Lung",
   "description": "A general term describing the appearance of lungs severely damaged by long-term inhalation of tobacco smoke. It is not a single disease, but a manifestation of multiple conditions like COPD (emphysema, chronic bronchitis) and lung cancer.",
-  "image_url": "diseases/human/smokers_lung/images/smokers_lung.jpg",
+  "image_url": "diseases/human/smoker's lung/images/Smoker's Lung.jpg",
   "stages": {
     "early_to_moderate_damage": "Characterized by chronic inflammation of the airways, increased mucus production ('smoker's cough'), and the gradual destruction of the lung's cleaning mechanisms (cilia). Lung function begins to decline, but symptoms may be mild.",
     "severe_damage": "Represents extensive and largely irreversible damage. This includes widespread emphysema (destruction of air sacs), severe chronic bronchitis, fibrosis (scarring), and often the presence of cancerous tumors. Results in extreme shortness of breath, chronic coughing, and a severely reduced quality of life."
