@@ -1,4 +1,3 @@
-![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=35&pause=1000&color=3BF7FF&center=true&vCenter=true&width=600&lines=Hi%2C+I'm+abhi-abhi86;AI+Enthusiast+%7C+Python+Dev+%7C+ML+Researcher)
 
 # 🦠 AI Multi-Species Disease Detection and Management System
 
@@ -68,7 +67,7 @@ Visual overview of the core project architecture:
 │   ├── disease_model.pt           # (Generated) Trained model.
 │   └── main.py                    # ▶️ App entry point.
 │
-├── train_disease_classifier.py    # 🚂 Train the AI model.
+├── train_disease_classifier.py    # 🚂 Train the AI model.     ##Before running main.py, you must first run train_disease_classifier.py
 ├── predict_disease.py             # ✅ Command-line prediction script.
 ├── requirements.txt               # 📦 Python dependencies.
 └── README.md                      # 📖 You're here!
@@ -162,4 +161,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-> _Crafted with ❤️ by [abhi-abhi86](https://github.com/abhi-abhi86) — AI Enthusiast, Python Developer, ML Researcher._
+>  [abhi-abhi86](https://github.com/abhi-abhi86) 
