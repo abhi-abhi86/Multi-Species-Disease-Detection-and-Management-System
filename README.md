@@ -1,131 +1,165 @@
-AI Multi-Species Disease Detection and Management System
-This project is a desktop application developed in Python that uses a pre-trained machine learning model to assist in the detection and management of diseases across different species (plants, humans, and animals).
+![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=35&pause=1000&color=3BF7FF&center=true&vCenter=true&width=600&lines=Hi%2C+I'm+abhi-abhi86;AI+Enthusiast+%7C+Python+Dev+%7C+ML+Researcher)
 
-Description
-The application provides a user-friendly interface built with PyQt6 where users can either upload an image of an affected specimen or describe its symptoms. The system then uses an AI model (MobileNetV2) for image-based analysis or a keyword-matching algorithm for symptom-based analysis to provide a potential diagnosis, detailed information from a local database, and a summary from Wikipedia.
+# 🦠 AI Multi-Species Disease Detection and Management System
 
-Features
-Multi-Domain Diagnosis: Supports separate tabs for Plants, Humans, and Animals.
+A powerful Python desktop application for **AI-driven disease detection and management**—across **plants, humans, and animals**.  
+Leverage a pre-trained machine learning model to assist with preliminary diagnosis, and empower your research or field work with data-driven insights.
 
-Dual Input Modes: Diagnose diseases using either image uploads (with drag-and-drop) or text-based symptom descriptions.
+---
 
-AI-Powered Image Analysis: Utilizes a pre-trained MobileNetV2 model from PyTorch to identify features in images and match them to known diseases in the database.
+## 🚀 Key Information
 
-Symptom-Based Analysis: A robust keyword-matching algorithm that compares user-input symptoms against the disease database.
+- **Tech Stack:** Python | PyQt6 | PyTorch (MobileNetV2) | ReportLab
+- **Status:** Actively Developed
+- **License:** MIT
 
-Comprehensive Results: Displays diagnosis confidence, disease information, known stages, causes, preventive measures, and recommended solutions.
+---
 
-Wikipedia Integration: Fetches and displays a concise summary from Wikipedia for the diagnosed disease.
+## ✨ Features
 
-Extensible Database: Users can add new disease information to the local JSON database through a dedicated form.
+- **Multi-Domain Diagnosis:** Instantly switch between dedicated tabs for Plants, Humans, and Animals. 🌳🧑‍🤝‍🧑🐅
+- **Dual Input Modes:** Diagnose with either image uploads (drag-and-drop supported) or via text-based symptom descriptions.
+- **AI-Powered Image Analysis:** Uses a trained MobileNetV2 model to match images to known diseases.
+- **Symptom-Based Analysis:** Robust keyword-matching for your symptom entries against our extensive database.
+- **Comprehensive Results:** Detailed diagnosis with confidence levels, stages, causes, prevention, and recommended solutions. 📄
+- **External Data Integration:** Pulls summaries from Wikipedia and the latest research abstracts from NCBI PubMed for a holistic view.
+- **Extensible Database:** Add new disease entries through a user-friendly form.
+- **PDF Report Generation:** Save or share professional PDF reports for any diagnosis.
+- **Location Logging:** Track outbreaks by logging diagnosis locations—viewable on a map. 🗺️
+- **Simple Chatbot:** Get quick disease info from our database with a built-in chatbot. 🤖
 
-Location Logging: Option to log the geographical location of a diagnosis to help track disease outbreaks.
+---
 
-Simple Chatbot: An informational chatbot to quickly look up disease descriptions from the database.
+## 🗂️ File Structure Diagram
 
-Setup and Installation
-1. Clone the Repository
-git clone [https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System.git](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System.git)
-cd Multi-Species-Disease-Detection-and-Management-System
+Visual overview of the core project architecture:
 
-2. Create a Virtual Environment
-It is highly recommended to use a virtual environment to manage dependencies.
+```
+/Multi-Species-Disease-Detection-and-Management-System
+|
+├── DiseaseDetectionApp/
+│   ├── core/
+│   │   ├── data_handler.py        # 🧠 Loads & saves disease data (JSON).
+│   │   ├── ml_processor.py        # 🤖 AI model loading & image prediction.
+│   │   ├── worker.py              # ⚙️ Async diagnosis processing.
+│   │   ├── wikipedia_integration.py # 🌐 Wikipedia summary fetch.
+│   │   ├── ncbi_integration.py      # 🔬 PubMed research fetch.
+│   │   └── report_generator.py      # 📄 PDF report creation.
+│   │
+│   ├── data/
+│   │   └── disease_database.json  # (Legacy) Fallback database.
+│   │
+│   ├── diseases/                  # ★ Main disease info database.
+│   │   ├── animal/
+│   │   │   └── sarcoptic_mange/
+│   │   │       ├── images/        # 🖼️ Training images.
+│   │   │       └── sarcoptic_mange.json # 📝 Disease info.
+│   │   ├── human/
+│   │   └── plant/
+│   │
+│   ├── ui/
+│   │   ├── main_window.py         # 🖥️ Main UI.
+│   │   ├── add_disease_dialog.py  # ➕ Add new disease form.
+│   │   ├── chatbot_dialog.py      # 💬 Chatbot UI.
+│   │   └── ... (other dialogs)
+│   │
+│   ├── dataset/                   # (Generated) Training images.
+│   ├── class_to_name.json         # (Generated) Label mapping.
+│   ├── disease_model.pt           # (Generated) Trained model.
+│   └── main.py                    # ▶️ App entry point.
+│
+├── train_disease_classifier.py    # 🚂 Train the AI model.
+├── predict_disease.py             # ✅ Command-line prediction script.
+├── requirements.txt               # 📦 Python dependencies.
+└── README.md                      # 📖 You're here!
+```
 
-# For Windows
-python -m venv venv
-venv\Scripts\activate
+---
 
-# For macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
+## 🧭 How It Works: Process Flow
 
-3. Install Dependencies
-Install all the required Python packages using the requirements.txt file.
+1. **Initialization:**  
+   - Launch `main.py` to start the app.  
+   - Loads disease data and the AI model (`disease_model.pt`). Warns if model files are missing.
 
-pip install -r requirements.txt
+2. **User Input:**  
+   - Use the UI to upload an image or enter symptoms.  
+   - Choose the species domain (Plant, Human, Animal) and click "Diagnose".
 
-4. Set Up Google API Credentials (Optional)
-The application can use the Google Custom Search API to fetch images and summaries online. This is optional but enhances functionality.
+3. **Background Processing:**  
+   - Diagnosis runs in a background thread (`worker.py`) for a smooth UI.  
+   - **If image:** AI model predicts the disease.
+   - **If symptoms:** Fuzzy string match finds the closest disease entry.
 
-Create a Google Custom Search Engine (CSE):
+4. **Data Aggregation:**  
+   - Fetches full disease info from the database.  
+   - Calls Wikipedia and PubMed integrations for summaries and research.
 
-Go to the Custom Search Engine control panel.
+5. **Results Display:**  
+   - UI presents all findings: disease info, confidence, Wikipedia, research abstracts.
 
-Create a new search engine. You can enable "Search the entire web".
+6. **Report Generation (Optional):**  
+   - Generate a detailed PDF with all results and images via the "Save Report" feature.
 
-Once created, find your Search engine ID (CX).
+This modular structure ensures that the UI, core logic, and data are all separated, making the system easier to maintain and expand.
 
-Get a Google API Key:
+---
 
-Go to the Google Cloud Console.
+## 🖥️ Installation & Usage
 
-Create a new project or select an existing one.
+1. **Clone the Repository**
+    ```sh
+    git clone https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System.git
+    cd Multi-Species-Disease-Detection-and-Management-System
+    ```
 
-Go to APIs & Services > Credentials.
+2. **Create a Virtual Environment**
+    - **Windows:**
+      ```sh
+      python -m venv venv
+      venv\Scripts\activate
+      ```
+    - **macOS/Linux:**
+      ```sh
+      python3 -m venv venv
+      source venv/bin/activate
+      ```
 
-Click Create Credentials > API key.
+3. **Install Dependencies**
+    ```sh
+    pip install -r requirements.txt
+    ```
 
-Important: Restrict your API key to only be used for the "Custom Search API".
+4. **[Optional] Set Up Google API Credentials**
+    - For enhanced Wikipedia/online lookup.  
+    - [Instructions here](https://console.cloud.google.com/) (see original file for details).
 
-Set Environment Variables:
-You need to set the API Key and CSE ID as environment variables so the application can access them securely.
-
-Windows (Command Prompt):
-
-setx GOOGLE_API_KEY "YOUR_API_KEY"
-setx GOOGLE_CSE_ID "YOUR_CSE_ID"
-
-(You may need to restart your terminal for these to take effect).
-
-Windows (PowerShell):
-
-$env:GOOGLE_API_KEY="YOUR_API_KEY"
-$env:GOOGLE_CSE_ID="YOUR_CSE_ID"
-
-macOS/Linux:
-
-export GOOGLE_API_KEY="YOUR_API_KEY"
-export GOOGLE_CSE_ID="YOUR_CSE_ID"
-
-(Add these lines to your ~/.bashrc, ~/.zshrc, or shell configuration file to make them permanent).
-
-5. Prepare the Image Dataset
-The AI model needs to be trained on a dataset of images. The training script expects the images to be organized in the following structure:
-
-Multi-Species-Disease-Detection-and-Management-System/
-└── DiseaseDetectionApp/
-    └── dataset/
+5. **Prepare the Image Dataset**
+    - Organize training images in `DiseaseDetectionApp/dataset/` as:
+      ```
+      dataset/
         ├── disease_one/
-        │   ├── image001.jpg
-        │   └── image002.png
-        ├── disease_two/
-        │   ├── image003.jpg
-        │   └── image004.jpeg
-        └── ...
+        │   ├── img1.jpg
+        └── disease_two/
+            ├── img2.jpg
+      ```
 
-I have created the dataset directory and moved the existing images into it for you. You can add more images to these folders or create new folders for other diseases. The folder names should be lowercase and use underscores instead of spaces (e.g., rose_black_spot).
+6. **Train the AI Model**
+    ```sh
+    python DiseaseDetectionApp/train_disease_classifier.py
+    ```
 
-6. Train the AI Model
-Before running the main application, you must train the model on your dataset.
+7. **Run the Application**
+    ```sh
+    python DiseaseDetectionApp/main.py
+    ```
 
-python DiseaseDetectionApp/train_disease_classifier.py
+---
 
-This script will:
+## 📄 License
 
-Read the images from the DiseaseDetectionApp/dataset directory.
+This project is licensed under the [MIT License](LICENSE).
 
-Train the MobileNetV2 model.
+---
 
-Create two essential files in the DiseaseDetectionApp directory:
-
-disease_model.pt: The trained model weights.
-
-class_to_name.json: A mapping of model output to disease names.
-
-Usage
-After you have successfully trained the model, you can run the main application.
-
-python DiseaseDetectionApp/main.py
-
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
+> _Crafted with ❤️ by [abhi-abhi86](https://github.com/abhi-abhi86) — AI Enthusiast, Python Developer, ML Researcher._
