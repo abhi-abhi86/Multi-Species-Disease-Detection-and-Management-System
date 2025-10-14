@@ -1,6 +1,5 @@
 {
   "domain": "human",
-  "name": "Aids",
   "description": "A virus that attacks the body's immune system, specifically the CD4 cells (T cells), which help the immune system fight off infections. If left untreated, HIV can lead to the disease called Acquired Immunodeficiency Syndrome (AIDS).",
   "image_url": "diseases/human/hiv/images/HIV.png",
   "stages": {
