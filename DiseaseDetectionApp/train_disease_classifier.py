@@ -85,8 +85,13 @@ def train_model():
 
     print("\n--- Starting AI Model Training ---")
 
-    # 2. Set up the device (use GPU if available, otherwise CPU).
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # 2. Set up the device (use MPS GPU if available on macOS, otherwise CUDA GPU, otherwise CPU).
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
     print(f"Training will be performed on: {device.type.upper()}")
 
     # 3. Define data transformations and create data loaders.
