@@ -53,7 +53,7 @@ Below is a comprehensive list of all Python packages required to run the applica
 
 ### Core Dependencies
 ```
-python>=3.8.0
+python>=3.11.9
 pip>=21.0.0
 setuptools>=58.0.0
 wheel>=0.37.0
