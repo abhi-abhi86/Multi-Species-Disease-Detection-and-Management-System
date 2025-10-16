@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt6.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMessageBox
 
 # --- Path Fix ---
 # This adds the project's root directory (the one containing the 'DiseaseDetectionApp' folder)

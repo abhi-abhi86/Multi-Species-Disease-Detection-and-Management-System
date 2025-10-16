@@ -1,5 +1,5 @@
 # DiseaseDetectionApp/core/worker.py
-from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal
 from core.ml_processor import predict_from_symptoms
 from core.ncbi_integration import get_pubmed_summary
 

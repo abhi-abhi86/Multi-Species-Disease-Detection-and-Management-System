@@ -1,6 +1,6 @@
 # DiseaseDetectionApp/ui/map_dialog.py
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton
-from PyQt6.QtCore import QObject, QThread, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton
+from PyQt5.QtCore import QObject, QThread, pyqtSignal
 
 class GeocoderWorker(QObject):
     """Worker to geocode locations in the background."""

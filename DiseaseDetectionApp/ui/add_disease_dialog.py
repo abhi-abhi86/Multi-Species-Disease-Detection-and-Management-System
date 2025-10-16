@@ -1,5 +1,5 @@
 # DiseaseDetectionApp/ui/add_disease_dialog.py
-from PyQt6.QtWidgets import (
+from PyQt5.QtWidgets import (
     QDialog, QFormLayout, QComboBox, QLineEdit, QTextEdit, QDialogButtonBox,
     QVBoxLayout
 )

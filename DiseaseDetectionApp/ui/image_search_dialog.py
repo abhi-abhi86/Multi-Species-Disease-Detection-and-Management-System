@@ -1,10 +1,10 @@
 # DiseaseDetectionApp/ui/image_search_dialog.py
 import requests
-from PyQt6.QtWidgets import (
+from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QPushButton, QLineEdit, QHBoxLayout
 )
-from PyQt6.QtGui import QPixmap, QCursor
-from PyQt6.QtCore import Qt, QObject, QThread, pyqtSignal
+from PyQt5.QtGui import QPixmap, QCursor
+from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
 
 from core.google_search import search_google_images
 

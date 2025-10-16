@@ -1,6 +1,6 @@
 # DiseaseDetectionApp/ui/chatbot_dialog.py
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QLineEdit, QPushButton
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, QObject
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QLineEdit, QPushButton
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QObject
 import re
 
 # Try to import fuzzywuzzy, but allow the chatbot to function without it.

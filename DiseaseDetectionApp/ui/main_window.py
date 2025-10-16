@@ -3,14 +3,15 @@ import os
 import re
 import sys
 import traceback
-from PyQt6.QtWidgets import (
+from PyQt5.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
     QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar,
     QLineEdit, QStatusBar, QDialog, QHBoxLayout, QGraphicsOpacityEffect,
     QFormLayout, QComboBox
 )
-from PyQt6.QtGui import QPixmap, QAction, QFont, QCursor, QMovie
-from PyQt6.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings
+from PyQt5.QtGui import QPixmap, QFont, QCursor, QMovie
+from PyQt5.QtWidgets import QAction
+from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings
 
 # --- Import local modules ---
 from .add_disease_dialog import AddNewDiseaseDialog
@@ -94,9 +95,11 @@ class AnimatedButton(QPushButton):
             f'  background-color: {color};'
             f'  color: white;'
             f'  border: none;'
-            f'  padding: 10px;'
-            f'  border-radius: 5px;'
+            f'  padding: 12px 20px;'
+            f'  border-radius: 8px;'
             f'  font-weight: bold;'
+            f'  font-family: Arial, sans-serif;'
+            f'  font-size: 14px;'
             f'}}'
         )
 
@@ -146,9 +149,9 @@ class CustomDropLabel(QLabel):
         self.setAcceptDrops(True)
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
-        self.setFont(QFont("Arial", 11, QFont.Weight.Bold))
-        self.base_style = "border: 2px dashed #007bff; background-color: #f8f9fa; border-radius: 10px; color: #007bff;"
-        self.hover_style = "border: 2px solid #0056b3; background-color: #e9ecef; border-radius: 10px; color: #0056b3;"
+        self.setFont(QFont("Arial", 12, QFont.Weight.Bold))
+        self.base_style = "border: 2px dashed #3498db; background-color: #ecf0f1; border-radius: 15px; color: #2c3e50; padding: 20px;"
+        self.hover_style = "border: 2px solid #2980b9; background-color: #d5dbdb; border-radius: 15px; color: #1c2833; padding: 20px;"
         self.setStyleSheet(self.base_style)
         self.setMinimumHeight(180)
 
@@ -227,23 +230,34 @@ class MainWindow(QMainWindow):
     def apply_theme(self, theme):
         if theme == "Dark":
             self.setStyleSheet(
-                'QMainWindow { background-color: #232629; color: #eee; }'
-                'QGroupBox { font-size: 14px; font-weight: bold; border: 1px solid #444; border-radius: 8px; margin-top: 10px; color: #eee;}'
-                'QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 10px; background-color: #232629;}'
-                'QLabel, QLineEdit, QTextEdit { color: #eee; }'
+                'QMainWindow { background-color: #2c3e50; color: #ecf0f1; font-family: Arial, sans-serif; }'
+                'QGroupBox { font-size: 16px; font-weight: bold; border: 2px solid #34495e; border-radius: 12px; margin-top: 15px; padding: 10px; color: #ecf0f1; background-color: #34495e; }'
+                'QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 5px 15px; background-color: #34495e; color: #ecf0f1; border-radius: 8px; }'
+                'QLabel, QLineEdit, QTextEdit { color: #ecf0f1; font-family: Arial, sans-serif; }'
+                'QPushButton { font-family: Arial, sans-serif; }'
+                'QTabWidget::pane { border: 1px solid #34495e; background-color: #2c3e50; }'
+                'QTabBar::tab { background-color: #34495e; color: #ecf0f1; padding: 10px; border-radius: 8px 8px 0 0; margin-right: 2px; font-family: Arial, sans-serif; }'
+                'QTabBar::tab:selected { background-color: #3498db; color: #ffffff; }'
+                'QTabBar::tab:hover { background-color: #2980b9; }'
             )
         else:
             self.setStyleSheet(
-                'QMainWindow { background-color: #fdfdff; }'
-                'QGroupBox { font-size: 14px; font-weight: bold; border: 1px solid #d3d3d3; border-radius: 8px; margin-top: 10px;}'
-                'QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 10px; background-color: #fdfdff;}'
+                'QMainWindow { background-color: #ecf0f1; color: #2c3e50; font-family: Arial, sans-serif; }'
+                'QGroupBox { font-size: 16px; font-weight: bold; border: 2px solid #bdc3c7; border-radius: 12px; margin-top: 15px; padding: 10px; color: #2c3e50; background-color: #ffffff; }'
+                'QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 5px 15px; background-color: #3498db; color: #ffffff; border-radius: 8px; }'
+                'QLabel, QLineEdit, QTextEdit { color: #2c3e50; font-family: Arial, sans-serif; }'
+                'QPushButton { font-family: Arial, sans-serif; }'
+                'QTabWidget::pane { border: 1px solid #bdc3c7; background-color: #ecf0f1; }'
+                'QTabBar::tab { background-color: #bdc3c7; color: #2c3e50; padding: 10px; border-radius: 8px 8px 0 0; margin-right: 2px; font-family: Arial, sans-serif; }'
+                'QTabBar::tab:selected { background-color: #3498db; color: #ffffff; }'
+                'QTabBar::tab:hover { background-color: #2980b9; color: #ffffff; }'
             )
 
     def create_domain_tab(self, domain_name):
         main_widget = QWidget()
         main_layout = QVBoxLayout(main_widget)
-        main_layout.setContentsMargins(15, 15, 15, 15)
-        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setSpacing(20)
         input_group = QGroupBox("1. Provide Input")
         input_layout = QGridLayout(input_group)
         image_label = CustomDropLabel()
@@ -269,14 +283,15 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(cancel_btn)
         button_layout.addStretch()
         button_layout.addWidget(spinner)
-        input_layout.addWidget(image_label, 0, 0, 3, 1)
-        input_layout.addWidget(upload_btn, 3, 0)
-        input_layout.addWidget(preview_meta, 4, 0)
+        input_layout.addWidget(image_label, 0, 0, 4, 1)
+        input_layout.addWidget(upload_btn, 4, 0)
+        input_layout.addWidget(preview_meta, 5, 0)
         input_layout.addWidget(QLabel("Symptoms:"), 0, 1)
         input_layout.addWidget(symptom_input, 1, 1, 1, 2)
         input_layout.addWidget(QLabel("Location:"), 2, 1)
         input_layout.addWidget(location_input, 2, 2)
         input_layout.addWidget(button_container, 3, 1, 1, 2)
+        input_layout.setRowStretch(6, 1)  # Add stretch to make layout more spacious
         main_layout.addWidget(input_group)
         result_group = QGroupBox("2. Diagnosis Result")
         result_layout = QGridLayout(result_group)
@@ -285,10 +300,11 @@ class MainWindow(QMainWindow):
         result_group.setVisible(False)
         reference_image_label = QLabel("Reference image will appear here.")
         reference_image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        reference_image_label.setFixedSize(250, 250)
-        reference_image_label.setStyleSheet("border: 1px solid #ccc; border-radius: 5px; background-color: #f8f9fa;")
+        reference_image_label.setFixedSize(300, 300)
+        reference_image_label.setStyleSheet("border: 2px solid #bdc3c7; border-radius: 10px; background-color: #ffffff; padding: 5px;")
         result_display = QTextEdit()
         result_display.setReadOnly(True)
+        result_display.setStyleSheet("border: 2px solid #bdc3c7; border-radius: 10px; background-color: #ffffff; padding: 10px; font-family: Arial, sans-serif; font-size: 14px;")
         pdf_button = AnimatedButton("Save Report as PDF")
         pdf_button.setEnabled(False)
         result_layout.addWidget(reference_image_label, 0, 0)
@@ -440,14 +456,14 @@ class MainWindow(QMainWindow):
                               'image_path': self.current_image_paths[domain]}
         stages_str = "\n".join([f"  • <b>{k}:</b> {v}" for k, v in result.get("stages", {}).items()])
         output_html = (
-            f"<h3 style='font-family: Arial; font-size: 16px;'>Diagnosis: {result.get('name', 'N/A')}</h3>"
-            f"<p><b>Confidence Score:</b> <span style='color:#28a745; font-weight:bold;'>{confidence:.1f}%</span></p>"
-            f"<p><b>Predicted Stage:</b> {predicted_stage}</p>"
-            f"<p><b>Description:</b><br>{result.get('description', 'N/A')}</p>"
-            f"<p><b>Wikipedia Summary:</b><br>{wiki_summary}</p>"
-            f"<p><b>Known Stages:</b><br>{stages_str if stages_str else 'N/A'}</p>"
-            f"<p><b style='color:#17a2b8;'>Solution/Cure:</b><br><span style='color:#17a2b8;'>{result.get('solution', 'N/A')}</span></p>"
-            f"<p><b>Recent Research (PubMed):</b><br>{pubmed_summary}</p>"
+            f"<h2 style='font-family: Arial, sans-serif; font-size: 18px; color: #2c3e50; margin-bottom: 10px;'>Diagnosis: {result.get('name', 'N/A')}</h2>"
+            f"<p style='font-size: 14px;'><b>Confidence Score:</b> <span style='color:#27ae60; font-weight:bold; font-size: 16px;'>{confidence:.1f}%</span></p>"
+            f"<p style='font-size: 14px;'><b>Predicted Stage:</b> <span style='color:#3498db;'>{predicted_stage}</span></p>"
+            f"<p style='font-size: 14px;'><b>Description:</b><br><span style='color:#34495e;'>{result.get('description', 'N/A')}</span></p>"
+            f"<p style='font-size: 14px;'><b>Wikipedia Summary:</b><br><span style='color:#34495e;'>{wiki_summary if wiki_summary else 'No summary available.'}</span></p>"
+            f"<p style='font-size: 14px;'><b>Known Stages:</b><br><span style='color:#34495e;'>{stages_str if stages_str else 'No stages information available.'}</span></p>"
+            f"<p style='font-size: 14px;'><b style='color:#e74c3c;'>Solution/Cure:</b><br><span style='color:#e74c3c; font-weight: bold;'>{result.get('solution', 'No solution available.')}</span></p>"
+            f"<p style='font-size: 14px;'><b>Recent Research (PubMed):</b><br><span style='color:#34495e;'>{pubmed_summary if pubmed_summary else 'No recent research available.'}</span></p>"
         )
         tab.result_display.setHtml(output_html)
         tab.pdf_button.setEnabled(True)
@@ -459,10 +475,13 @@ class MainWindow(QMainWindow):
                 tab.reference_image_label.setPixmap(
                     pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
                                   Qt.TransformationMode.SmoothTransformation))
+                tab.reference_image_label.setStyleSheet("border: 2px solid #27ae60; border-radius: 10px; background-color: #ffffff; padding: 5px;")
             else:
-                tab.reference_image_label.setText(f"Image not found:\n{relative_image_path}")
+                tab.reference_image_label.setText(f"Reference image not found:\n{relative_image_path}\nPlease check the database.")
+                tab.reference_image_label.setStyleSheet("border: 2px solid #e74c3c; border-radius: 10px; background-color: #f8d7da; color: #721c24; padding: 5px;")
         else:
-            tab.reference_image_label.setText("No reference image\nin database.")
+            tab.reference_image_label.setText("No reference image available in database.")
+            tab.reference_image_label.setStyleSheet("border: 2px solid #bdc3c7; border-radius: 10px; background-color: #ecf0f1; color: #7f8c8d; padding: 5px;")
         self.animate_result_fade_in(tab)
         location = tab.location_input.text().strip()
         if location:
