@@ -388,7 +388,7 @@ Common issues and solutions:
 
 | Problem | Solution |
 |---------|----------|
-| App fails to start | Check Python version (3.8+ required) and ensure all dependencies are installed |
+| App fails to start | Check Python version (3.11+ required) and ensure all dependencies are installed |
 | Model loading error | Verify that you've run the training script first and model files exist |
 | Slow image processing | Enable GPU acceleration in settings if available |
 | Connection errors | Check internet connection for Wikipedia/PubMed features or enable offline mode |
