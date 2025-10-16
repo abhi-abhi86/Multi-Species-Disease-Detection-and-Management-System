@@ -110,21 +110,30 @@ class MLProcessor:
                 }
                 return uncertain_result, primary_confidence * 100, "N/A", "Uncertain"
 
-            # --- FIXED LOGIC V2 ---
+            # --- FIXED LOGIC V3 ---
             # Find the correct disease in the database using a more robust matching strategy.
             best_match_disease = None
             predicted_name_lower = predicted_class_name.lower()
 
-            # 1. First, try for an exact match (most reliable)
+            # 1. First, try for an exact match by internal_id (most reliable)
             for disease_data in database:
                 if disease_data.get("domain", "").lower() == domain.lower():
-                    db_name = disease_data.get("name", "")
-                    sanitized_db_name = re.sub(r'[\s/\\:*?"<>|]+', '_', db_name).lower()
-                    if sanitized_db_name == predicted_name_lower:
+                    db_internal_id = disease_data.get("internal_id", "")
+                    if db_internal_id.lower() == predicted_name_lower:
                         best_match_disease = disease_data
                         break
 
-            # 2. If no exact match, try a 'contains' match as a fallback
+            # 2. If no internal_id match, try for an exact match by name
+            if not best_match_disease:
+                for disease_data in database:
+                    if disease_data.get("domain", "").lower() == domain.lower():
+                        db_name = disease_data.get("name", "")
+                        sanitized_db_name = re.sub(r'[\s/\\:*?"<>|]+', '_', db_name).lower()
+                        if sanitized_db_name == predicted_name_lower:
+                            best_match_disease = disease_data
+                            break
+
+            # 3. If no exact match, try a 'contains' match as a fallback
             if not best_match_disease:
                 print(f"No exact match for '{predicted_name_lower}'. Trying a contains-match fallback.")
                 for disease_data in database:
@@ -144,10 +153,43 @@ class MLProcessor:
                 return best_match_disease, primary_confidence * 100, wiki_summary, "Detected from Image"
             else:
                 # This fallback will now only be reached if both matching strategies fail.
+                # First, check if the prediction matches a disease in a different domain
+                predicted_clean = predicted_class_name.replace('_', ' ')
+                for other_domain in ["Plant", "Human", "Animal"]:
+                    if other_domain.lower() != domain.lower():
+                        for disease_data in database:
+                            if disease_data.get("domain", "").lower() == other_domain.lower():
+                                db_name = disease_data.get("name", "")
+                                sanitized_db_name = re.sub(r'[\s/\\:*?"<>|]+', '_', db_name).lower()
+                                if sanitized_db_name == predicted_class_name.lower():
+                                    suggestion_msg = f"This image appears to be of a {other_domain.lower()} disease. Please switch to the '{other_domain}' tab for accurate diagnosis."
+                                    return {
+                                        'name': f"Wrong Domain - {predicted_clean.title()}",
+                                        'description': suggestion_msg,
+                                        'solution': f"Switch to the {other_domain} tab and try again.",
+                                        'stages': {},
+                                        'causes': '',
+                                        'risk_factors': '',
+                                        'preventive_measures': '',
+                                        'image_url': disease_data.get('image_url', '')
+                                    }, primary_confidence * 100, "", f"Suggested: Switch to {other_domain} Tab"
+                # Try fuzzy matching for partial matches within the current domain
+                print(f"No exact match for '{predicted_class_name}'. Attempting fuzzy matching fallback.")
+                from fuzzywuzzy import process
+                disease_names = [d.get("name", "") for d in database if d.get("domain", "").lower() == domain.lower()]
+                if disease_names:
+                    best_match, score = process.extractOne(predicted_clean, disease_names)
+                    if score >= 60:  # Threshold for fuzzy match
+                        print(f"Fuzzy match found: '{predicted_class_name}' -> '{best_match}' (score: {score})")
+                        for disease_data in database:
+                            if disease_data.get("domain", "").lower() == domain.lower() and disease_data.get("name", "") == best_match:
+                                wiki_summary = get_wikipedia_summary(disease_data['name'])
+                                return disease_data, primary_confidence * 100, wiki_summary, "Detected from Image (Fuzzy Match)"
+                # If fuzzy match fails, attempt web search
                 print(
                     f"AI prediction '{predicted_class_name}' not in local DB for domain '{domain}'. Attempting web search...")
-                google_summary = search_google_for_summary(predicted_class_name.replace('_', ' '))
-                wiki_summary = get_wikipedia_summary(predicted_class_name.replace('_', ' '))
+                google_summary = search_google_for_summary(predicted_clean)
+                wiki_summary = get_wikipedia_summary(predicted_clean)
 
                 if google_summary and "Could not perform search" not in google_summary:
                     web_result = {

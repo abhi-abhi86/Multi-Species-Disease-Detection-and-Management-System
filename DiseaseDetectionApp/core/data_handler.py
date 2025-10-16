@@ -34,10 +34,10 @@ def load_database():
                                 if disease_name and disease_name.lower() not in loaded_disease_names:
                                     # --- NEW: Create a robust internal ID from the folder structure ---
                                     # This ID will match the AI model's class prediction exactly.
-                                    # e.g., .../diseases/animal/sarcoptic_mange/images -> sarcoptic_mange
-                                    if 'images' in root:
-                                        class_folder_name = os.path.basename(os.path.dirname(root))
-                                        disease_info['internal_id'] = class_folder_name
+                                    # e.g., .../diseases/plant/Areca nut/ -> areca_nut
+                                    folder_name = os.path.basename(root)
+                                    safe_internal_id = re.sub(r'[\s/\\:*?"<>|]+', '_', folder_name).lower()
+                                    disease_info['internal_id'] = safe_internal_id
                                     # --- END NEW ---
 
                                     database.append(disease_info)

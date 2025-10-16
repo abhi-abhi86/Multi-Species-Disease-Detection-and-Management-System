@@ -468,6 +468,7 @@ class MainWindow(QMainWindow):
         tab.result_display.setHtml(output_html)
         tab.pdf_button.setEnabled(True)
         relative_image_path = result.get('image_url')
+        image_displayed = False
         if relative_image_path:
             full_image_path = os.path.join(self.base_app_dir, relative_image_path)
             if os.path.exists(full_image_path):
@@ -476,12 +477,68 @@ class MainWindow(QMainWindow):
                     pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
                                   Qt.TransformationMode.SmoothTransformation))
                 tab.reference_image_label.setStyleSheet("border: 2px solid #27ae60; border-radius: 10px; background-color: #ffffff; padding: 5px;")
+                image_displayed = True
             else:
-                tab.reference_image_label.setText(f"Reference image not found:\n{relative_image_path}\nPlease check the database.")
-                tab.reference_image_label.setStyleSheet("border: 2px solid #e74c3c; border-radius: 10px; background-color: #f8d7da; color: #721c24; padding: 5px;")
+                # Try to find a similar image in the same folder
+                image_dir = os.path.dirname(full_image_path)
+                if os.path.exists(image_dir):
+                    image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+                    if image_files:
+                        # Pick the first available image
+                        fallback_image_path = os.path.join(image_dir, image_files[0])
+                        pixmap = QPixmap(fallback_image_path)
+                        tab.reference_image_label.setPixmap(
+                            pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
+                                          Qt.TransformationMode.SmoothTransformation))
+                        tab.reference_image_label.setStyleSheet("border: 2px solid #f39c12; border-radius: 10px; background-color: #fff3cd; padding: 5px;")
+                        # Update the result to reflect the fallback
+                        result['image_url'] = os.path.relpath(fallback_image_path, self.base_app_dir).replace('\\', '/')
+                        image_displayed = True
+                    else:
+                        # No images in folder, use uploaded image if available
+                        uploaded_image = self.current_image_paths.get(domain)
+                        if uploaded_image and os.path.exists(uploaded_image):
+                            pixmap = QPixmap(uploaded_image)
+                            tab.reference_image_label.setPixmap(
+                                pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
+                                              Qt.TransformationMode.SmoothTransformation))
+                            tab.reference_image_label.setStyleSheet("border: 2px solid #3498db; border-radius: 10px; background-color: #d4e6f1; padding: 5px;")
+                            # Update the result to use uploaded image for report
+                            result['image_url'] = os.path.relpath(uploaded_image, self.base_app_dir).replace('\\', '/')
+                            image_displayed = True
+                        else:
+                            tab.reference_image_label.setText(f"No reference images found in:\n{image_dir}\nPlease check the database.")
+                            tab.reference_image_label.setStyleSheet("border: 2px solid #e74c3c; border-radius: 10px; background-color: #f8d7da; color: #721c24; padding: 5px;")
+                else:
+                    # Directory doesn't exist, use uploaded image
+                    uploaded_image = self.current_image_paths.get(domain)
+                    if uploaded_image and os.path.exists(uploaded_image):
+                        pixmap = QPixmap(uploaded_image)
+                        tab.reference_image_label.setPixmap(
+                            pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
+                                          Qt.TransformationMode.SmoothTransformation))
+                        tab.reference_image_label.setStyleSheet("border: 2px solid #3498db; border-radius: 10px; background-color: #d4e6f1; padding: 5px;")
+                        # Update the result to use uploaded image for report
+                        result['image_url'] = os.path.relpath(uploaded_image, self.base_app_dir).replace('\\', '/')
+                        image_displayed = True
+                    else:
+                        tab.reference_image_label.setText(f"Reference image not found:\n{relative_image_path}\nPlease check the database.")
+                        tab.reference_image_label.setStyleSheet("border: 2px solid #e74c3c; border-radius: 10px; background-color: #f8d7da; color: #721c24; padding: 5px;")
         else:
-            tab.reference_image_label.setText("No reference image available in database.")
-            tab.reference_image_label.setStyleSheet("border: 2px solid #bdc3c7; border-radius: 10px; background-color: #ecf0f1; color: #7f8c8d; padding: 5px;")
+            # No image_url in result, use uploaded image
+            uploaded_image = self.current_image_paths.get(domain)
+            if uploaded_image and os.path.exists(uploaded_image):
+                pixmap = QPixmap(uploaded_image)
+                tab.reference_image_label.setPixmap(
+                    pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
+                                  Qt.TransformationMode.SmoothTransformation))
+                tab.reference_image_label.setStyleSheet("border: 2px solid #3498db; border-radius: 10px; background-color: #d4e6f1; padding: 5px;")
+                # Update the result to use uploaded image for report
+                result['image_url'] = os.path.relpath(uploaded_image, self.base_app_dir).replace('\\', '/')
+                image_displayed = True
+            else:
+                tab.reference_image_label.setText("No reference image available in database.")
+                tab.reference_image_label.setStyleSheet("border: 2px solid #bdc3c7; border-radius: 10px; background-color: #ecf0f1; color: #7f8c8d; padding: 5px;")
         self.animate_result_fade_in(tab)
         location = tab.location_input.text().strip()
         if location:
