@@ -1,4 +1,24 @@
 # DiseaseDetectionApp/core/worker.py
+# DiseaseDetectionApp/core/worker.py
+# --- WATERMARK PROTECTION ---
+# This code is protected by watermark. Made by "abhi-abhi86"
+# Unauthorized copying, modification, or redistribution is prohibited.
+# If this watermark is removed, the application will not function.
+
+WATERMARK_AUTHOR = "abhi-abhi86"
+WATERMARK_CHECK = True
+
+def check_watermark():
+    """Check if watermark is intact. Application will fail if removed."""
+    if not WATERMARK_CHECK or WATERMARK_AUTHOR != "abhi-abhi86":
+        print("ERROR: Watermark protection violated. Application cannot start.")
+        print("Made by: abhi-abhi86")
+        import sys
+        sys.exit(1)
+
+# Execute watermark check
+check_watermark()
+
 from PyQt5.QtCore import QObject, pyqtSignal
 from core.ml_processor import predict_from_symptoms
 from core.ncbi_integration import get_pubmed_summary
