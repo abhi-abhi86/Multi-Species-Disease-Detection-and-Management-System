@@ -19,6 +19,15 @@ def check_watermark():
 # Execute watermark check
 check_watermark()
 
+import os
+import sys
+
+# --- Path Fix ---
+# This adds the project's root directory to the Python path.
+# This is crucial for making the absolute imports work correctly
+# when you run this script directly.
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from PyQt5.QtCore import QObject, pyqtSignal
 from core.ml_processor import predict_from_symptoms
 from core.ncbi_integration import get_pubmed_summary
