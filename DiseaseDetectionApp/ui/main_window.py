@@ -42,6 +42,7 @@ from ..core.data_handler import load_database, save_disease
 from ..core.ml_processor import MLProcessor
 from ..core.worker import DiagnosisWorker
 from ..core.report_generator import generate_pdf_report
+from ..core.html_report_generator import generate_html_report
 
 
 def show_exception_box(exc_type, exc_value, exc_tb):
@@ -329,6 +330,8 @@ class MainWindow(QMainWindow):
         result_display.setStyleSheet("border: 2px solid #bdc3c7; border-radius: 10px; background-color: #ffffff; padding: 10px; font-family: Arial, sans-serif; font-size: 14px;")
         pdf_button = AnimatedButton("Save Report as PDF")
         pdf_button.setEnabled(False)
+        html_button = AnimatedButton("Save Report as HTML")
+        html_button.setEnabled(False)
         chatbot_button = AnimatedButton("Chatbot Query")
         chatbot_button.setEnabled(False)
         image_search_button = AnimatedButton("Search Images Online")
@@ -336,8 +339,9 @@ class MainWindow(QMainWindow):
         result_layout.addWidget(reference_image_label, 0, 0)
         result_layout.addWidget(result_display, 0, 1)
         result_layout.addWidget(pdf_button, 1, 0)
-        result_layout.addWidget(chatbot_button, 1, 1)
-        result_layout.addWidget(image_search_button, 2, 0, 1, 2)
+        result_layout.addWidget(html_button, 1, 1)
+        result_layout.addWidget(chatbot_button, 2, 0)
+        result_layout.addWidget(image_search_button, 2, 1)
         result_layout.setColumnStretch(1, 1)
         main_layout.addWidget(result_group)
         main_widget.image_label = image_label
@@ -348,6 +352,7 @@ class MainWindow(QMainWindow):
         main_widget.diagnose_btn = diagnose_btn
         main_widget.cancel_btn = cancel_btn
         main_widget.pdf_button = pdf_button
+        main_widget.html_button = html_button
         main_widget.chatbot_button = chatbot_button
         main_widget.image_search_button = image_search_button
         main_widget.spinner = spinner
@@ -359,6 +364,7 @@ class MainWindow(QMainWindow):
         diagnose_btn.clicked.connect(lambda: self.run_diagnosis(domain_name))
         cancel_btn.clicked.connect(lambda: self.cancel_diagnosis(domain_name))
         pdf_button.clicked.connect(lambda: self.save_report_as_pdf(domain_name))
+        html_button.clicked.connect(lambda: self.save_report_as_html(domain_name))
         chatbot_button.clicked.connect(lambda: self.open_chatbot_with_query(domain_name))
         image_search_button.clicked.connect(lambda: self.open_image_search_with_disease(domain_name))
         return main_widget
@@ -384,6 +390,7 @@ class MainWindow(QMainWindow):
         tab.symptom_input.clear()
         tab.result_display.clear()
         tab.pdf_button.setEnabled(False)
+        tab.html_button.setEnabled(False)
         tab.result_group.setVisible(False)
         tab.diagnosis_data = None
         tab.reference_image_label.setText("Reference image will appear here.")
@@ -445,6 +452,7 @@ class MainWindow(QMainWindow):
         tab.diagnose_btn.setVisible(False)
         tab.cancel_btn.setVisible(True)
         tab.pdf_button.setEnabled(False)
+        tab.html_button.setEnabled(False)
         tab.spinner.start()
         tab.result_display.setPlainText("Starting diagnosis...")
         tab.result_group.setVisible(False)
@@ -499,6 +507,7 @@ class MainWindow(QMainWindow):
         )
         tab.result_display.setHtml(output_html)
         tab.pdf_button.setEnabled(True)
+        tab.html_button.setEnabled(True)
         tab.chatbot_button.setEnabled(True)
         tab.image_search_button.setEnabled(True)
         relative_image_path = result.get('image_url')
@@ -637,6 +646,24 @@ class MainWindow(QMainWindow):
                 QMessageBox.information(self, "Success", f"Report saved successfully to:\n{file_path}")
             else:
                 QMessageBox.critical(self, "PDF Error", f"Failed to generate PDF report:\n{error_msg}")
+
+    def save_report_as_html(self, domain):
+        tab = self.domain_tabs[domain]
+        if not tab.diagnosis_data:
+            QMessageBox.warning(self, "No Data", "Please run a diagnosis before saving a report.")
+            return
+        html_folder = self.settings.value("pdf_folder", os.path.expanduser("~"))  # Reuse PDF folder setting
+        safe_name = re.sub(r'[\s/:*?"<>|]+', '_', tab.diagnosis_data.get('name', '')).lower()
+        default_path = os.path.join(html_folder, f"{safe_name}_report.html")
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save HTML Report", default_path, "HTML Files (*.html)")
+        if file_path:
+            success, error_msg = generate_html_report(tab.diagnosis_data, file_path)
+            if success:
+                QMessageBox.information(self, "Success", f"Report saved successfully to:\n{file_path}")
+                # Optionally open in browser
+                webbrowser.open(f"file://{file_path}")
+            else:
+                QMessageBox.critical(self, "HTML Error", f"Failed to generate HTML report:\n{error_msg}")
 
     def open_chatbot(self):
         dialog = ChatbotDialog(self.database, self)
