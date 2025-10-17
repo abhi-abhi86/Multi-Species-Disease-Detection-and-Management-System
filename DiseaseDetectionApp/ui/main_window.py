@@ -43,6 +43,14 @@ from ..core.ml_processor import MLProcessor
 from ..core.worker import DiagnosisWorker
 from ..core.report_generator import generate_pdf_report
 from ..core.html_report_generator import generate_html_report
+from ..core.llm_integrator import LLMIntegrator
+
+# Try to import LLM integrator for enhanced features
+try:
+    llm_available = True
+except ImportError:
+    llm_available = False
+    LLMIntegrator = None
 
 
 def show_exception_box(exc_type, exc_value, exc_tb):
@@ -207,6 +215,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 1000, 800)
         self.database = load_database()
         self.ml_processor = MLProcessor()
+        self.llm_integrator = LLMIntegrator() if llm_available else None
         self.current_image_paths = {"Plant": None, "Human": None, "Animal": None}
         self.diagnosis_locations = []
         self.worker_thread = None
@@ -332,7 +341,7 @@ class MainWindow(QMainWindow):
         pdf_button.setEnabled(False)
         html_button = AnimatedButton("Save Report as HTML")
         html_button.setEnabled(False)
-        chatbot_button = AnimatedButton("Chatbot Query")
+        chatbot_button = AnimatedButton("AI Chatbot Query")
         chatbot_button.setEnabled(False)
         image_search_button = AnimatedButton("Search Images Online")
         image_search_button.setEnabled(False)
@@ -666,7 +675,7 @@ class MainWindow(QMainWindow):
                 QMessageBox.critical(self, "HTML Error", f"Failed to generate HTML report:\n{error_msg}")
 
     def open_chatbot(self):
-        dialog = ChatbotDialog(self.database, self)
+        dialog = ChatbotDialog(self.database, self, llm_integrator=self.llm_integrator)
         dialog.exec()
         dialog.deleteLater()
 
@@ -676,7 +685,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "No Diagnosis", "Please run a diagnosis first to query the chatbot.")
             return
         disease_name = tab.diagnosis_data.get('name', '')
-        dialog = ChatbotDialog(self.database, self, initial_query=disease_name)
+        dialog = ChatbotDialog(self.database, self, initial_query=disease_name, llm_integrator=self.llm_integrator)
         dialog.exec()
         dialog.deleteLater()
 

@@ -7,12 +7,12 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 
 ## 🚀 Key Information
 
-- **Tech Stack:** Python | PyQt6 | PyTorch (MobileNetV2) | ReportLab
-- **Status:** Actively Developed
+- **Tech Stack:** Python | PyQt6 | PyTorch (MobileNetV2) | ReportLab | OpenAI GPT
+- **Status:** Actively Developed with Futuristic Enhancements
 - **License:** MIT
-- **Latest Version:** 1.2.0
+- **Latest Version:** 1.3.0 (Futuristic Edition)
 - **Python Compatibility:** 3.8+
-- **Last Updated:** 2025-10-16
+- **Last Updated:** 2025-10-17
 
 ---
 
@@ -27,11 +27,14 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 - **Extensible Knowledge Base:** Easily add new disease entries through an intuitive user interface.
 - **PDF Report Generation:** Create and share professional PDF reports for any diagnosis with a single click.
 - **Geographic Tracking:** Map-based visualization of disease occurrences to monitor outbreaks and patterns. 🗺️
-- **Interactive Chatbot:** Get instant information about diseases from our database through a conversational interface. 🤖
+- **AI-Powered Interactive Chatbot:** Get instant information about diseases from our database through a conversational interface enhanced with GPT integration for smarter responses. 🤖
 - **Cross-Platform Compatibility:** Works on Windows, macOS, and Linux systems.
 - **Offline Mode:** Core functionality works without internet connectivity.
 - **Batch Processing:** Analyze multiple images simultaneously for research projects.
 - **Export Capabilities:** Save results in multiple formats (PDF, CSV, JSON).
+- **🆕 Futuristic LLM Integration:** Enhanced chatbot with OpenAI GPT for personalized explanations and treatment plans.
+- **🆕 Context-Aware Responses:** Memory-enabled conversations for better user experience.
+- **🆕 Advanced AI Explanations:** Natural language generation for diagnosis breakdowns.
 
 ---
 
@@ -43,7 +46,8 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 - **Storage:** 500MB for application, 2GB+ for full database and models
 - **GPU:** Optional - CUDA-compatible NVIDIA GPU for faster processing
 - **Display:** 1366x768 or higher resolution
-- **Internet:** Required for external data integration (Wikipedia/PubMed)
+- **Internet:** Required for external data integration (Wikipedia/PubMed) and LLM features
+- **API Keys:** OpenAI API key for LLM features (optional, falls back to database search)
 
 ---
 
@@ -124,6 +128,14 @@ black>=21.5b0
 flake8>=3.9.0
 isort>=5.9.0
 mypy>=0.910
+```
+
+### Futuristic AI Enhancements
+```
+openai>=0.27.0
+wikipedia>=1.4.0
+fuzzywuzzy>=0.18.0
+python-Levenshtein>=0.12.2
 ```
 
 You can install all required dependencies using:
@@ -310,7 +322,15 @@ The text-based diagnosis uses a hybrid approach:
     python -m nltk.downloader punkt wordnet stopwords
     ```
 
-5. **Prepare the Dataset & Train the Model**
+5. **Optional: Setup OpenAI API for Futuristic AI Features**
+    - Get an OpenAI API key from https://platform.openai.com/
+    - Set the environment variable:
+      ```sh
+      export OPENAI_API_KEY="your-api-key-here"
+      ```
+    - This enables AI-enhanced chatbot responses, personalized treatment plans, and natural language explanations
+
+6. **Prepare the Dataset & Train the Model**
     - Organize your training images in the appropriate disease folders
     - Run the training script:
       ```sh
@@ -318,7 +338,7 @@ The text-based diagnosis uses a hybrid approach:
       ```
     - Note: This step is crucial before running the main application
 
-6. **Launch the Application**
+7. **Launch the Application**
     ```sh
     python DiseaseDetectionApp/main.py
     ```
@@ -493,6 +513,9 @@ A: No, but a CUDA-compatible GPU will significantly improve performance, especia
 
 **Q: How do I resolve dependency conflicts?**  
 A: Try creating a fresh virtual environment and installing dependencies in the order listed in the requirements.txt file.
+
+**Q: What are the new LLM features?**  
+A: The futuristic edition includes OpenAI GPT integration for enhanced chatbot responses, personalized treatment plans, and natural language explanations of diagnoses.
 
 ---
 
