@@ -6,6 +6,7 @@ import re
 # --- Constants ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DISEASES_DIR = os.path.join(BASE_DIR, '..', 'diseases')
+USER_ADDED_DISEASES_DIR = os.path.join(BASE_DIR, '..', 'user_added_diseases')
 LEGACY_DB_PATH = os.path.join(BASE_DIR, '..', 'data', 'disease_database.json')
 
 
@@ -17,6 +18,7 @@ def load_database():
     database = []
     loaded_disease_names = set()
 
+    # Load from diseases/
     print(f"Searching for disease files in: {DISEASES_DIR}")
     if not os.path.exists(DISEASES_DIR):
         print(f"Warning: The directory '{DISEASES_DIR}' does not exist.")
@@ -39,6 +41,36 @@ def load_database():
                                     safe_internal_id = re.sub(r'[\s/\\:*?"<>|]+', '_', folder_name).lower()
                                     disease_info['internal_id'] = safe_internal_id
                                     # --- END NEW ---
+
+                                    database.append(disease_info)
+                                    loaded_disease_names.add(disease_name.lower())
+                                else:
+                                    print(f"Warning: Skipped duplicate or empty-named disease in '{file_path}'.")
+                            else:
+                                print(f"Warning: Skipped invalid JSON file: {file_path}")
+                    except (json.JSONDecodeError, Exception) as e:
+                        print(f"Error reading or parsing '{file_path}': {e}")
+
+    # Load from user_added_diseases/
+    print(f"Searching for user-added disease files in: {USER_ADDED_DISEASES_DIR}")
+    if not os.path.exists(USER_ADDED_DISEASES_DIR):
+        print(f"Info: The directory '{USER_ADDED_DISEASES_DIR}' does not exist yet.")
+    else:
+        for root, _, files in os.walk(USER_ADDED_DISEASES_DIR):
+            for file in files:
+                if file.endswith('.json') and not file.startswith('_'):
+                    file_path = os.path.join(root, file)
+                    try:
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            disease_info = json.load(f)
+
+                            if isinstance(disease_info, dict) and 'name' in disease_info:
+                                disease_name = disease_info['name'].strip()
+                                if disease_name and disease_name.lower() not in loaded_disease_names:
+                                    # Create internal_id for user-added diseases
+                                    folder_name = os.path.basename(root)
+                                    safe_internal_id = re.sub(r'[\s/\\:*?"<>|]+', '_', folder_name).lower()
+                                    disease_info['internal_id'] = safe_internal_id
 
                                     database.append(disease_info)
                                     loaded_disease_names.add(disease_name.lower())
@@ -75,7 +107,8 @@ def load_database():
 def save_disease(disease_data):
     """
     Saves a new disease as a clean, separate JSON file in the appropriate
-    domain subdirectory inside 'diseases/'.
+    domain subdirectory inside 'user_added_diseases/'.
+    Also copies the image to the images/ subfolder if provided.
     """
     try:
         domain = disease_data.get("domain", "general").strip().lower()
@@ -87,10 +120,28 @@ def save_disease(disease_data):
         if not safe_filename or safe_filename == ".json":
             raise ValueError("Disease name is invalid or empty, cannot create filename.")
 
-        domain_dir = os.path.join(DISEASES_DIR, domain)
+        domain_dir = os.path.join(USER_ADDED_DISEASES_DIR, domain)
         os.makedirs(domain_dir, exist_ok=True)
 
+        # Create images subfolder
+        images_dir = os.path.join(domain_dir, 'images')
+        os.makedirs(images_dir, exist_ok=True)
+
         file_path = os.path.join(domain_dir, safe_filename)
+
+        # Handle image copying
+        image_url = disease_data.get("image_url")
+        if image_url:
+            # Assume image_url is a full path to the image file
+            if os.path.exists(image_url):
+                import shutil
+                image_filename = os.path.basename(image_url)
+                dest_image_path = os.path.join(images_dir, image_filename)
+                shutil.copy(image_url, dest_image_path)
+                # Update image_url to relative path
+                disease_data["image_url"] = f"user_added_diseases/{domain}/images/{image_filename}"
+            else:
+                print(f"Warning: Image file '{image_url}' not found, skipping copy.")
 
         print(f"Saving new disease to: {file_path}")
         with open(file_path, 'w', encoding='utf-8') as f:

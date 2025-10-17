@@ -18,6 +18,7 @@ def check_watermark():
 # Execute watermark check
 check_watermark()
 
+import csv
 import os
 import re
 import sys
@@ -27,52 +28,55 @@ from PyQt5.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
     QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar,
     QLineEdit, QStatusBar, QDialog, QHBoxLayout, QGraphicsOpacityEffect,
-    QFormLayout, QComboBox
+    QFormLayout, QComboBox, QMenu
 )
 from PyQt5.QtGui import QPixmap, QFont, QCursor, QMovie
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings
 
+# Add the parent directory to the path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 # --- Import local modules ---
 try:
-    from .add_disease_dialog import AddNewDiseaseDialog
+    from ui.add_disease_dialog import AddNewDiseaseDialog
 except ImportError:
     AddNewDiseaseDialog = None
 try:
-    from .chatbot_dialog import ChatbotDialog
+    from ui.chatbot_dialog import ChatbotDialog
 except ImportError:
     ChatbotDialog = None
 try:
-    from .image_search_dialog import ImageSearchDialog
+    from ui.image_search_dialog import ImageSearchDialog
 except ImportError:
     ImageSearchDialog = None
 try:
-    from .map_dialog import MapDialog
+    from ui.map_dialog import MapDialog
 except ImportError:
     MapDialog = None
 try:
-    from ..core.data_handler import load_database, save_disease
+    from core.data_handler import load_database, save_disease
 except ImportError:
     load_database = None
     save_disease = None
 try:
-    from ..core.ml_processor import MLProcessor
+    from core.ml_processor import MLProcessor
 except ImportError:
     MLProcessor = None
 try:
-    from ..core.worker import DiagnosisWorker
+    from core.worker import DiagnosisWorker
 except ImportError:
     DiagnosisWorker = None
 try:
-    from ..core.report_generator import generate_pdf_report
+    from core.report_generator import generate_pdf_report
 except ImportError:
     generate_pdf_report = None
 try:
-    from ..core.html_report_generator import generate_html_report
+    from core.html_report_generator import generate_html_report
 except ImportError:
     generate_html_report = None
 try:
-    from ..core.llm_integrator import LLMIntegrator
+    from core.llm_integrator import LLMIntegrator
 except ImportError:
     LLMIntegrator = None
 
@@ -385,16 +389,26 @@ class MainWindow(QMainWindow):
         pdf_button.setEnabled(False)
         html_button = AnimatedButton("Save Report as HTML")
         html_button.setEnabled(False)
+        csv_button = AnimatedButton("Save Report as CSV")
+        csv_button.setEnabled(False)
         chatbot_button = AnimatedButton("AI Chatbot Query")
         chatbot_button.setEnabled(False)
         image_search_button = AnimatedButton("Search Images Online")
         image_search_button.setEnabled(False)
         result_layout.addWidget(reference_image_label, 0, 0)
         result_layout.addWidget(result_display, 0, 1)
-        result_layout.addWidget(pdf_button, 1, 0)
-        result_layout.addWidget(html_button, 1, 1)
-        result_layout.addWidget(chatbot_button, 2, 0)
-        result_layout.addWidget(image_search_button, 2, 1)
+        # Reports menu button
+        reports_menu_button = AnimatedButton("Reports")
+        reports_menu = QMenu(reports_menu_button)
+        reports_menu.addAction("Save as PDF", lambda: self.save_report_as_pdf(domain_name))
+        reports_menu.addAction("Save as HTML", lambda: self.save_report_as_html(domain_name))
+        reports_menu.addAction("Save as CSV", lambda: self.save_report_as_csv(domain_name))
+        reports_menu.addSeparator()
+        reports_menu.addAction("AI Chatbot Query", lambda: self.open_chatbot_with_query(domain_name))
+        reports_menu.addAction("Search Images Online", lambda: self.open_image_search_with_disease(domain_name))
+        reports_menu_button.setMenu(reports_menu)
+        reports_menu_button.setEnabled(False)
+        result_layout.addWidget(reports_menu_button, 1, 0)
         result_layout.setColumnStretch(1, 1)
         main_layout.addWidget(result_group)
         main_widget.image_label = image_label
@@ -404,10 +418,7 @@ class MainWindow(QMainWindow):
         main_widget.location_input = location_input
         main_widget.diagnose_btn = diagnose_btn
         main_widget.cancel_btn = cancel_btn
-        main_widget.pdf_button = pdf_button
-        main_widget.html_button = html_button
-        main_widget.chatbot_button = chatbot_button
-        main_widget.image_search_button = image_search_button
+        main_widget.reports_menu_button = reports_menu_button
         main_widget.spinner = spinner
         main_widget.diagnosis_data = None
         main_widget.result_group = result_group
@@ -416,10 +427,6 @@ class MainWindow(QMainWindow):
         upload_btn.clicked.connect(lambda: self.upload_image(domain_name))
         diagnose_btn.clicked.connect(lambda: self.run_diagnosis(domain_name))
         cancel_btn.clicked.connect(lambda: self.cancel_diagnosis(domain_name))
-        pdf_button.clicked.connect(lambda: self.save_report_as_pdf(domain_name))
-        html_button.clicked.connect(lambda: self.save_report_as_html(domain_name))
-        chatbot_button.clicked.connect(lambda: self.open_chatbot_with_query(domain_name))
-        image_search_button.clicked.connect(lambda: self.open_image_search_with_disease(domain_name))
         return main_widget
 
     # --- IMAGE PREVIEW & VALIDATION ---
@@ -442,8 +449,7 @@ class MainWindow(QMainWindow):
         self.current_image_paths[domain] = file_path
         tab.symptom_input.clear()
         tab.result_display.clear()
-        tab.pdf_button.setEnabled(False)
-        tab.html_button.setEnabled(False)
+        tab.reports_menu_button.setEnabled(False)
         tab.result_group.setVisible(False)
         tab.diagnosis_data = None
         tab.reference_image_label.setText("Reference image will appear here.")
@@ -504,8 +510,7 @@ class MainWindow(QMainWindow):
         tab.diagnose_btn.setEnabled(False)
         tab.diagnose_btn.setVisible(False)
         tab.cancel_btn.setVisible(True)
-        tab.pdf_button.setEnabled(False)
-        tab.html_button.setEnabled(False)
+        tab.reports_menu_button.setEnabled(False)
         tab.spinner.start()
         tab.result_display.setPlainText("Starting diagnosis...")
         tab.result_group.setVisible(False)
@@ -559,10 +564,7 @@ class MainWindow(QMainWindow):
             f"<p style='font-size: 14px;'><b>Recent Research (PubMed):</b><br><span style='color:#34495e;'>{pubmed_summary if pubmed_summary else 'No recent research available.'}</span></p>"
         )
         tab.result_display.setHtml(output_html)
-        tab.pdf_button.setEnabled(True)
-        tab.html_button.setEnabled(True)
-        tab.chatbot_button.setEnabled(True)
-        tab.image_search_button.setEnabled(True)
+        tab.reports_menu_button.setEnabled(True)
         relative_image_path = result.get('image_url')
         image_displayed = False
         if relative_image_path:
@@ -717,6 +719,41 @@ class MainWindow(QMainWindow):
                 webbrowser.open(f"file://{file_path}")
             else:
                 QMessageBox.critical(self, "HTML Error", f"Failed to generate HTML report:\n{error_msg}")
+
+    def save_report_as_csv(self, domain):
+        tab = self.domain_tabs[domain]
+        if not tab.diagnosis_data:
+            QMessageBox.warning(self, "No Data", "Please run a diagnosis before saving a report.")
+            return
+        csv_folder = self.settings.value("pdf_folder", os.path.expanduser("~"))  # Reuse PDF folder setting
+        safe_name = re.sub(r'[\s/:*?"<>|]+', '_', tab.diagnosis_data.get('name', '')).lower()
+        default_path = os.path.join(csv_folder, f"{safe_name}_report.csv")
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save CSV Report", default_path, "CSV Files (*.csv)")
+        if file_path:
+            try:
+                with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
+                    fieldnames = ['Field', 'Value']
+                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                    writer.writeheader()
+                    data = tab.diagnosis_data
+                    writer.writerow({'Field': 'Disease Name', 'Value': data.get('name', 'N/A')})
+                    writer.writerow({'Field': 'Confidence Score', 'Value': f"{data.get('confidence', 0):.1f}%"})
+                    writer.writerow({'Field': 'Predicted Stage', 'Value': data.get('stage', 'N/A')})
+                    writer.writerow({'Field': 'Description', 'Value': data.get('description', 'N/A')})
+                    writer.writerow({'Field': 'Solution/Cure', 'Value': data.get('solution', 'N/A')})
+                    # Handle stages as a single string
+                    stages = data.get('stages', {})
+                    if stages:
+                        stages_str = '; '.join([f"{k}: {v}" for k, v in stages.items()])
+                        writer.writerow({'Field': 'Known Stages', 'Value': stages_str})
+                    else:
+                        writer.writerow({'Field': 'Known Stages', 'Value': 'No stages information available.'})
+                    writer.writerow({'Field': 'Wikipedia Summary', 'Value': data.get('wiki_summary', 'No summary available.')})
+                    writer.writerow({'Field': 'Recent Research (PubMed)', 'Value': data.get('pubmed_summary', 'No recent research available.')})
+                    writer.writerow({'Field': 'Image Path', 'Value': data.get('image_path', 'N/A')})
+                QMessageBox.information(self, "Success", f"CSV report saved successfully to:\n{file_path}")
+            except Exception as e:
+                QMessageBox.critical(self, "CSV Error", f"Failed to generate CSV report:\n{str(e)}")
 
     def open_chatbot(self):
         dialog = ChatbotDialog(self.database, self, llm_integrator=self.llm_integrator)

@@ -1,16 +1,17 @@
 # DiseaseDetectionApp/ui/add_disease_dialog.py
 from PyQt5.QtWidgets import (
     QDialog, QFormLayout, QComboBox, QLineEdit, QTextEdit, QDialogButtonBox,
-    QVBoxLayout
+    QVBoxLayout, QFileDialog
 )
 import re
+import os
 
 class AddNewDiseaseDialog(QDialog):
     """
     A dialog for adding new disease information to the application's database.
     It saves the data as a new, clean JSON file.
     """
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, prefilled_data=None):
         super().__init__(parent)
         self.setWindowTitle("Add New Disease Information")
         self.setMinimumWidth(500)
@@ -25,16 +26,20 @@ class AddNewDiseaseDialog(QDialog):
 
         self.name_edit = QLineEdit()
         self.desc_edit = QTextEdit()
-        
+
         self.stages_edit = QTextEdit()
-        self.stages_edit.setPlaceholderText("Format: One stage per line, like 'Key: Value'\nExample:\nEarly: Small, irregular spots.\nAdvanced: Lesions enlarge.")
-        
+        self.stages_edit.setPlaceholderText("Format: One stage per line, like 'Key: Value'\nExample:\nAcute: Sudden onset.\nChronic: Long-term.")
+
         self.causes_edit = QTextEdit()
+        self.risk_factors_edit = QTextEdit()
         self.solution_edit = QTextEdit()
         self.preventive_measures_edit = QTextEdit()
-        
+
         self.image_url_edit = QLineEdit()
-        self.image_url_edit.setPlaceholderText("Relative path, e.g., diseases/plant/new_disease_img.jpg")
+        self.image_url_edit.setPlaceholderText("Relative path, e.g., user_added_diseases/plant/new_disease_img.jpg")
+
+        self.browse_button = QDialogButtonBox(QDialogButtonBox.StandardButton.Open)
+        self.browse_button.clicked.connect(self.browse_image)
 
         # --- Add Widgets to Form Layout ---
         form_layout.addRow("Domain:", self.domain_box)
@@ -42,9 +47,11 @@ class AddNewDiseaseDialog(QDialog):
         form_layout.addRow("Description:", self.desc_edit)
         form_layout.addRow("Stages (key: value per line):", self.stages_edit)
         form_layout.addRow("Common Causes:", self.causes_edit)
+        form_layout.addRow("Risk Factors:", self.risk_factors_edit)
         form_layout.addRow("Solution / Cure:", self.solution_edit)
         form_layout.addRow("Preventive Measures:", self.preventive_measures_edit)
         form_layout.addRow("Reference Image Path:", self.image_url_edit)
+        form_layout.addRow("Browse Image:", self.browse_button)
 
         # --- Dialog Buttons ---
         self.button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
@@ -54,6 +61,38 @@ class AddNewDiseaseDialog(QDialog):
         # --- Add Form and Buttons to Main Layout ---
         main_layout.addLayout(form_layout)
         main_layout.addWidget(self.button_box)
+
+        # --- Prefill data if provided ---
+        if prefilled_data:
+            self.prefill_data(prefilled_data)
+
+    def browse_image(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")
+        if file_path:
+            self.image_url_edit.setText(file_path)
+
+    def prefill_data(self, data):
+        if 'domain' in data:
+            index = self.domain_box.findText(data['domain'])
+            if index >= 0:
+                self.domain_box.setCurrentIndex(index)
+        if 'name' in data:
+            self.name_edit.setText(data['name'])
+        if 'description' in data:
+            self.desc_edit.setText(data['description'])
+        if 'stages' in data:
+            stages_text = "\n".join([f"{k}: {v}" for k, v in data['stages'].items()])
+            self.stages_edit.setText(stages_text)
+        if 'causes' in data:
+            self.causes_edit.setText(data['causes'])
+        if 'risk_factors' in data:
+            self.risk_factors_edit.setText(data['risk_factors'])
+        if 'solution' in data:
+            self.solution_edit.setText(data['solution'])
+        if 'preventive_measures' in data:
+            self.preventive_measures_edit.setText(data['preventive_measures'])
+        if 'image_path' in data:
+            self.image_url_edit.setText(data['image_path'])
 
     def get_data(self):
         """
@@ -84,8 +123,22 @@ class AddNewDiseaseDialog(QDialog):
             "description": self.desc_edit.toPlainText().strip(),
             "stages": stages,
             "causes": self.causes_edit.toPlainText().strip(),
+            "risk_factors": self.risk_factors_edit.toPlainText().strip(),
             "solution": self.solution_edit.toPlainText().strip(),
             "preventive_measures": self.preventive_measures_edit.toPlainText().strip(),
             # Standardize to use 'image_url' and handle backslashes for path consistency.
             "image_url": self.image_url_edit.text().strip().replace("\\", "/") or None,
         }
+
+
+if __name__ == "__main__":
+    import sys
+    from PyQt5.QtWidgets import QApplication
+
+    app = QApplication(sys.argv)
+    dialog = AddNewDiseaseDialog()
+    if dialog.exec() == QDialog.DialogCode.Accepted:
+        data = dialog.get_data()
+        print("Disease data:", data)
+        # In standalone mode, we can save directly if needed, but for now just print
+    sys.exit(app.exec())

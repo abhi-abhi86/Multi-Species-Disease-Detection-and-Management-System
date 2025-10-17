@@ -1,0 +1,14 @@
+{
+    "domain": "plant",
+    "name": "Test Disease",
+    "description": "A test disease",
+    "stages": {
+        "Early": "Mild",
+        "Late": "Severe"
+    },
+    "causes": "Test causes",
+    "risk_factors": "Test risks",
+    "solution": "Test solution",
+    "preventive_measures": "Test prevention",
+    "image_url": "user_added_diseases/plant/images/tmpgi_0yfgd.jpg"
+}

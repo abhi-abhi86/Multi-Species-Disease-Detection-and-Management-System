@@ -13,6 +13,7 @@ import re
 # Make paths relative to the script's location.
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DISEASES_DIR = os.path.join(BASE_DIR, 'diseases')  # Source of the images
+USER_ADDED_DISEASES_DIR = os.path.join(BASE_DIR, 'user_added_diseases')  # Additional source
 DATA_DIR = os.path.join(BASE_DIR, 'dataset')  # Temporary directory for training
 MODEL_PATH = os.path.join(BASE_DIR, 'disease_model.pt')
 CLASS_MAP_PATH = os.path.join(BASE_DIR, 'class_to_name.json')
@@ -45,6 +46,7 @@ def prepare_dataset_for_training():
 
     image_count = 0
     class_count = 0
+    # Include diseases/
     for root, _, files in os.walk(DISEASES_DIR):
         if os.path.basename(root) == 'images':
             class_name = os.path.basename(os.path.dirname(root))
@@ -64,6 +66,28 @@ def prepare_dataset_for_training():
                     dest_path = os.path.join(class_dest_dir, file)
                     shutil.copy(source_path, dest_path)
                     image_count += 1
+
+    # Include user_added_diseases/
+    if os.path.exists(USER_ADDED_DISEASES_DIR):
+        for root, _, files in os.walk(USER_ADDED_DISEASES_DIR):
+            if os.path.basename(root) == 'images':
+                class_name = os.path.basename(os.path.dirname(root))
+                safe_class_name = re.sub(r'[\s/\\:*?"<>|]+', '_', class_name).lower()
+
+                if not safe_class_name:
+                    continue
+
+                class_dest_dir = os.path.join(DATA_DIR, safe_class_name)
+                if not os.path.exists(class_dest_dir):
+                    os.makedirs(class_dest_dir)
+                    class_count += 1
+
+                for file in files:
+                    if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+                        source_path = os.path.join(root, file)
+                        dest_path = os.path.join(class_dest_dir, file)
+                        shutil.copy(source_path, dest_path)
+                        image_count += 1
 
     if image_count == 0:
         print("FATAL ERROR: No images found to train. Please check the 'diseases' directory structure.")

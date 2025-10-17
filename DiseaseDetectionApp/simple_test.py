@@ -33,7 +33,8 @@ def test_wikipedia_image(disease_name):
         print(f"  Found image: {img_url}")
         # Try to fetch the image to verify it's accessible
         try:
-            response = requests.head(img_url, timeout=5)
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+            response = requests.head(img_url, headers=headers, timeout=5)
             if response.status_code == 200:
                 print(f"  Image accessible (status: {response.status_code})")
             else:
