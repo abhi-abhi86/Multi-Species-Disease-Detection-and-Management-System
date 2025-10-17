@@ -7,6 +7,11 @@ Pillow==10.1.0
 Machine Learning
 torch==2.1.0
 torchvision==0.16.0
+transformers==4.36.2
+numpy==1.24.3
+matplotlib==3.8.2
+pandas==2.1.4
+scikit-learn==1.3.2
 
 Web Requests and APIs
 requests==2.31.0
@@ -15,6 +20,7 @@ beautifulsoup4==4.12.3
 
 Geocoding for Map Feature
 geopy==2.4.0
+folium==0.15.1
 
 Chatbot Functionality (Added)
 fuzzywuzzy==0.18.0
@@ -22,4 +28,6 @@ python-Levenshtein==0.25.0
 
 PDF Report Generation (Added)
 reportlab==4.1.0
-openai>=0.27.0
+
+LLM Integration (Futuristic Enhancement)
+openai==0.28.1

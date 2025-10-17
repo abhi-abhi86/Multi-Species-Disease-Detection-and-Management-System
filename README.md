@@ -7,10 +7,10 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 
 ## 🚀 Key Information
 
-- **Tech Stack:** Python | PyQt6 | PyTorch (MobileNetV2) | ReportLab | OpenAI GPT
-- **Status:** Actively Developed with Futuristic Enhancements
+- **Tech Stack:** Python | PyQt6 | PyTorch (MobileNetV2) | ReportLab | OpenAI GPT | Transformers
+- **Status:** Actively Developed with Futuristic AI Enhancements
 - **License:** MIT
-- **Latest Version:** 1.3.0 (Futuristic Edition)
+- **Latest Version:** 1.4.0 (Futuristic AI Edition)
 - **Python Compatibility:** 3.8+
 - **Last Updated:** 2025-10-17
 
@@ -32,9 +32,18 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 - **Offline Mode:** Core functionality works without internet connectivity.
 - **Batch Processing:** Analyze multiple images simultaneously for research projects.
 - **Export Capabilities:** Save results in multiple formats (PDF, CSV, JSON).
-- **🆕 Futuristic LLM Integration:** Enhanced chatbot with OpenAI GPT for personalized explanations and treatment plans.
-- **🆕 Context-Aware Responses:** Memory-enabled conversations for better user experience.
-- **🆕 Advanced AI Explanations:** Natural language generation for diagnosis breakdowns.
+
+### 🚀 Futuristic AI Enhancements (Latest Update)
+
+- **🧠 LLM-Powered AI Assistant:** Integrated OpenAI GPT for advanced chatbot responses, personalized treatment plans, and context-aware conversations.
+- **📝 Natural Language Explanations:** AI-generated detailed explanations of diagnoses in patient-friendly language.
+- **🧠 Memory-Enabled Chat:** Conversational memory for follow-up questions and personalized interactions.
+- **📊 Predictive Analytics:** Early warning system for potential disease outbreaks using location data and trends (planned).
+- **☁️ Cloud Integration:** Secure cloud storage for data backup and real-time synchronization (planned).
+- **📰 Real-time News Aggregation:** Automatic collection of latest disease-related news and research updates (planned).
+- **🎤 Voice Input Support:** Speech-to-text for symptom description input (future mobile app feature).
+- **🔬 Advanced ML Models:** Vision Transformer (ViT) support for superior image analysis accuracy (planned).
+- **🔒 Blockchain Security:** Secure data sharing for research collaboration (planned).
 
 ---
 

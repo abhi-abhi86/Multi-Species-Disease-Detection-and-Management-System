@@ -34,16 +34,47 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings
 
 # --- Import local modules ---
-from .add_disease_dialog import AddNewDiseaseDialog
-from .chatbot_dialog import ChatbotDialog
-from .image_search_dialog import ImageSearchDialog
-from .map_dialog import MapDialog
-from ..core.data_handler import load_database, save_disease
-from ..core.ml_processor import MLProcessor
-from ..core.worker import DiagnosisWorker
-from ..core.report_generator import generate_pdf_report
-from ..core.html_report_generator import generate_html_report
-from ..core.llm_integrator import LLMIntegrator
+try:
+    from .add_disease_dialog import AddNewDiseaseDialog
+except ImportError:
+    AddNewDiseaseDialog = None
+try:
+    from .chatbot_dialog import ChatbotDialog
+except ImportError:
+    ChatbotDialog = None
+try:
+    from .image_search_dialog import ImageSearchDialog
+except ImportError:
+    ImageSearchDialog = None
+try:
+    from .map_dialog import MapDialog
+except ImportError:
+    MapDialog = None
+try:
+    from ..core.data_handler import load_database, save_disease
+except ImportError:
+    load_database = None
+    save_disease = None
+try:
+    from ..core.ml_processor import MLProcessor
+except ImportError:
+    MLProcessor = None
+try:
+    from ..core.worker import DiagnosisWorker
+except ImportError:
+    DiagnosisWorker = None
+try:
+    from ..core.report_generator import generate_pdf_report
+except ImportError:
+    generate_pdf_report = None
+try:
+    from ..core.html_report_generator import generate_html_report
+except ImportError:
+    generate_html_report = None
+try:
+    from ..core.llm_integrator import LLMIntegrator
+except ImportError:
+    LLMIntegrator = None
 
 # Try to import LLM integrator for enhanced features
 try:
@@ -51,6 +82,19 @@ try:
 except ImportError:
     llm_available = False
     LLMIntegrator = None
+
+# Check for missing critical dependencies
+missing_deps = []
+if load_database is None:
+    missing_deps.append("data_handler")
+if MLProcessor is None:
+    missing_deps.append("ml_processor")
+if DiagnosisWorker is None:
+    missing_deps.append("worker")
+
+if missing_deps:
+    print(f"Warning: Missing critical dependencies: {', '.join(missing_deps)}")
+    print("Application may not function properly. Please check the core modules.")
 
 
 def show_exception_box(exc_type, exc_value, exc_tb):
