@@ -632,7 +632,7 @@ class MainWindow(QMainWindow):
         default_path = os.path.join(pdf_folder, f"{safe_name}_report.pdf")
         file_path, _ = QFileDialog.getSaveFileName(self, "Save PDF Report", default_path, "PDF Files (*.pdf)")
         if file_path:
-            success, error_msg = generate_pdf_report(file_path, tab.diagnosis_data)
+            success, error_msg = generate_pdf_report(tab.diagnosis_data, file_path)
             if success:
                 QMessageBox.information(self, "Success", f"Report saved successfully to:\n{file_path}")
             else:
