@@ -2,6 +2,7 @@
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QLineEdit, QPushButton
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QObject
 import re
+import wikipedia
 
 # Try to import fuzzywuzzy, but allow the chatbot to function without it.
 try:
@@ -46,9 +47,14 @@ class ChatbotWorker(QObject):
         # `process.extractOne` returns a tuple: (best_match, score)
         best_match, score = process.extractOne(self.message, disease_names)
         
-        # Set a confidence threshold. If the match score is too low, it's likely irrelevant.
+        # Set a confidence threshold. If the match score is too low, try Wikipedia.
         if score < 55:
-            self.response_ready.emit(f"I'm sorry, I couldn't find any information related to '{self.message}' in my database. Please check the spelling or try a different disease.")
+            # Try to get information from Wikipedia
+            wiki_response = self.get_wikipedia_info(self.message)
+            if wiki_response:
+                self.response_ready.emit(wiki_response)
+            else:
+                self.response_ready.emit(f"I'm sorry, I couldn't find any information related to '{self.message}' in my database or on Wikipedia. Please check the spelling or try a different disease.")
             return
 
         # Retrieve the full data for the matched disease.
@@ -67,19 +73,24 @@ class ChatbotWorker(QObject):
         best_match_disease = None
         max_matches = 0
         search_words = set(self.message.split())
-        
+
         for disease in self.database:
             disease_words = set(disease['name'].lower().split())
             matches = len(search_words.intersection(disease_words))
             if matches > max_matches:
                 max_matches = matches
                 best_match_disease = disease
-        
+
         if best_match_disease:
             response = self.get_info_by_intent(best_match_disease)
             self.response_ready.emit(response)
         else:
-            self.response_ready.emit("I couldn't find a clear match in the database. Please be more specific.")
+            # Try Wikipedia if no match in database
+            wiki_response = self.get_wikipedia_info(self.message)
+            if wiki_response:
+                self.response_ready.emit(wiki_response)
+            else:
+                self.response_ready.emit("I couldn't find a clear match in the database or on Wikipedia. Please be more specific.")
 
     def get_info_by_intent(self, disease_data):
         """ Returns a specific piece of information based on keywords in the user's message. """
@@ -100,8 +111,29 @@ class ChatbotWorker(QObject):
             # Default to the general description if no specific intent is found.
             return disease_data.get('description', 'No description available for this disease.')
 
+    def get_wikipedia_info(self, query):
+        """
+        Fetches a summary from Wikipedia for the given query.
+        Returns None if no information is found or an error occurs.
+        """
+        try:
+            summary = wikipedia.summary(query, sentences=3, auto_suggest=True, redirect=True)
+            return f"From Wikipedia: {summary}"
+        except wikipedia.exceptions.PageError:
+            return None
+        except wikipedia.exceptions.DisambiguationError as e:
+            # If ambiguous, try the first option
+            try:
+                first_option = e.options[0]
+                summary = wikipedia.summary(first_option, sentences=3, auto_suggest=False)
+                return f"From Wikipedia (assuming '{first_option}'): {summary}"
+            except Exception:
+                return None
+        except Exception:
+            return None
+
 class ChatbotDialog(QDialog):
-    def __init__(self, database, parent=None):
+    def __init__(self, database, parent=None, initial_query=""):
         super().__init__(parent)
         self.database = database
         self.setWindowTitle("Disease Information Chatbot")
@@ -112,22 +144,27 @@ class ChatbotDialog(QDialog):
         self.chat_history = QTextEdit()
         self.chat_history.setReadOnly(True)
         self.chat_history.setHtml("<p style='color:#0056b3;'><i>Hello! I can look up disease information from the local database. How can I help?</i></p>")
-        
+
         self.user_input = QLineEdit()
         self.user_input.setPlaceholderText("Type your question here and press Enter...")
-        
+
         self.send_button = QPushButton("Send")
 
         self.layout.addWidget(self.chat_history)
         self.layout.addWidget(self.user_input)
         self.layout.addWidget(self.send_button)
-        
+
         # --- Threading ---
         self.worker_thread = None
 
         # --- Connections ---
         self.send_button.clicked.connect(self.handle_user_message)
         self.user_input.returnPressed.connect(self.handle_user_message)
+
+        # Set initial query if provided
+        if initial_query:
+            self.user_input.setText(initial_query)
+            self.handle_user_message()
 
     def handle_user_message(self):
         user_text = self.user_input.text().strip()

@@ -216,15 +216,16 @@ def predict_from_symptoms(symptoms, domain, database):
     if not domain_candidates:
         return None, 0, f"No diseases found for the '{domain}' domain.", "Not applicable"
 
-    choices = {
-        name: f"{name} {data.get('description', '')} {' '.join(data.get('stages', {}).values())} {data.get('causes', '')}".lower()
-        for name, data in domain_candidates.items()}
-    results = process.extract(symptoms.lower(), choices, limit=3)
+    # Create choices as a list of disease names for fuzzy matching
+    disease_names = list(domain_candidates.keys())
+
+    # Extract matches
+    results = process.extract(symptoms.lower(), disease_names, limit=3)
 
     if not results or results[0][1] < SYMPTOM_CONFIDENCE_THRESHOLD_WEAK:
         return None, 0, "Could not find a strong match for the specified symptoms.", "Not applicable"
 
-    best_match_name, primary_confidence, _ = results[0]
+    best_match_name, primary_confidence = results[0]
     best_match_disease = domain_candidates[best_match_name]
     wiki_summary = get_wikipedia_summary(best_match_disease['name'])
     predicted_stage = "Uncertain (Possible Match)" if primary_confidence < SYMPTOM_CONFIDENCE_THRESHOLD_STRONG else "Inferred from Symptoms"

@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import traceback
+import webbrowser
 from PyQt5.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
     QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar,
@@ -288,8 +289,10 @@ class MainWindow(QMainWindow):
         input_layout.addWidget(preview_meta, 5, 0)
         input_layout.addWidget(QLabel("Symptoms:"), 0, 1)
         input_layout.addWidget(symptom_input, 1, 1, 1, 2)
+        symptom_input.setStyleSheet("background-color: #ffffff; color: #2c3e50; border: 1px solid #bdc3c7; border-radius: 5px; padding: 5px;")
         input_layout.addWidget(QLabel("Location:"), 2, 1)
         input_layout.addWidget(location_input, 2, 2)
+        location_input.setStyleSheet("background-color: #ffffff; color: #2c3e50; border: 1px solid #bdc3c7; border-radius: 5px; padding: 5px;")
         input_layout.addWidget(button_container, 3, 1, 1, 2)
         input_layout.setRowStretch(6, 1)  # Add stretch to make layout more spacious
         main_layout.addWidget(input_group)
@@ -307,9 +310,15 @@ class MainWindow(QMainWindow):
         result_display.setStyleSheet("border: 2px solid #bdc3c7; border-radius: 10px; background-color: #ffffff; padding: 10px; font-family: Arial, sans-serif; font-size: 14px;")
         pdf_button = AnimatedButton("Save Report as PDF")
         pdf_button.setEnabled(False)
+        chatbot_button = AnimatedButton("Chatbot Query")
+        chatbot_button.setEnabled(False)
+        image_search_button = AnimatedButton("Search Images Online")
+        image_search_button.setEnabled(False)
         result_layout.addWidget(reference_image_label, 0, 0)
         result_layout.addWidget(result_display, 0, 1)
-        result_layout.addWidget(pdf_button, 1, 0, 1, 2)
+        result_layout.addWidget(pdf_button, 1, 0)
+        result_layout.addWidget(chatbot_button, 1, 1)
+        result_layout.addWidget(image_search_button, 2, 0, 1, 2)
         result_layout.setColumnStretch(1, 1)
         main_layout.addWidget(result_group)
         main_widget.image_label = image_label
@@ -320,6 +329,8 @@ class MainWindow(QMainWindow):
         main_widget.diagnose_btn = diagnose_btn
         main_widget.cancel_btn = cancel_btn
         main_widget.pdf_button = pdf_button
+        main_widget.chatbot_button = chatbot_button
+        main_widget.image_search_button = image_search_button
         main_widget.spinner = spinner
         main_widget.diagnosis_data = None
         main_widget.result_group = result_group
@@ -329,6 +340,8 @@ class MainWindow(QMainWindow):
         diagnose_btn.clicked.connect(lambda: self.run_diagnosis(domain_name))
         cancel_btn.clicked.connect(lambda: self.cancel_diagnosis(domain_name))
         pdf_button.clicked.connect(lambda: self.save_report_as_pdf(domain_name))
+        chatbot_button.clicked.connect(lambda: self.open_chatbot_with_query(domain_name))
+        image_search_button.clicked.connect(lambda: self.open_image_search_with_disease(domain_name))
         return main_widget
 
     # --- IMAGE PREVIEW & VALIDATION ---
@@ -467,6 +480,8 @@ class MainWindow(QMainWindow):
         )
         tab.result_display.setHtml(output_html)
         tab.pdf_button.setEnabled(True)
+        tab.chatbot_button.setEnabled(True)
+        tab.image_search_button.setEnabled(True)
         relative_image_path = result.get('image_url')
         image_displayed = False
         if relative_image_path:
@@ -609,10 +624,31 @@ class MainWindow(QMainWindow):
         dialog.exec()
         dialog.deleteLater()
 
+    def open_chatbot_with_query(self, domain):
+        tab = self.domain_tabs[domain]
+        if not tab.diagnosis_data:
+            QMessageBox.warning(self, "No Diagnosis", "Please run a diagnosis first to query the chatbot.")
+            return
+        disease_name = tab.diagnosis_data.get('name', '')
+        dialog = ChatbotDialog(self.database, self, initial_query=disease_name)
+        dialog.exec()
+        dialog.deleteLater()
+
     def open_image_search_dialog(self):
         dialog = ImageSearchDialog(self.database, self)
         dialog.exec()
         dialog.deleteLater()
+
+    def open_image_search_with_disease(self, domain):
+        tab = self.domain_tabs[domain]
+        if not tab.diagnosis_data:
+            QMessageBox.warning(self, "No Diagnosis", "Please run a diagnosis first to search for images.")
+            return
+        disease_name = tab.diagnosis_data.get('name', '')
+        # Open Google Images search in browser
+        query = f"{disease_name} disease images"
+        url = f"https://www.google.com/search?tbm=isch&q={query.replace(' ', '+')}"
+        webbrowser.open(url)
 
     def open_map_dialog(self):
         dialog = MapDialog(self.diagnosis_locations, self)

@@ -1,9 +1,8 @@
-# TODO: Enable GPU Training for Disease Classifier
+# TODO List for Fixing Chatbot and Adding Output UI Option
 
-## Completed Tasks
-- [x] Modify device selection in train_disease_classifier.py to prioritize MPS (macOS GPU), then CUDA, then CPU.
-
-## Next Steps
-- [ ] Test the training script to verify GPU usage (run `python train_disease_classifier.py` and check if it prints "MPS" or "CUDA").
-- [ ] If MPS is not available, ensure PyTorch version supports MPS (requires PyTorch 1.12+ on macOS with Apple Silicon).
-- [ ] Monitor training performance for speed improvements.
+- [x] Fix chatbot error handling and add initial query support
+- [x] Add "Chatbot Query" button in diagnosis result UI
+- [x] Add "Search Images Online" button in diagnosis result UI (integrated with Google Images in browser)
+- [x] Integrate chatbot with Wikipedia for queries not found in database
+- [x] Test chatbot integration from output UI
+- [x] Test image search integration from output UI

@@ -1,5 +1,6 @@
 # DiseaseDetectionApp/ui/image_search_dialog.py
 import requests
+import wikipedia
 from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QPushButton, QLineEdit, QHBoxLayout
 )
@@ -21,12 +22,14 @@ class ImageFetchWorker(QObject):
 
     def run(self):
         try:
-            # Append "disease" to the query to get more relevant results
-            image_url = search_google_images(self.disease_name + " disease")
-            
+            # First, try to get an image from Wikipedia
+            image_url = self.get_wikipedia_image(self.disease_name)
             if not image_url:
-                self.error.emit(f"No image found online for '{self.disease_name}'.")
-                return
+                # Fallback to Google search if Wikipedia doesn't provide an image
+                image_url = search_google_images(self.disease_name + " disease")
+                if not image_url:
+                    self.error.emit(f"No image found online for '{self.disease_name}'.")
+                    return
 
             # Fetch the image data
             response = requests.get(image_url, timeout=10)
@@ -38,13 +41,36 @@ class ImageFetchWorker(QObject):
         except Exception as e:
             self.error.emit(f"An unexpected error occurred: {e}")
 
+    def get_wikipedia_image(self, disease_name):
+        """
+        Attempts to fetch the first available image URL from the Wikipedia page for the disease.
+        Returns None if no images are found, inaccessible, or an error occurs.
+        Note: Wikipedia images may be blocked by user-agent restrictions, so fallback to Google is important.
+        """
+        try:
+            page = wikipedia.page(disease_name, auto_suggest=False, redirect=True)
+            if page.images:
+                # Return the first image URL that is likely a valid image (not SVG or icon)
+                for img_url in page.images:
+                    if img_url.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                        # Note: Even if accessible via HEAD, GET might fail due to user-agent blocks
+                        # But we try to return it, and let the main fetch handle errors
+                        return img_url
+            return None
+        except wikipedia.exceptions.PageError:
+            return None
+        except wikipedia.exceptions.DisambiguationError:
+            return None
+        except Exception:
+            return None
+
 
 class ImageSearchDialog(QDialog):
     """
     A redesigned dialog that allows users to search for disease images online
     using a more intuitive text input and a dedicated search button.
     """
-    def __init__(self, database, parent=None):
+    def __init__(self, database, parent=None, initial_disease=None):
         super().__init__(parent)
         self.current_pixmap = None
         self.worker_thread = None
@@ -68,7 +94,7 @@ class ImageSearchDialog(QDialog):
         self.search_button.setStyleSheet(
             "padding: 5px 15px; background-color: #4f8cff; color: white; border-radius: 5px;"
         )
-        
+
         search_layout.addWidget(self.search_input)
         search_layout.addWidget(self.search_button)
         # --- End of New Layout ---
@@ -84,6 +110,11 @@ class ImageSearchDialog(QDialog):
         self.layout.addLayout(search_layout) # Add the new search bar layout
         self.layout.addWidget(self.image_label, 1) # The '1' makes the image label expand
         self.layout.addWidget(self.close_button)
+
+        # If initial_disease is provided, set it and start search
+        if initial_disease:
+            self.search_input.setText(initial_disease)
+            self.start_image_search()
 
     def start_image_search(self):
         """
