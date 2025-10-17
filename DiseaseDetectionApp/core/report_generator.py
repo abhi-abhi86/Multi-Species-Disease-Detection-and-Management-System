@@ -108,21 +108,9 @@ def get_domain_logo(domain):
     """
     Returns base64 encoded logo data for the given domain.
     Logos are embedded as base64 strings for simplicity.
+    Currently, no logos are provided to avoid errors.
     """
-    logos = {
-        'human': """
-iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==
-""".strip(),  # Placeholder for human health logo (red cross)
-        'animal': """
-iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==
-""".strip(),  # Placeholder for animal logo (paw print)
-        'plant': """
-iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==
-""".strip(),  # Placeholder for plant logo (leaf)
-    }
-    logo_b64 = logos.get(domain.lower(), None)
-    if logo_b64:
-        return base64.b64decode(logo_b64)
+    # Logos not implemented yet, return None to skip logo addition
     return None
 
 def generate_pdf_report(diagnosis_data, file_path):
@@ -182,13 +170,13 @@ def generate_pdf_report(diagnosis_data, file_path):
 
         def add_section(title, key):
             content = diagnosis_data.get(key, 'Not Available')
-            if content and content.strip() and content != 'Not Available':
+            if content and isinstance(content, str) and content.strip() and content != 'Not Available':
                 story.append(Paragraph(title, header_style))
                 story.append(Paragraph(content.replace('\n', '<br/>'), body_style))
 
         add_section("Detailed Description", "description")
         stages = diagnosis_data.get("stages")
-        if stages:
+        if stages and isinstance(stages, dict):
             story.append(Paragraph("Disease Progression Stages", header_style))
             stages_text = "<br/>".join([f"<b>• {k}:</b> {v}" for k, v in stages.items()])
             story.append(Paragraph(stages_text, body_style))
@@ -202,7 +190,10 @@ def generate_pdf_report(diagnosis_data, file_path):
 
         story.append(Paragraph("Recommended Solution / Cure", header_style))
         solution_text = diagnosis_data.get('solution', 'No specific solution provided in the database.')
-        story.append(Paragraph(solution_text, solution_style))
+        if solution_text and isinstance(solution_text, str):
+            story.append(Paragraph(solution_text, solution_style))
+        else:
+            story.append(Paragraph('No specific solution provided in the database.', solution_style))
         story.append(Spacer(1, 0.2 * inch))
 
         disclaimer_style = ParagraphStyle('disclaimer', parent=styles['Italic'], fontSize=9, alignment=TA_CENTER)
