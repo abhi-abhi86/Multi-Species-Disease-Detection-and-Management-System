@@ -77,17 +77,21 @@ def prepare_dataset_for_training():
                 if not safe_class_name:
                     continue
 
+                # Skip if no valid image files in the directory
+                valid_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+                if not valid_files:
+                    continue
+
                 class_dest_dir = os.path.join(DATA_DIR, safe_class_name)
                 if not os.path.exists(class_dest_dir):
                     os.makedirs(class_dest_dir)
                     class_count += 1
 
-                for file in files:
-                    if file.lower().endswith(('.png', '.jpg', '.jpeg')):
-                        source_path = os.path.join(root, file)
-                        dest_path = os.path.join(class_dest_dir, file)
-                        shutil.copy(source_path, dest_path)
-                        image_count += 1
+                for file in valid_files:
+                    source_path = os.path.join(root, file)
+                    dest_path = os.path.join(class_dest_dir, file)
+                    shutil.copy(source_path, dest_path)
+                    image_count += 1
 
     if image_count == 0:
         print("FATAL ERROR: No images found to train. Please check the 'diseases' directory structure.")
