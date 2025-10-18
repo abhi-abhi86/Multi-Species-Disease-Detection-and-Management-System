@@ -14,7 +14,9 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 - **Python Compatibility:** 3.8+
 - **Last Updated:** 2025-10-17
 
-> 🧠 **Looking for Algorithm Details?** Check out **[ALGORITHMS.md](ALGORITHMS.md)** for comprehensive documentation on MobileNetV2, Transfer Learning, Fuzzy Matching, Adam Optimizer, and all other algorithms used in this system.
+> 🧠 **Looking for Algorithm Details?**  
+> - **Quick Overview:** [ALGORITHMS_QUICK_REFERENCE.md](ALGORITHMS_QUICK_REFERENCE.md) - At-a-glance algorithm summary  
+> - **Complete Guide:** [ALGORITHMS.md](ALGORITHMS.md) - Comprehensive documentation with mathematical formulas and implementation details
 
 ---
 
@@ -437,8 +439,12 @@ The text-based diagnosis uses a hybrid approach:
 
 ### 📘 Detailed Algorithm Documentation
 
-For in-depth information about all algorithms, mathematical foundations, and implementation details, see **[ALGORITHMS.md](ALGORITHMS.md)**. This comprehensive guide covers:
+For information about all algorithms used in this system:
 
+- **[ALGORITHMS_QUICK_REFERENCE.md](ALGORITHMS_QUICK_REFERENCE.md)** - Quick reference guide with tables, benchmarks, and key parameters
+- **[ALGORITHMS.md](ALGORITHMS.md)** - Comprehensive technical documentation with mathematical foundations and implementation details
+
+Topics covered:
 - **Deep Learning:** MobileNetV2 architecture, Transfer Learning, Data Augmentation
 - **NLP:** Fuzzy String Matching (Levenshtein Distance), Text Preprocessing
 - **Optimization:** Adam Optimizer, Cross-Entropy Loss
