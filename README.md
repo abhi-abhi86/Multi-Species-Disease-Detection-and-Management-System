@@ -14,6 +14,8 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 - **Python Compatibility:** 3.8+
 - **Last Updated:** 2025-10-17
 
+> 🧠 **Looking for Algorithm Details?** Check out **[ALGORITHMS.md](ALGORITHMS.md)** for comprehensive documentation on MobileNetV2, Transfer Learning, Fuzzy Matching, Adam Optimizer, and all other algorithms used in this system.
+
 ---
 
 ## ✨ Features
@@ -428,10 +430,20 @@ The model training process includes:
 
 The text-based diagnosis uses a hybrid approach:
 
-- TF-IDF vectorization of symptom descriptions
+- Fuzzy string matching using Levenshtein distance algorithm
 - Medical-specific vocabulary enhancement
-- Cosine similarity matching against known disease profiles
+- Similarity scoring against known disease profiles
 - Contextual weighting of medical terms
+
+### 📘 Detailed Algorithm Documentation
+
+For in-depth information about all algorithms, mathematical foundations, and implementation details, see **[ALGORITHMS.md](ALGORITHMS.md)**. This comprehensive guide covers:
+
+- **Deep Learning:** MobileNetV2 architecture, Transfer Learning, Data Augmentation
+- **NLP:** Fuzzy String Matching (Levenshtein Distance), Text Preprocessing
+- **Optimization:** Adam Optimizer, Cross-Entropy Loss
+- **Data Processing:** Image preprocessing pipeline, class label sanitization
+- **Search & Matching:** Multi-level database matching, domain-specific filtering
 
 ---
 
