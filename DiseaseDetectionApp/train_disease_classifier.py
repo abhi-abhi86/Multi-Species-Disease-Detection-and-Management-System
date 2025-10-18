@@ -1,4 +1,14 @@
 # DiseaseDetectionApp/train_disease_classifier.py
+#
+# TRAINING ALGORITHMS USED IN THIS MODULE:
+# - MobileNetV2 Architecture: Efficient CNN with inverted residual blocks
+# - Transfer Learning: Fine-tuning pre-trained ImageNet model
+# - Adam Optimizer: Adaptive learning rate optimization
+# - Cross-Entropy Loss: Multi-class classification loss function
+# - Data Augmentation: Random flips, rotations, and normalization
+#
+# For detailed algorithm documentation, see: ../ALGORITHMS.md
+#
 import os
 import json
 import torch
@@ -123,6 +133,11 @@ def train_model():
     print(f"Training will be performed on: {device.type.upper()}")
 
     # 3. Define data transformations and create data loaders.
+    # ALGORITHM: Data Augmentation Pipeline
+    # - Resize: Standardize to 224x224 (MobileNetV2 requirement)
+    # - RandomHorizontalFlip: 50% chance of mirror flip (improves generalization)
+    # - RandomRotation(15°): Handle images at different angles
+    # - Normalize: Use ImageNet statistics for transfer learning compatibility
     train_transforms = transforms.Compose([
         transforms.Resize((IMG_SIZE, IMG_SIZE)),
         transforms.RandomHorizontalFlip(),
@@ -151,16 +166,28 @@ def train_model():
     print(f"Class mapping saved to '{CLASS_MAP_PATH}'")
 
     # 5. Set up the model architecture.
+    # ALGORITHM: Transfer Learning with MobileNetV2
+    # - Load MobileNetV2 pre-trained on ImageNet (1.4M images)
+    # - Freeze all convolutional layers (feature extractor)
+    # - Replace final classifier layer for custom disease classes
+    # - Only train the new classifier layer (faster training, less overfitting)
     model = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.IMAGENET1K_V1)
 
     for param in model.parameters():
-        param.requires_grad = False
+        param.requires_grad = False  # Freeze all base model parameters
 
     model.classifier[1] = nn.Linear(model.last_channel, len(train_data.classes))
     model = model.to(device)
 
     # 6. Define the loss function and optimizer.
+    # ALGORITHM: Cross-Entropy Loss - Measures classification error
+    # Formula: L = -log(P(correct_class))
+    # Penalizes confident wrong predictions more heavily
     criterion = nn.CrossEntropyLoss()
+    
+    # ALGORITHM: Adam Optimizer - Adaptive Moment Estimation
+    # Combines momentum and RMSprop for efficient gradient descent
+    # Learning Rate: 0.001 (tuned for transfer learning)
     optimizer = optim.Adam(model.classifier.parameters(), lr=LEARNING_RATE)
 
     # 7. Start the training loop.
@@ -175,11 +202,17 @@ def train_model():
         for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
 
+            # ALGORITHM: Backpropagation Training Loop
+            # 1. Zero gradients from previous iteration
             optimizer.zero_grad()
 
+            # 2. Forward pass: compute predictions
             outputs = model(images)
+            # 3. Compute loss: how far predictions are from true labels
             loss = criterion(outputs, labels)
+            # 4. Backward pass: compute gradients via backpropagation
             loss.backward()
+            # 5. Update weights: Adam optimizer adjusts parameters
             optimizer.step()
 
             running_loss += loss.item() * images.size(0)

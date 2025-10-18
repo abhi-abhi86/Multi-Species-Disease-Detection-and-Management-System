@@ -1,4 +1,14 @@
 # DiseaseDetectionApp/core/ml_processor.py
+# 
+# ALGORITHMS USED IN THIS MODULE:
+# - MobileNetV2: Convolutional Neural Network for image classification
+# - Transfer Learning: Pre-trained ImageNet weights + custom classifier
+# - Softmax Activation: Probability distribution over disease classes
+# - Fuzzy String Matching: Levenshtein distance for symptom matching
+# - Multi-level Database Matching: Intelligent disease lookup strategy
+# 
+# For detailed algorithm documentation, see: ../../ALGORITHMS.md
+# 
 # --- WATERMARK PROTECTION ---
 # This code is protected by watermark. Made by "abhi-abhi86"
 # Unauthorized copying, modification, or redistribution is prohibited.
@@ -73,7 +83,10 @@ class MLProcessor:
         self.num_classes = len(self.labels)
         print(f"Found {self.num_classes} classes: {list(self.labels.values())}")
 
+        # ALGORITHM: MobileNetV2 - Efficient CNN architecture for mobile/edge devices
+        # Uses inverted residual blocks with depthwise separable convolutions
         self.model = models.mobilenet_v2(weights=None)
+        # ALGORITHM: Transfer Learning - Replace final layer for custom disease classification
         self.model.classifier[1] = torch.nn.Linear(self.model.last_channel, self.num_classes)
 
         if not os.path.exists(MODEL_PATH):
@@ -89,6 +102,10 @@ class MLProcessor:
             print(f"An error occurred while loading the model state dictionary: {e}")
             self.model = None
 
+        # ALGORITHM: Image Preprocessing Pipeline
+        # 1. Resize to 224x224 (MobileNetV2 input requirement)
+        # 2. Convert to tensor format
+        # 3. Normalize using ImageNet mean/std for transfer learning compatibility
         self.transform = transforms.Compose([
             transforms.Resize((IMG_SIZE, IMG_SIZE)),
             transforms.ToTensor(),
@@ -104,6 +121,10 @@ class MLProcessor:
             img_t = self.transform(img)
             batch_t = torch.unsqueeze(img_t, 0)
 
+            # ALGORITHM: Neural Network Forward Pass + Softmax Activation
+            # 1. Forward pass through MobileNetV2 to get logits
+            # 2. Apply softmax: P(class_i) = exp(logit_i) / sum(exp(logit_j))
+            # 3. Get highest probability class as prediction
             with torch.no_grad():
                 logits = self.model(batch_t)
                 probabilities = torch.nn.functional.softmax(logits, dim=1)[0]
@@ -129,8 +150,13 @@ class MLProcessor:
                 }
                 return uncertain_result, primary_confidence * 100, "N/A", "Uncertain"
 
-            # --- FIXED LOGIC V3 ---
-            # Find the correct disease in the database using a more robust matching strategy.
+            # ALGORITHM: Multi-level Database Matching Strategy
+            # Uses hierarchical matching from most to least reliable:
+            # Level 1: Exact internal_id match
+            # Level 2: Exact sanitized name match
+            # Level 3: Substring/partial match
+            # Level 4: Fuzzy match with similarity threshold
+            # Level 5: Web search fallback
             best_match_disease = None
             predicted_name_lower = predicted_class_name.lower()
 
@@ -227,7 +253,19 @@ class MLProcessor:
 
 
 def predict_from_symptoms(symptoms, domain, database):
-    """Predicts a disease from symptoms with graded confidence levels."""
+    """
+    ALGORITHM: Fuzzy String Matching for Symptom-Based Diagnosis
+    Uses Levenshtein Distance to calculate similarity between input symptoms
+    and disease descriptions in the database.
+    
+    Levenshtein Distance: Minimum number of single-character edits needed
+    to transform one string into another.
+    
+    Confidence Thresholds:
+    - Strong Match: ≥75% similarity
+    - Weak Match: 60-74% similarity
+    - No Match: <60% similarity
+    """
     if process is None:
         return None, 0, "The 'fuzzywuzzy' library is not installed.", "Library Missing"
 
@@ -238,7 +276,8 @@ def predict_from_symptoms(symptoms, domain, database):
     # Create choices as a list of disease names for fuzzy matching
     disease_names = list(domain_candidates.keys())
 
-    # Extract matches
+    # ALGORITHM: FuzzyWuzzy Extract - Returns top 3 matches with similarity scores
+    # Uses Levenshtein distance internally to compute string similarity
     results = process.extract(symptoms.lower(), disease_names, limit=3)
 
     if not results or results[0][1] < SYMPTOM_CONFIDENCE_THRESHOLD_WEAK:
