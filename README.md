@@ -220,6 +220,10 @@ Visual overview of the core project architecture:
 
 ### Interactive Process Animation
 
+**[🎬 View Full Interactive Animation](docs/animation.html)** - Open this HTML file locally in Chrome or Firefox for the best animated experience.
+
+> **Note:** GitHub may sanitize SVG animations in README previews. For the best animated visualization with full interactivity, download and open `docs/animation.html` locally in your browser.
+
 <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <!-- Gradient definitions -->
@@ -350,6 +354,8 @@ Visual overview of the core project architecture:
     <text x="0" y="45" font-family="Arial, sans-serif" font-size="10" fill="#666">per analysis</text>
   </g>
 </svg>
+
+**Optional GIF Fallback:** For environments where SVG animations are not supported, an animated GIF can be added to `assets/animation.gif`. To add the GIF fallback, create the `assets` directory and place your animated GIF there, then reference it in markdown with: `![Process Animation](assets/animation.gif)`
 
 ### Detailed Process Flow
 

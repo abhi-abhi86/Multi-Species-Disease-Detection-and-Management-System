@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Species Disease Detection - Process Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .svg-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            color: #856404;
+            font-size: 14px;
+        }
+        
+        .note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Note: For best results, open this file in Chrome or Firefox. GitHub may sanitize SVG animations in README previews. -->
+    
+    <div class="container">
+        <h1>🦠 AI Multi-Species Disease Detection</h1>
+        <p class="subtitle">Interactive Process Animation</p>
+        
+        <div class="svg-container">
+            <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Gradient definitions -->
+                    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#2196F3;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+                    </linearGradient>
+
+                    <!-- Animated arrow marker -->
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
+                    </marker>
+
+                    <!-- Pulse animation -->
+                    <style>
+                        @keyframes pulse {
+                            0% { r: 15; opacity: 0.8; }
+                            50% { r: 20; opacity: 1; }
+                            100% { r: 15; opacity: 0.8; }
+                        }
+                        @keyframes flow {
+                            0% { stroke-dashoffset: 100; }
+                            100% { stroke-dashoffset: 0; }
+                        }
+                        .pulse-circle { animation: pulse 2s infinite; }
+                        .flow-path { animation: flow 3s infinite linear; }
+                    </style>
+                </defs>
+
+                <!-- Background -->
+                <rect width="800" height="400" fill="#f8f9fa" rx="10"/>
+
+                <!-- Step 1: User Input -->
+                <g transform="translate(50, 50)">
+                    <circle cx="60" cy="60" r="50" fill="#E3F2FD" stroke="#2196F3" stroke-width="3"/>
+                    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1565C0">1. INPUT</text>
+                    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Image or</text>
+                    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Symptoms</text>
+                    <image x="45" y="85" width="30" height="30" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0IDE0VjE2SDR2LTRoMTB6TTE0IDhINHY0aDEweiIvPgo8L3N2Zz4K"/>
+                </g>
+
+                <!-- Step 2: AI Processing -->
+                <g transform="translate(200, 50)">
+                    <circle cx="60" cy="60" r="50" fill="#FFF3E0" stroke="#FF9800" stroke-width="3"/>
+                    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#E65100">2. AI ANALYSIS</text>
+                    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">ML Model</text>
+                    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Processing</text>
+                    <circle cx="60" cy="95" r="8" fill="#FF9800" class="pulse-circle"/>
+                </g>
+
+                <!-- Step 3: Data Enrichment -->
+                <g transform="translate(350, 50)">
+                    <circle cx="60" cy="60" r="50" fill="#F3E5F5" stroke="#9C27B0" stroke-width="3"/>
+                    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#6A1B9A">3. ENRICHMENT</text>
+                    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Wikipedia</text>
+                    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">PubMed</text>
+                    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDI0IDMuOSA4IDggNi45IDggNiA5LjEgNiAxMEwxMiAxOFoiIGZpbGw9IiM5QzI3QjAiLz4KPC9zdmc+Cg=="/>
+                </g>
+
+                <!-- Step 4: Results -->
+                <g transform="translate(500, 50)">
+                    <circle cx="60" cy="60" r="50" fill="#E8F5E8" stroke="#4CAF50" stroke-width="3"/>
+                    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2E7D32">4. RESULTS</text>
+                    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Diagnosis</text>
+                    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Treatment</text>
+                    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDIxTDcuMzgzIDkuNjdMMiA2bDEuNTQ1LTEuMjg5TDcuMzgzIDguMzJMMTEuNjE3IDJsMS41NDUgMS4yODlMMTEuNjE3IDYuNjhMMTEuNjE3IDZsMS41NDUgMS4yODlMMTEuNjE3IDguMzJMMTEuNjE3IDEwbDEuNTQ1IDEuMjg5TDExLjYxNyAxMnoiIGZpbGw9IiM0Q0FGNTAiLz4KPC9zdmc+Cg=="/>
+                </g>
+
+                <!-- Step 5: Report Generation -->
+                <g transform="translate(650, 50)">
+                    <circle cx="60" cy="60" r="50" fill="#FFF8E1" stroke="#FFC107" stroke-width="3"/>
+                    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FF6F00">5. REPORT</text>
+                    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">PDF Export</text>
+                    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Save Data</text>
+                    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0IDJINWMtMS4xIDAtMiAuOS0yIDJ2MTZjMCAxLjEgLjkgMiAyIDJoMTJjMS4xIDAgMi0uOSAyLTJWOGwxLTUtNnoiIGZpbGw9IiNGRkMxMDciLz4KPC9zdmc+Cg=="/>
+                </g>
+
+                <!-- Flow arrows -->
+                <path d="M 150 100 Q 175 125 200 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
+                <path d="M 300 100 Q 325 125 350 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
+                <path d="M 450 100 Q 475 125 500 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
+                <path d="M 600 100 Q 625 125 650 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
+
+                <!-- AI Enhancement Indicator -->
+                <g transform="translate(350, 200)">
+                    <rect x="0" y="0" width="100" height="40" fill="#E3F2FD" stroke="#2196F3" stroke-width="2" rx="5"/>
+                    <text x="50" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#1565C0">🤖 AI ENHANCED</text>
+                    <text x="50" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666">GPT Integration</text>
+                </g>
+
+                <!-- Data Flow Labels -->
+                <text x="175" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Image/Symptom Data</text>
+                <text x="325" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">External Research</text>
+                <text x="475" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Diagnosis Results</text>
+                <text x="625" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Export Options</text>
+
+                <!-- Species Icons -->
+                <g transform="translate(50, 250)">
+                    <circle cx="30" cy="30" r="20" fill="#C8E6C9"/>
+                    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#2E7D32">🌱</text>
+                    <text x="60" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Plants</text>
+                </g>
+
+                <g transform="translate(150, 250)">
+                    <circle cx="30" cy="30" r="20" fill="#BBDEFB"/>
+                    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1565C0">👤</text>
+                    <text x="60" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Humans</text>
+                </g>
+
+                <g transform="translate(250, 250)">
+                    <circle cx="30" cy="30" r="20" fill="#FFECB3"/>
+                    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#FF6F00">🐾</text>
+                    <text x="60" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Animals</text>
+                </g>
+
+                <!-- Technology Stack -->
+                <g transform="translate(400, 250)">
+                    <text x="0" y="15" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">Tech Stack:</text>
+                    <text x="0" y="30" font-family="Arial, sans-serif" font-size="10" fill="#666">PyTorch • OpenAI GPT • MobileNetV2</text>
+                    <text x="0" y="45" font-family="Arial, sans-serif" font-size="10" fill="#666">PyQt6 • ReportLab • Wikipedia API</text>
+                </g>
+
+                <!-- Processing Time Indicator -->
+                <g transform="translate(650, 250)">
+                    <text x="0" y="15" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">Processing:</text>
+                    <text x="0" y="30" font-family="Arial, sans-serif" font-size="10" fill="#666">~2-5 seconds</text>
+                    <text x="0" y="45" font-family="Arial, sans-serif" font-size="10" fill="#666">per analysis</text>
+                </g>
+            </svg>
+        </div>
+        
+        <div class="note">
+            <strong>📌 Note:</strong>
+            This animation uses SVG/SMIL animations which work best in modern browsers (Chrome, Firefox, Safari, Edge). 
+            GitHub may sanitize or remove animations when viewing SVG content directly in markdown files.
+        </div>
+        
+        <footer>
+            AI Multi-Species Disease Detection and Management System &copy; 2025
+        </footer>
+    </div>
+</body>
+</html>
