@@ -167,6 +167,6 @@
     "type": "function",
     "description": "Function call test",
     "error": null,
-    "result": "<core.ml_processor.MLProcessor object at 0x12883f8c0>"
+    "result": "<core.ml_processor.MLProcessor object at 0x11d2fb8c0>"
   }
 }

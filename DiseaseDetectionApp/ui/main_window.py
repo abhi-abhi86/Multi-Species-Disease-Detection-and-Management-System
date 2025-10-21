@@ -285,27 +285,95 @@ class MainWindow(QMainWindow):
 
     def setup_menu(self):
         menubar = self.menuBar()
+
+        # File Menu
         file_menu = menubar.addMenu("File")
         add_action = QAction("Add New Disease...", self)
+        add_action.setShortcut("Ctrl+N")
+        add_action.setStatusTip("Add a new disease to the database")
         add_action.triggered.connect(self.open_add_disease_dialog)
         file_menu.addAction(add_action)
+
+        import_action = QAction("Import Disease Database...", self)
+        import_action.setShortcut("Ctrl+I")
+        import_action.setStatusTip("Import diseases from JSON file")
+        import_action.triggered.connect(self.import_disease_database)
+        file_menu.addAction(import_action)
+
+        export_action = QAction("Export Disease Database...", self)
+        export_action.setShortcut("Ctrl+E")
+        export_action.setStatusTip("Export current disease database")
+        export_action.triggered.connect(self.export_disease_database)
+        file_menu.addAction(export_action)
+
         file_menu.addSeparator()
         exit_action = QAction("Exit", self)
+        exit_action.setShortcut("Ctrl+Q")
+        exit_action.setStatusTip("Exit the application")
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
+
+        # Edit Menu
+        edit_menu = menubar.addMenu("Edit")
+        clear_action = QAction("Clear All", self)
+        clear_action.setShortcut("Ctrl+L")
+        clear_action.setStatusTip("Clear all inputs and results")
+        clear_action.triggered.connect(self.clear_all_inputs)
+        edit_menu.addAction(clear_action)
+
+        # Tools Menu
         tools_menu = menubar.addMenu("Tools")
         chatbot_action = QAction("Disease Chatbot...", self)
+        chatbot_action.setShortcut("Ctrl+B")
+        chatbot_action.setStatusTip("Open AI-powered disease chatbot")
         chatbot_action.triggered.connect(self.open_chatbot)
         tools_menu.addAction(chatbot_action)
+
         search_image_action = QAction("Search Disease Image Online...", self)
+        search_image_action.setShortcut("Ctrl+S")
+        search_image_action.setStatusTip("Search for disease images online")
         search_image_action.triggered.connect(self.open_image_search_dialog)
         tools_menu.addAction(search_image_action)
+
         map_action = QAction("View Disease Map...", self)
+        map_action.setShortcut("Ctrl+M")
+        map_action.setStatusTip("View disease locations on map")
         map_action.triggered.connect(self.open_map_dialog)
         tools_menu.addAction(map_action)
+
+        tools_menu.addSeparator()
+        statistics_action = QAction("View Statistics...", self)
+        statistics_action.setShortcut("Ctrl+T")
+        statistics_action.setStatusTip("View diagnosis statistics")
+        statistics_action.triggered.connect(self.show_statistics)
+        tools_menu.addAction(statistics_action)
+
+        retrain_action = QAction("Retrain Model...", self)
+        retrain_action.setShortcut("Ctrl+R")
+        retrain_action.setStatusTip("Retrain the ML model with current data")
+        retrain_action.triggered.connect(self.manual_retrain_model)
+        tools_menu.addAction(retrain_action)
+
+        tools_menu.addSeparator()
         settings_action = QAction("Settings...", self)
+        settings_action.setShortcut("Ctrl+P")
+        settings_action.setStatusTip("Open application settings")
         settings_action.triggered.connect(self.open_settings_dialog)
         tools_menu.addAction(settings_action)
+
+        # Help Menu
+        help_menu = menubar.addMenu("Help")
+        about_action = QAction("About...", self)
+        about_action.setShortcut("F1")
+        about_action.setStatusTip("About this application")
+        about_action.triggered.connect(self.show_about_dialog)
+        help_menu.addAction(about_action)
+
+        developer_action = QAction("Developer Info...", self)
+        developer_action.setShortcut("Ctrl+D")
+        developer_action.setStatusTip("View developer information")
+        developer_action.triggered.connect(self.show_developer_info)
+        help_menu.addAction(developer_action)
 
     def apply_theme(self, theme):
         if theme == "Dark":
@@ -554,6 +622,15 @@ class MainWindow(QMainWindow):
         tab = self.domain_tabs[domain]
         tab.diagnosis_data = {**result, 'confidence': confidence, 'stage': predicted_stage,
                               'image_path': self.current_image_paths[domain]}
+
+        # Check if diagnosis failed (low confidence or "No Confident Match Found")
+        if result.get('name') == "No Confident Match Found" or confidence < 50.0:
+            # Add "Add New Disease" button dynamically
+            add_disease_button = AnimatedButton("Add New Disease", primary_color="#17a2b8", hover_color="#138496")
+            add_disease_button.clicked.connect(lambda: self.open_add_disease_dialog_with_prefill(domain))
+            # Add button to the result layout
+            tab.result_layout.addWidget(add_disease_button, 2, 0)  # Below reports menu button
+
         stages_str = "\n".join([f"  • <b>{k}:</b> {v}" for k, v in result.get("stages", {}).items()])
         output_html = (
             f"<h2 style='font-family: Arial, sans-serif; font-size: 18px; color: #2c3e50; margin-bottom: 10px;'>Diagnosis: {result.get('name', 'N/A')}</h2>"
@@ -688,6 +765,64 @@ class MainWindow(QMainWindow):
                 QMessageBox.critical(self, "Save Error", f"Failed to save the disease:\n{error_msg}")
         dialog.deleteLater()
 
+    def open_add_disease_dialog_with_prefill(self, domain):
+        """Open add disease dialog with current image path and domain pre-filled."""
+        image_path = self.current_image_paths.get(domain)
+        dialog = AddNewDiseaseDialog(self, image_path=image_path, domain=domain)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            data = dialog.get_data()
+            if not all([data.get('name'), data.get('description'), data.get('solution')]):
+                QMessageBox.warning(self, "Incomplete Data",
+                                    "Please fill in at least the Name, Description, and Solution fields.")
+                return
+            success, error_msg = save_disease(data)
+            if success:
+                self.database = load_database()
+                # Trigger background retraining
+                self.start_background_retraining()
+                QMessageBox.information(self, "Success",
+                                        f"Disease '{data.get('name', '')}' has been saved successfully.\nModel retraining started in the background.")
+            else:
+                QMessageBox.critical(self, "Save Error", f"Failed to save the disease:\n{error_msg}")
+        dialog.deleteLater()
+
+    def start_background_retraining(self):
+        """Start model retraining in a background thread."""
+        if hasattr(self, 'retraining_thread') and self.retraining_thread.isRunning():
+            QMessageBox.warning(self, "Retraining in Progress", "Model retraining is already in progress.")
+            return
+
+        # Show loading message
+        self.status_bar.showMessage("Retraining model in background, please wait...", 0)
+
+        # Create retraining worker
+        from core.retraining_worker import RetrainingWorker
+        self.retraining_worker = RetrainingWorker()
+        self.retraining_thread = QThread()
+        self.retraining_worker.moveToThread(self.retraining_thread)
+
+        self.retraining_thread.started.connect(self.retraining_worker.run)
+        self.retraining_worker.finished.connect(self.on_retraining_complete)
+        self.retraining_worker.error.connect(self.on_retraining_error)
+        self.retraining_worker.finished.connect(self.retraining_thread.quit)
+        self.retraining_thread.finished.connect(self.retraining_thread.deleteLater)
+
+        self.retraining_thread.start()
+
+    def on_retraining_complete(self):
+        """Handle successful retraining completion."""
+        self.status_bar.showMessage("Model retraining completed successfully!", 5000)
+        # Reload database and reinitialize ML processor
+        self.database = load_database()
+        self.ml_processor = MLProcessor()
+        QMessageBox.information(self, "Retraining Complete",
+                                "Model has been updated with the new disease data.\nYou can now diagnose the previously unrecognized disease.")
+
+    def on_retraining_error(self, error_message):
+        """Handle retraining error."""
+        self.status_bar.showMessage("Model retraining failed.", 5000)
+        QMessageBox.critical(self, "Retraining Error", f"Failed to retrain the model:\n{error_message}")
+
     def save_report_as_pdf(self, domain):
         tab = self.domain_tabs[domain]
         if not tab.diagnosis_data:
@@ -815,6 +950,204 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
         event.accept()
+
+    # --- NEW MENU ACTION METHODS ---
+
+    def import_disease_database(self):
+        """Import diseases from a JSON file."""
+        file_path, _ = QFileDialog.getOpenFileName(self, "Import Disease Database", "",
+                                                   "JSON Files (*.json)")
+        if file_path:
+            try:
+                import json
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    imported_data = json.load(f)
+
+                # Validate imported data structure
+                if not isinstance(imported_data, list):
+                    QMessageBox.warning(self, "Invalid Format",
+                                        "The imported file must contain a list of disease objects.")
+                    return
+
+                # Import each disease
+                imported_count = 0
+                for disease_data in imported_data:
+                    if isinstance(disease_data, dict) and 'name' in disease_data:
+                        success, error_msg = save_disease(disease_data)
+                        if success:
+                            imported_count += 1
+                        else:
+                            print(f"Failed to import disease '{disease_data.get('name', 'Unknown')}': {error_msg}")
+
+                if imported_count > 0:
+                    self.database = load_database()
+                    QMessageBox.information(self, "Import Successful",
+                                            f"Successfully imported {imported_count} diseases.")
+                else:
+                    QMessageBox.warning(self, "Import Failed",
+                                        "No diseases were successfully imported.")
+
+            except Exception as e:
+                QMessageBox.critical(self, "Import Error", f"Failed to import database:\n{str(e)}")
+
+    def export_disease_database(self):
+        """Export current disease database to JSON file."""
+        file_path, _ = QFileDialog.getSaveFileName(self, "Export Disease Database", "disease_database.json",
+                                                   "JSON Files (*.json)")
+        if file_path:
+            try:
+                import json
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    json.dump(self.database, f, indent=2, ensure_ascii=False)
+
+                QMessageBox.information(self, "Export Successful",
+                                        f"Database exported successfully to:\n{file_path}")
+
+            except Exception as e:
+                QMessageBox.critical(self, "Export Error", f"Failed to export database:\n{str(e)}")
+
+    def clear_all_inputs(self):
+        """Clear all inputs and results across all tabs."""
+        for domain in self.domain_tabs:
+            tab = self.domain_tabs[domain]
+            tab.image_label.clear()
+            tab.image_label.setText("Drag & Drop an Image Here\nor Click 'Upload Image'")
+            tab.symptom_input.clear()
+            tab.location_input.clear()
+            tab.result_display.clear()
+            tab.reference_image_label.clear()
+            tab.reference_image_label.setText("Reference image will appear here.")
+            tab.reports_menu_button.setEnabled(False)
+            tab.result_group.setVisible(False)
+            tab.diagnosis_data = None
+            tab.preview_meta.setText("")
+
+        self.current_image_paths = {"Plant": None, "Human": None, "Animal": None}
+        self.status_bar.showMessage("All inputs cleared.", 3000)
+
+    def show_statistics(self):
+        """Show diagnosis statistics dialog."""
+        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QTextEdit
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Diagnosis Statistics")
+        dialog.setGeometry(200, 200, 500, 400)
+
+        layout = QVBoxLayout(dialog)
+
+        # Calculate statistics
+        total_diagnoses = len(self.diagnosis_locations)
+        disease_counts = {}
+        location_counts = {}
+
+        for entry in self.diagnosis_locations:
+            disease = entry['disease']
+            location = entry['location']
+
+            disease_counts[disease] = disease_counts.get(disease, 0) + 1
+            location_counts[location] = location_counts.get(location, 0) + 1
+
+        # Display statistics
+        stats_text = QTextEdit()
+        stats_text.setReadOnly(True)
+
+        stats_html = f"""
+        <h2>Diagnosis Statistics</h2>
+        <p><b>Total Diagnoses:</b> {total_diagnoses}</p>
+
+        <h3>Diseases Diagnosed:</h3>
+        <ul>
+        {"".join(f"<li>{disease}: {count} times</li>" for disease, count in disease_counts.items())}
+        </ul>
+
+        <h3>Locations:</h3>
+        <ul>
+        {"".join(f"<li>{location}: {count} diagnoses</li>" for location, count in location_counts.items())}
+        </ul>
+
+        <h3>Database Summary:</h3>
+        <p><b>Total Diseases in Database:</b> {len(self.database)}</p>
+        """
+
+        stats_text.setHtml(stats_html)
+        layout.addWidget(stats_text)
+
+        dialog.exec()
+
+    def manual_retrain_model(self):
+        """Manually trigger model retraining."""
+        reply = QMessageBox.question(self, "Retrain Model",
+                                     "This will retrain the ML model with current disease data.\n"
+                                     "The process may take several minutes.\n\nContinue?",
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+        if reply == QMessageBox.StandardButton.Yes:
+            self.start_background_retraining()
+
+    def show_about_dialog(self):
+        """Show about dialog."""
+        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("About")
+        dialog.setGeometry(300, 300, 400, 200)
+
+        layout = QVBoxLayout(dialog)
+
+        about_text = QLabel()
+        about_text.setText("""
+        <h2>Multi-Species Disease Detection and Management System</h2>
+        <p><b>Version:</b> 1.0.0</p>
+        <p><b>Description:</b> AI-powered disease detection system for plants, humans, and animals</p>
+        <p><b>Technologies:</b> Python, PyQt5, PyTorch, Machine Learning</p>
+        <p><b>Developer:</b> Abhishek MG</p>
+        """)
+        about_text.setWordWrap(True)
+        layout.addWidget(about_text)
+
+        dialog.exec()
+
+    def show_developer_info(self):
+        """Show developer information dialog."""
+        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Developer Information")
+        dialog.setGeometry(300, 300, 500, 300)
+
+        layout = QVBoxLayout(dialog)
+
+        try:
+            import json
+            with open('.developer_info.json', 'r') as f:
+                dev_info = json.load(f)
+
+            info_text = QLabel()
+            info_html = f"""
+            <h2>Developer Information</h2>
+            <p><b>Name:</b> {dev_info['developer']['name']}</p>
+            <p><b>Username:</b> {dev_info['developer']['username']}</p>
+            <p><b>Email:</b> {dev_info['developer']['email']}</p>
+            <p><b>GitHub:</b> <a href="{dev_info['developer']['github']}">{dev_info['developer']['github']}</a></p>
+            <p><b>Project:</b> {dev_info['developer']['project']}</p>
+            <p><b>Description:</b> {dev_info['developer']['description']}</p>
+            <p><b>Version:</b> {dev_info['developer']['version']}</p>
+            <p><b>Last Updated:</b> {dev_info['developer']['last_updated']}</p>
+            <h3>Features:</h3>
+            <ul>
+            {"".join(f"<li>{feature}</li>" for feature in dev_info['developer']['features'])}
+            </ul>
+            """
+            info_text.setText(info_html)
+            info_text.setWordWrap(True)
+            info_text.setOpenExternalLinks(True)
+            layout.addWidget(info_text)
+
+        except Exception as e:
+            error_label = QLabel(f"Error loading developer information: {str(e)}")
+            layout.addWidget(error_label)
+
+        dialog.exec()
 
 
 if __name__ == "__main__":

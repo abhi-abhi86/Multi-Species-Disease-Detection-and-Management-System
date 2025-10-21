@@ -11,7 +11,7 @@ class AddNewDiseaseDialog(QDialog):
     A dialog for adding new disease information to the application's database.
     It saves the data as a new, clean JSON file.
     """
-    def __init__(self, parent=None, prefilled_data=None):
+    def __init__(self, parent=None, prefilled_data=None, image_path=None, domain=None):
         super().__init__(parent)
         self.setWindowTitle("Add New Disease Information")
         self.setMinimumWidth(500)
@@ -65,6 +65,14 @@ class AddNewDiseaseDialog(QDialog):
         # --- Prefill data if provided ---
         if prefilled_data:
             self.prefill_data(prefilled_data)
+
+        # --- Pre-fill image_path and domain if provided ---
+        if image_path:
+            self.image_url_edit.setText(image_path)
+        if domain:
+            index = self.domain_box.findText(domain)
+            if index >= 0:
+                self.domain_box.setCurrentIndex(index)
 
     def browse_image(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")
