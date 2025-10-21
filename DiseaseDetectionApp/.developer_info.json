@@ -1,0 +1,25 @@
+{
+    "developer": {
+        "name": "Abhishek Kumar",
+        "username": "abhi-abhi86",
+        "email": "abhi-abhi86@example.com",
+        "github": "https://github.com/abhi-abhi86",
+        "project": "Multi-Species Disease Detection and Management System",
+        "description": "AI-powered disease detection system for plants, humans, and animals",
+        "technologies": ["Python", "PyQt5", "PyTorch", "Machine Learning", "Computer Vision"],
+        "version": "1.0.0",
+        "last_updated": "2024",
+        "features": [
+            "Multi-species disease detection",
+            "ML model training and prediction",
+            "Research integration (PubMed, Wikipedia)",
+            "Comprehensive testing suite",
+            "Performance optimizations"
+        ]
+    },
+    "system_info": {
+        "os": "macOS",
+        "python_version": "3.8+",
+        "dependencies": ["torch", "torchvision", "PyQt5", "requests", "beautifulsoup4"]
+    }
+}
