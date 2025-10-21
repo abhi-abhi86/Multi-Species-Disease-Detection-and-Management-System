@@ -2,7 +2,7 @@
   "core.ml_processor": {
     "status": "PASS",
     "type": "import",
-    "description": "ML processing module",
+    "description": "",
     "error": null
   },
   "core.worker": {
@@ -14,7 +14,7 @@
   "core.data_handler": {
     "status": "PASS",
     "type": "import",
-    "description": "Data handling module",
+    "description": "",
     "error": null
   },
   "core.wikipedia_integration": {
@@ -154,5 +154,19 @@
     "type": "json",
     "description": "JSON validity test",
     "error": null
+  },
+  "core.data_handler.load_database": {
+    "status": "PASS",
+    "type": "function",
+    "description": "Function call test",
+    "error": null,
+    "result": "[{'domain': 'plant', 'name': 'Powdery Mildew', 'description': 'A common fungal disease that affects "
+  },
+  "core.ml_processor.MLProcessor": {
+    "status": "PASS",
+    "type": "function",
+    "description": "Function call test",
+    "error": null,
+    "result": "<core.ml_processor.MLProcessor object at 0x12883f8c0>"
   }
 }

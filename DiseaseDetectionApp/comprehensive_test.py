@@ -245,8 +245,8 @@ class ModuleTester:
                 result = self.results.get(module, {})
                 print(f"  - {module}: {result.get('error', 'Unknown error')}")
 
-        print("
-📄 Detailed Results:"        for name, result in self.results.items():
+        print("\n📄 Detailed Results:")
+        for name, result in self.results.items():
             status_icon = "✓" if result['status'] == 'PASS' else "✗"
             print(f"  {status_icon} {name} ({result['type']})")
 
