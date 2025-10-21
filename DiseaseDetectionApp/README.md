@@ -177,7 +177,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [![Download macOS App](https://img.shields.io/badge/Download-macOS%20DMG-blue?style=for-the-badge&logo=apple)](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/releases/latest/download/Multi-Species-Disease-Detection.dmg)
 [![Download Windows App](https://img.shields.io/badge/Download-Windows%20EXE-blue?style=for-the-badge&logo=windows)](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/releases/latest/download/Multi-Species%20Disease%20Detection.exe)
 
-> **Note**: The standalone applications are not yet released. Please use the source code installation method below for now.
+> **Note**: The standalone applications are not yet released. We are actively working on them and they will be available soon. Please use the source code installation method below for now.
 
 ### 📋 System Requirements for Pre-built Apps
 
