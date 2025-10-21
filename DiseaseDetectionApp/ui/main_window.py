@@ -778,10 +778,24 @@ class MainWindow(QMainWindow):
             success, error_msg = save_disease(data)
             if success:
                 self.database = load_database()
-                # Trigger background retraining
-                self.start_background_retraining()
-                QMessageBox.information(self, "Success",
-                                        f"Disease '{data.get('name', '')}' has been saved successfully.\nModel retraining started in the background.")
+                # Ask user if they want to retrain the model immediately
+                reply = QMessageBox.question(self, "Retrain Model",
+                                           f"Disease '{data.get('name', '')}' has been saved successfully.\n\n"
+                                           "Would you like to retrain the ML model now to include this new disease?\n"
+                                           "This will take a few minutes but will allow immediate diagnosis of the new disease.",
+                                           QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+
+                if reply == QMessageBox.StandardButton.Yes:
+                    self.start_background_retraining()
+                    QMessageBox.information(self, "Retraining Started",
+                                          "Model retraining has started in the background.\n"
+                                          "You will be notified when it completes.")
+                else:
+                    QMessageBox.information(self, "Disease Added",
+                                          f"Disease '{data.get('name', '')}' has been saved successfully.\n\n"
+                                          "Note: The ML model has not been retrained yet. You can retrain it later using:\n"
+                                          "Tools → Retrain Model...")
+
             else:
                 QMessageBox.critical(self, "Save Error", f"Failed to save the disease:\n{error_msg}")
         dialog.deleteLater()
@@ -815,8 +829,25 @@ class MainWindow(QMainWindow):
         # Reload database and reinitialize ML processor
         self.database = load_database()
         self.ml_processor = MLProcessor()
-        QMessageBox.information(self, "Retraining Complete",
-                                "Model has been updated with the new disease data.\nYou can now diagnose the previously unrecognized disease.")
+
+        # Count newly trained diseases
+        import os
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        user_added_dir = os.path.join(base_dir, 'user_added_diseases')
+
+        new_diseases_count = 0
+        if os.path.exists(user_added_dir):
+            for root, dirs, files in os.walk(user_added_dir):
+                for file in files:
+                    if file.endswith('.json'):
+                        new_diseases_count += 1
+
+        message = "Model has been updated with all current disease data."
+        if new_diseases_count > 0:
+            message += f"\n\nSuccessfully trained {new_diseases_count} new disease(s)!"
+        message += "\n\nYou can now diagnose all diseases in the database, including any newly added ones."
+
+        QMessageBox.information(self, "Retraining Complete", message)
 
     def on_retraining_error(self, error_message):
         """Handle retraining error."""
@@ -1076,9 +1107,24 @@ class MainWindow(QMainWindow):
 
     def manual_retrain_model(self):
         """Manually trigger model retraining."""
-        reply = QMessageBox.question(self, "Retrain Model",
-                                     "This will retrain the ML model with current disease data.\n"
-                                     "The process may take several minutes.\n\nContinue?",
+        # Check if there are any new diseases that need training
+        import os
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        user_added_dir = os.path.join(base_dir, 'user_added_diseases')
+
+        new_diseases_count = 0
+        if os.path.exists(user_added_dir):
+            for root, dirs, files in os.walk(user_added_dir):
+                for file in files:
+                    if file.endswith('.json'):
+                        new_diseases_count += 1
+
+        message = "This will retrain the ML model with all current disease data"
+        if new_diseases_count > 0:
+            message += f", including {new_diseases_count} newly added disease(s)"
+        message += ".\nThe process may take several minutes.\n\nContinue?"
+
+        reply = QMessageBox.question(self, "Retrain Model", message,
                                      QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
 
         if reply == QMessageBox.StandardButton.Yes:
