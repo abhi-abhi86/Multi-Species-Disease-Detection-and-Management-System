@@ -1,0 +1,14 @@
+{
+    "domain": "Plant",
+    "name": "Ginger Leaf Spot (Leaf Blight)",
+    "description": "Ginger Leaf Spot is a fungal disease, primarily caused by Phyllosticta zingiberi, that affects the leaves of ginger plants. It manifests as spots that enlarge and merge, leading to the drying and withering of leaves, which in turn reduces rhizome yield.",
+    "image_url": "diseases/plant/Ginger/images/Ginger_Leaf_Spot.jpeg",
+    "stages": {
+        "Initial": "Small, water-soaked, oval-to-elongated spots (lesions) appear on the leaves. These spots are often yellowish or pale in color.",
+        "Advanced": "The spots enlarge, turning into a brownish-grey 'blight' with a distinct dark brown border. The centers may become thin and papery. Multiple spots merge (coalesce), covering large areas of the leaf, causing it to turn yellow, dry out, and wither from the tip downwards."
+    },
+    "causes": "The disease is caused by the fungus *Phyllosticta zingiberi*. The fungus survives on infected plant debris (old leaves) in the soil and spreads through rain splash or irrigation water.",
+    "risk_factors": "High humidity (>80%) and warm, wet weather, especially during the monsoon season. Continuous rainfall or overhead irrigation that keeps leaves wet. Dense planting which reduces air circulation. Poor field sanitation where infected debris from the previous season is present.",
+    "preventive_measures": "Use healthy, disease-free rhizomes (seed) for planting. Practice field sanitation by collecting and burning all infected plant debris after harvest. Implement crop rotation with non-host crops for at least 2-3 years. Ensure proper plant spacing to promote good air circulation and faster drying of leaves. Avoid overhead irrigation; prefer drip irrigation.",
+    "solution": "At the first sign of the disease, apply a foliar spray with a suitable fungicide. Common treatments include 1% Bordeaux mixture, Mancozeb (0.25%), or Copper Oxychloride (0.3%). Sprays should be repeated at 15-20 day intervals, particularly during periods of continuous rain, to protect new growth and control the spread of the infection."
+}
