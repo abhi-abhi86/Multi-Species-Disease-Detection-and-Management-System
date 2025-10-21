@@ -8,7 +8,7 @@ DATA_FILES = [
     ('diseases', ['diseases/human/acne vulgaris/Acne Vulgaris.json',
                   'diseases/human/Aids/package.json',
                   'diseases/human/eczema/eczema.json',
-                  'diseases/human/smoker's lung/smoker's lung.json',
+                  "diseases/human/smoker's lung/smoker's lung.json",
                   'diseases/plant/areca nut/areca_nut.json',
                   'diseases/plant/citrus canker/citrus_canker.json',
                   'diseases/plant/powdery mildew/powdery_mildew.json',
