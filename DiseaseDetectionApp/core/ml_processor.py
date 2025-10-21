@@ -95,9 +95,17 @@ class MLProcessor:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
 
+        # Cache for model predictions to avoid redundant processing
+        self.prediction_cache = {}
+
     def predict_from_image(self, image_path, domain, database):
         if not self.model:
             return None, 0, "The AI model is not loaded.", "Error"
+
+        # Check cache first
+        cache_key = f"{image_path}_{domain}"
+        if cache_key in self.prediction_cache:
+            return self.prediction_cache[cache_key]
 
         try:
             img = Image.open(image_path).convert('RGB')
@@ -168,6 +176,7 @@ class MLProcessor:
             # --- END OF FIX ---
 
             if best_match_disease:
+                # Wikipedia summary is now cached in worker, so we can skip fetching here or use a lighter call
                 wiki_summary = get_wikipedia_summary(best_match_disease['name'])
                 return best_match_disease, primary_confidence * 100, wiki_summary, "Detected from Image"
             else:
@@ -216,14 +225,21 @@ class MLProcessor:
                         'description': google_summary,
                         'solution': 'No local data available. Please consult online resources or a professional.',
                     }
-                    return web_result, primary_confidence * 100, wiki_summary, "Found via Web Search"
+                    result = (web_result, primary_confidence * 100, wiki_summary, "Found via Web Search")
                 else:
                     error_msg = f"AI's prediction '{predicted_class_name}' was not found in the local database for the '{domain}' domain, and the online search feature is either not configured or failed."
-                    return None, 0, error_msg, "Database Mismatch"
+                    result = (None, 0, error_msg, "Database Mismatch")
+
+            # Cache the result
+            self.prediction_cache[cache_key] = result
+            return result
 
         except Exception as e:
             print(f"Unexpected error during image prediction: {e}")
-            return None, 0, f"An error occurred while processing the image: {e}", "Processing Error"
+            result = (None, 0, f"An error occurred while processing the image: {e}", "Processing Error")
+            # Cache error results too to avoid repeated failures
+            self.prediction_cache[cache_key] = result
+            return result
 
 
 def predict_from_symptoms(symptoms, domain, database):

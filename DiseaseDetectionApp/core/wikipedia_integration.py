@@ -6,11 +6,13 @@ def get_wikipedia_summary(disease_name):
     """
     Fetches a concise summary of the given disease from Wikipedia.
     Includes robust error handling for common issues like disambiguation or page not found.
+    Reduced sentences for faster loading.
     """
     try:
         # `auto_suggest=False` prevents Wikipedia from guessing a different page, which can be wrong.
         # `redirect=True` allows it to follow simple page redirects (e.g., "Mange" -> "Sarcoptic mange").
-        summary = wikipedia.summary(disease_name, sentences=4, auto_suggest=False, redirect=True)
+        # Reduced sentences from 4 to 2 for faster loading
+        summary = wikipedia.summary(disease_name, sentences=2, auto_suggest=False, redirect=True)
         return summary
     except wikipedia.exceptions.PageError:
         print(f"No direct Wikipedia page found for '{disease_name}'.")
@@ -20,7 +22,8 @@ def get_wikipedia_summary(disease_name):
         try:
             first_option = e.options[0]
             print(f"'{disease_name}' was ambiguous. Trying first option: '{first_option}'")
-            summary = wikipedia.summary(first_option, sentences=4, auto_suggest=False)
+            # Reduced sentences for disambiguation too
+            summary = wikipedia.summary(first_option, sentences=2, auto_suggest=False)
             return summary
         except Exception as inner_e:
             print(f"Could not resolve Wikipedia disambiguation for '{disease_name}': {inner_e}")

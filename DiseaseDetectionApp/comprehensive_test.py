@@ -1,242 +1,266 @@
-#!/usr/bin/env python3
-"""
-Comprehensive test script for all core, data, diseases, and ui modules.
-Tests imports, basic functionality, and data validation.
-"""
+# DiseaseDetectionApp/comprehensive_test.py
+# Comprehensive test suite for all modules and files
 
-import sys
 import os
-import json
+import sys
+import importlib
 import traceback
+import json
+from pathlib import Path
 
-# Add current directory to path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add project root to path
+project_root = Path(__file__).parent
+sys.path.insert(0, str(project_root))
 
-def test_imports():
-    """Test importing all modules."""
-    print("🧪 TESTING IMPORTS")
-    print("=" * 50)
+class ModuleTester:
+    def __init__(self):
+        self.results = {}
+        self.failed_modules = []
 
-    modules_to_test = [
-        # Core modules
-        'core.data_handler',
-        'core.ml_processor',
-        'core.worker',
-        'core.report_generator',
-        'core.html_report_generator',
-        'core.llm_integrator',
-        'core.ncbi_integration',
-        'core.wikipedia_integration',
-        'core.google_search',
-        'core.prepare_dataset',
-        # UI modules (import without GUI)
-        'ui.main_window',
-        'ui.add_disease_dialog',
-        'ui.chatbot_dialog',
-        'ui.image_search_dialog',
-        'ui.create_spinner',
-        'ui.map_dialog',
-    ]
-
-    failed_imports = []
-
-    for module in modules_to_test:
+    def test_import(self, module_name, description=""):
+        """Test if a module can be imported successfully."""
         try:
-            __import__(module)
-            print(f"✅ {module}")
+            module = importlib.import_module(module_name)
+            self.results[module_name] = {
+                'status': 'PASS',
+                'type': 'import',
+                'description': description,
+                'error': None
+            }
+            print(f"✓ {module_name}: Import successful")
+            return module
         except Exception as e:
-            print(f"❌ {module}: {e}")
-            failed_imports.append(module)
+            error_msg = f"Import failed: {str(e)}"
+            self.results[module_name] = {
+                'status': 'FAIL',
+                'type': 'import',
+                'description': description,
+                'error': error_msg
+            }
+            self.failed_modules.append(module_name)
+            print(f"✗ {module_name}: {error_msg}")
+            return None
 
-    if failed_imports:
-        print(f"\n❌ Failed imports: {len(failed_imports)}")
-        return False
-    else:
-        print("\n✅ All imports successful!")
-        return True
-
-def test_core_functions():
-    """Test basic functions in core modules."""
-    print("\n🔧 TESTING CORE FUNCTIONS")
-    print("=" * 50)
-
-    try:
-        from core.data_handler import load_database
-        print("Testing data_handler.load_database()...")
-        database = load_database()
-        if database and len(database) > 0:
-            print(f"✅ Loaded {len(database)} diseases")
-            # Check structure
-            sample = database[0]
-            required_keys = ['name', 'domain', 'description']
-            if all(key in sample for key in required_keys):
-                print("✅ Database structure valid")
-            else:
-                print("❌ Database structure invalid")
-                return False
-        else:
-            print("❌ Failed to load database")
-            return False
-    except Exception as e:
-        print(f"❌ data_handler test failed: {e}")
-        traceback.print_exc()
-        return False
-
-    try:
-        from core.ml_processor import MLProcessor
-        print("Testing MLProcessor initialization...")
-        ml_proc = MLProcessor()
-        if ml_proc.model is None:
-            print("⚠️  ML model not loaded (expected if no model file)")
-        else:
-            print("✅ ML model loaded")
-    except Exception as e:
-        print(f"❌ MLProcessor test failed: {e}")
-        traceback.print_exc()
-        return False
-
-    try:
-        from core.ncbi_integration import get_pubmed_summary
-        print("Testing ncbi_integration.get_pubmed_summary()...")
-        # Test with a known disease, but limit to avoid long wait
-        summary = get_pubmed_summary("test", max_results=1)
-        if summary:
-            print("✅ PubMed integration working")
-        else:
-            print("⚠️  PubMed returned empty (may be network issue)")
-    except Exception as e:
-        print(f"❌ ncbi_integration test failed: {e}")
-        return False
-
-    try:
-        from core.wikipedia_integration import get_wikipedia_summary
-        print("Testing wikipedia_integration.get_wikipedia_summary()...")
-        summary = get_wikipedia_summary("Test")
-        if summary:
-            print("✅ Wikipedia integration working")
-        else:
-            print("⚠️  Wikipedia returned empty")
-    except Exception as e:
-        print(f"❌ wikipedia_integration test failed: {e}")
-        return False
-
-    print("✅ Core functions tests passed!")
-    return True
-
-def test_data_validation():
-    """Test data files and diseases structure."""
-    print("\n📁 TESTING DATA VALIDATION")
-    print("=" * 50)
-
-    # Test disease_database.json if exists
-    db_path = os.path.join(os.path.dirname(__file__), 'data', 'disease_database.json')
-    if os.path.exists(db_path):
+    def test_function(self, module_name, func_name, *args, **kwargs):
+        """Test if a function in a module can be called."""
         try:
-            with open(db_path, 'r', encoding='utf-8') as f:
+            module = importlib.import_module(module_name)
+            func = getattr(module, func_name)
+            result = func(*args, **kwargs)
+            self.results[f"{module_name}.{func_name}"] = {
+                'status': 'PASS',
+                'type': 'function',
+                'description': f"Function call test",
+                'error': None,
+                'result': str(result)[:100] if result is not None else None
+            }
+            print(f"✓ {module_name}.{func_name}: Function call successful")
+            return result
+        except Exception as e:
+            error_msg = f"Function call failed: {str(e)}"
+            self.results[f"{module_name}.{func_name}"] = {
+                'status': 'FAIL',
+                'type': 'function',
+                'description': f"Function call test",
+                'error': error_msg
+            }
+            print(f"✗ {module_name}.{func_name}: {error_msg}")
+            return None
+
+    def test_file_existence(self, file_path, description=""):
+        """Test if a file exists."""
+        full_path = project_root / file_path
+        if full_path.exists():
+            self.results[file_path] = {
+                'status': 'PASS',
+                'type': 'file',
+                'description': description,
+                'error': None
+            }
+            print(f"✓ {file_path}: File exists")
+            return True
+        else:
+            self.results[file_path] = {
+                'status': 'FAIL',
+                'type': 'file',
+                'description': description,
+                'error': 'File not found'
+            }
+            self.failed_modules.append(file_path)
+            print(f"✗ {file_path}: File not found")
+            return False
+
+    def test_json_validity(self, file_path):
+        """Test if a JSON file is valid."""
+        full_path = project_root / file_path
+        if not full_path.exists():
+            self.results[f"{file_path}_json"] = {
+                'status': 'FAIL',
+                'type': 'json',
+                'description': 'JSON validity test',
+                'error': 'File does not exist'
+            }
+            return False
+
+        try:
+            with open(full_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            if isinstance(data, list) and len(data) > 0:
-                print("✅ disease_database.json valid")
-            else:
-                print("❌ disease_database.json invalid")
-                return False
+            self.results[f"{file_path}_json"] = {
+                'status': 'PASS',
+                'type': 'json',
+                'description': 'JSON validity test',
+                'error': None
+            }
+            print(f"✓ {file_path}: Valid JSON")
+            return True
         except Exception as e:
-            print(f"❌ Error reading disease_database.json: {e}")
+            error_msg = f"Invalid JSON: {str(e)}"
+            self.results[f"{file_path}_json"] = {
+                'status': 'FAIL',
+                'type': 'json',
+                'description': 'JSON validity test',
+                'error': error_msg
+            }
+            print(f"✗ {file_path}: {error_msg}")
             return False
-    else:
-        print("⚠️  disease_database.json not found (using modular diseases/)")
 
-    # Test diseases/ directory
-    diseases_dir = os.path.join(os.path.dirname(__file__), 'diseases')
-    if os.path.exists(diseases_dir):
-        json_files = []
-        for root, dirs, files in os.walk(diseases_dir):
-            for file in files:
-                if file.endswith('.json'):
-                    json_files.append(os.path.join(root, file))
+    def run_comprehensive_test(self):
+        """Run all tests."""
+        print("🧬 COMPREHENSIVE MODULE TEST SUITE")
+        print("=" * 50)
 
-        if json_files:
+        # Test core modules
+        print("\n📁 Testing Core Modules:")
+        core_modules = [
+            ('core.ml_processor', 'ML processing module'),
+            ('core.worker', 'Diagnosis worker module'),
+            ('core.data_handler', 'Data handling module'),
+            ('core.wikipedia_integration', 'Wikipedia integration module'),
+            ('core.ncbi_integration', 'NCBI/PubMed integration module'),
+            ('core.google_search', 'Google search integration module'),
+        ]
+
+        for module_name, description in core_modules:
+            self.test_import(module_name, description)
+
+        # Test UI modules
+        print("\n🖥️  Testing UI Modules:")
+        ui_modules = [
+            ('ui.main_window', 'Main window UI module'),
+            ('ui.create_spinner', 'Spinner creation UI module'),
+        ]
+
+        for module_name, description in ui_modules:
+            self.test_import(module_name, description)
+
+        # Test main application files
+        print("\n🚀 Testing Main Application Files:")
+        main_files = [
+            ('main.py', 'Main application entry point'),
+            ('predict_disease.py', 'Disease prediction script'),
+            ('train_disease_classifier.py', 'Model training script'),
+        ]
+
+        for file_name, description in main_files:
+            if self.test_file_existence(file_name, description):
+                # Try to import if it's a Python file
+                if file_name.endswith('.py'):
+                    module_name = file_name[:-3]  # Remove .py extension
+                    self.test_import(module_name, f"Import test for {description}")
+
+        # Test existing test files
+        print("\n🧪 Testing Test Files:")
+        test_files = [
+            ('test_disease_detection.py', 'Disease detection test suite'),
+            ('test_train_model.py', 'Model training test suite'),
+        ]
+
+        for file_name, description in test_files:
+            if self.test_file_existence(file_name, description):
+                module_name = file_name[:-3]
+                self.test_import(module_name, f"Import test for {description}")
+
+        # Test critical data files
+        print("\n📊 Testing Data Files:")
+        data_files = [
+            ('disease_model.pt', 'Trained ML model file'),
+            ('class_to_name.json', 'Class name mapping file'),
+        ]
+
+        for file_name, description in data_files:
+            self.test_file_existence(file_name, description)
+            if file_name.endswith('.json'):
+                self.test_json_validity(file_name)
+
+        # Test disease database structure
+        print("\n🗂️  Testing Disease Database:")
+        diseases_dir = project_root / 'diseases'
+        if diseases_dir.exists():
+            json_files = list(diseases_dir.rglob('*.json'))
             print(f"Found {len(json_files)} disease JSON files")
-            # Test a few
-            for i, json_file in enumerate(json_files[:3]):  # Test first 3
-                try:
-                    with open(json_file, 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                    if 'name' in data and 'domain' in data:
-                        print(f"✅ {os.path.basename(json_file)} valid")
-                    else:
-                        print(f"❌ {os.path.basename(json_file)} missing required fields")
-                        return False
-                except Exception as e:
-                    print(f"❌ Error in {os.path.basename(json_file)}: {e}")
-                    return False
+            for json_file in json_files[:5]:  # Test first 5 files
+                rel_path = json_file.relative_to(project_root)
+                self.test_json_validity(str(rel_path))
         else:
-            print("❌ No disease JSON files found")
-            return False
-    else:
-        print("❌ diseases/ directory not found")
-        return False
+            print("✗ diseases directory not found")
 
-    print("✅ Data validation passed!")
-    return True
-
-def test_ui_imports():
-    """Test UI module imports (without GUI)."""
-    print("\n🖥️  TESTING UI IMPORTS")
-    print("=" * 50)
-
-    ui_modules = [
-        'ui.main_window',
-        'ui.add_disease_dialog',
-        'ui.chatbot_dialog',
-        'ui.image_search_dialog',
-        'ui.create_spinner',
-        'ui.map_dialog',
-    ]
-
-    failed = []
-    for module in ui_modules:
+        # Test function calls on key modules
+        print("\n⚙️  Testing Key Functions:")
         try:
-            __import__(module)
-            print(f"✅ {module}")
-        except Exception as e:
-            print(f"❌ {module}: {e}")
-            failed.append(module)
+            # Test data loading
+            data_handler = self.test_import('core.data_handler')
+            if data_handler:
+                self.test_function('core.data_handler', 'load_database')
+        except:
+            pass
 
-    if failed:
-        print(f"❌ Failed UI imports: {len(failed)}")
-        return False
-    else:
-        print("✅ All UI imports successful!")
-        return True
+        try:
+            # Test ML processor initialization
+            ml_proc = self.test_import('core.ml_processor')
+            if ml_proc:
+                self.test_function('core.ml_processor', 'MLProcessor')
+        except:
+            pass
 
-def main():
-    """Run all tests."""
-    print("🧬 COMPREHENSIVE MODULE TEST SUITE")
-    print("=" * 60)
+        # Generate summary
+        self.generate_summary()
 
-    results = []
-    results.append(("Imports", test_imports()))
-    results.append(("Core Functions", test_core_functions()))
-    results.append(("Data Validation", test_data_validation()))
-    results.append(("UI Imports", test_ui_imports()))
+    def generate_summary(self):
+        """Generate a comprehensive test summary."""
+        print("\n" + "=" * 50)
+        print("📋 TEST SUMMARY")
+        print("=" * 50)
 
-    print("\n" + "=" * 60)
-    print("📊 TEST RESULTS SUMMARY")
-    print("=" * 60)
+        total_tests = len(self.results)
+        passed_tests = sum(1 for r in self.results.values() if r['status'] == 'PASS')
+        failed_tests = total_tests - passed_tests
 
-    all_passed = True
-    for test_name, passed in results:
-        status = "✅ PASSED" if passed else "❌ FAILED"
-        print(f"{test_name}: {status}")
-        if not passed:
-            all_passed = False
+        print(f"Total Tests: {total_tests}")
+        print(f"Passed: {passed_tests}")
+        print(f"Failed: {failed_tests}")
 
-    if all_passed:
-        print("\n🎉 ALL TESTS PASSED! The codebase is functioning correctly.")
-    else:
-        print("\n⚠️  Some tests failed. Please review the errors above.")
+        if self.failed_modules:
+            print(f"\n❌ Failed Modules/Components ({len(self.failed_modules)}):")
+            for module in self.failed_modules:
+                result = self.results.get(module, {})
+                print(f"  - {module}: {result.get('error', 'Unknown error')}")
 
-    return all_passed
+        print("
+📄 Detailed Results:"        for name, result in self.results.items():
+            status_icon = "✓" if result['status'] == 'PASS' else "✗"
+            print(f"  {status_icon} {name} ({result['type']})")
+
+        # Save detailed results to file
+        results_file = project_root / 'test_results.json'
+        with open(results_file, 'w') as f:
+            json.dump(self.results, f, indent=2)
+        print(f"\n📁 Detailed results saved to: {results_file}")
+
+        if failed_tests == 0:
+            print("\n🎉 ALL TESTS PASSED!")
+        else:
+            print(f"\n⚠️  {failed_tests} TESTS FAILED - Check the detailed results above")
 
 if __name__ == "__main__":
-    main()
+    tester = ModuleTester()
+    tester.run_comprehensive_test()

@@ -39,15 +39,17 @@ class DiagnosisWorker(QObject):
     """
     # A class-level cache to store PubMed results for the duration of the app session.
     pubmed_cache = {}
-    
+    # Cache for Wikipedia summaries
+    wiki_cache = {}
+
     # Signal to emit when diagnosis is complete.
     # Emits: result_dict, confidence_float, wiki_summary_str, predicted_stage_str, pubmed_summary_str, domain_str
     finished = pyqtSignal(dict, float, str, str, str, str)
-    
+
     # Signal to emit if an error occurs.
     # Emits: error_message_str, domain_str
     error = pyqtSignal(str, str)
-    
+
     # Signal to emit progress updates to the UI.
     progress = pyqtSignal(str)
 
@@ -89,6 +91,16 @@ class DiagnosisWorker(QObject):
             if self.is_running and result:
                 disease_name = result.get('name', 'Unknown Disease')
                 pubmed_summary = ""
+                wiki_summary = wiki
+
+                # Check the cache for Wikipedia data first to avoid network calls.
+                if disease_name in self.wiki_cache:
+                    self.progress.emit("Fetching Wikipedia data from cache...")
+                    wiki_summary = self.wiki_cache[disease_name]
+                else:
+                    # Wikipedia is already fetched in ml_processor, but we can cache it here if needed
+                    if wiki and wiki != "N/A":
+                        self.wiki_cache[disease_name] = wiki
 
                 # Check the cache for PubMed data first to avoid network calls.
                 if disease_name in self.pubmed_cache:
@@ -105,10 +117,10 @@ class DiagnosisWorker(QObject):
                         # Gracefully handle network failures.
                         print(f"Network error while fetching from PubMed: {e}")
                         pubmed_summary = "Could not retrieve online research data. Please check your internet connection."
-                
+
                 # Check again in case the user closed the app during the network request.
                 if self.is_running:
-                    self.finished.emit(result, confidence, wiki, stage, pubmed_summary, self.domain)
+                    self.finished.emit(result, confidence, wiki_summary, stage, pubmed_summary, self.domain)
             
             # Handle cases where diagnosis ran but found no match.
             elif self.is_running:

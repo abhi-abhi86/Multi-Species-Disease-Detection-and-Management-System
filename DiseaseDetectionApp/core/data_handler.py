@@ -10,11 +10,19 @@ USER_ADDED_DISEASES_DIR = os.path.join(BASE_DIR, '..', 'user_added_diseases')
 LEGACY_DB_PATH = os.path.join(BASE_DIR, '..', 'data', 'disease_database.json')
 
 
+# Global cache for database to avoid reloading on every diagnosis
+_database_cache = None
+
 def load_database():
     """
     Loads all disease information from the modular 'diseases' directory.
     It now includes an 'internal_id' based on the folder structure for robust lookups.
+    Uses caching to avoid reloading database on every call.
     """
+    global _database_cache
+    if _database_cache is not None:
+        return _database_cache
+
     database = []
     loaded_disease_names = set()
 
@@ -101,6 +109,8 @@ def load_database():
     else:
         print(f"Successfully loaded {len(database)} unique disease entries.")
 
+    # Cache the database
+    _database_cache = database
     return database
 
 

@@ -1,0 +1,158 @@
+{
+  "core.ml_processor": {
+    "status": "PASS",
+    "type": "import",
+    "description": "ML processing module",
+    "error": null
+  },
+  "core.worker": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Diagnosis worker module",
+    "error": null
+  },
+  "core.data_handler": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Data handling module",
+    "error": null
+  },
+  "core.wikipedia_integration": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Wikipedia integration module",
+    "error": null
+  },
+  "core.ncbi_integration": {
+    "status": "PASS",
+    "type": "import",
+    "description": "NCBI/PubMed integration module",
+    "error": null
+  },
+  "core.google_search": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Google search integration module",
+    "error": null
+  },
+  "ui.main_window": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Main window UI module",
+    "error": null
+  },
+  "ui.create_spinner": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Spinner creation UI module",
+    "error": null
+  },
+  "main.py": {
+    "status": "PASS",
+    "type": "file",
+    "description": "Main application entry point",
+    "error": null
+  },
+  "main": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Import test for Main application entry point",
+    "error": null
+  },
+  "predict_disease.py": {
+    "status": "PASS",
+    "type": "file",
+    "description": "Disease prediction script",
+    "error": null
+  },
+  "predict_disease": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Import test for Disease prediction script",
+    "error": null
+  },
+  "train_disease_classifier.py": {
+    "status": "PASS",
+    "type": "file",
+    "description": "Model training script",
+    "error": null
+  },
+  "train_disease_classifier": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Import test for Model training script",
+    "error": null
+  },
+  "test_disease_detection.py": {
+    "status": "PASS",
+    "type": "file",
+    "description": "Disease detection test suite",
+    "error": null
+  },
+  "test_disease_detection": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Import test for Disease detection test suite",
+    "error": null
+  },
+  "test_train_model.py": {
+    "status": "PASS",
+    "type": "file",
+    "description": "Model training test suite",
+    "error": null
+  },
+  "test_train_model": {
+    "status": "PASS",
+    "type": "import",
+    "description": "Import test for Model training test suite",
+    "error": null
+  },
+  "disease_model.pt": {
+    "status": "PASS",
+    "type": "file",
+    "description": "Trained ML model file",
+    "error": null
+  },
+  "class_to_name.json": {
+    "status": "PASS",
+    "type": "file",
+    "description": "Class name mapping file",
+    "error": null
+  },
+  "class_to_name.json_json": {
+    "status": "PASS",
+    "type": "json",
+    "description": "JSON validity test",
+    "error": null
+  },
+  "diseases/human/smoker's lung/smoker's lung.json_json": {
+    "status": "PASS",
+    "type": "json",
+    "description": "JSON validity test",
+    "error": null
+  },
+  "diseases/human/eczema/eczema.json_json": {
+    "status": "PASS",
+    "type": "json",
+    "description": "JSON validity test",
+    "error": null
+  },
+  "diseases/human/Aids/package.json_json": {
+    "status": "PASS",
+    "type": "json",
+    "description": "JSON validity test",
+    "error": null
+  },
+  "diseases/human/acne vulgaris/Acne Vulgaris.json_json": {
+    "status": "PASS",
+    "type": "json",
+    "description": "JSON validity test",
+    "error": null
+  },
+  "diseases/animal/sarcoptic_mange/sarcoptic_mange.json_json": {
+    "status": "PASS",
+    "type": "json",
+    "description": "JSON validity test",
+    "error": null
+  }
+}

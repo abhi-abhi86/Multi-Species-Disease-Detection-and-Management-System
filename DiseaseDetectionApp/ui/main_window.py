@@ -32,7 +32,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QPixmap, QFont, QCursor, QMovie
 from PyQt5.QtWidgets import QAction
-from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings
+from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings, QEvent
 
 # Add the parent directory to the path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -270,6 +270,8 @@ class MainWindow(QMainWindow):
         self.diagnosis_worker = None
         self.base_app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.result_animation = None
+        # Set initial window opacity for fade-in
+        self.setWindowOpacity(0.0)
         self.setup_menu()
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
@@ -790,6 +792,17 @@ class MainWindow(QMainWindow):
         dialog = MapDialog(self.diagnosis_locations, self)
         dialog.exec()
         dialog.deleteLater()
+
+    def showEvent(self, event):
+        """Override showEvent to trigger fade-in animation when window is shown."""
+        super().showEvent(event)
+        # Start fade-in animation using window opacity
+        self.fade_in_animation = QPropertyAnimation(self, b"windowOpacity")
+        self.fade_in_animation.setDuration(1000)  # 1 second
+        self.fade_in_animation.setStartValue(0.0)
+        self.fade_in_animation.setEndValue(1.0)
+        self.fade_in_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        self.fade_in_animation.start()
 
     def closeEvent(self, event):
         try:
