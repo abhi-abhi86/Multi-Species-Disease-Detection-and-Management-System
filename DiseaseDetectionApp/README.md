@@ -168,6 +168,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - NCBI/PubMed for research data access
 - Wikipedia for general disease information
 
+## 📥 Download
+
+### 🚀 Latest Release Downloads
+
+**Download the latest version of the Multi-Species Disease Detection and Management System:**
+
+[![Download macOS App](https://img.shields.io/badge/Download-macOS%20DMG-blue?style=for-the-badge&logo=apple)](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/releases/latest/download/Multi-Species-Disease-Detection.dmg)
+[![Download Windows App](https://img.shields.io/badge/Download-Windows%20EXE-blue?style=for-the-badge&logo=windows)](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/releases/latest/download/Multi-Species%20Disease%20Detection.exe)
+
+### 📋 System Requirements for Pre-built Apps
+
+- **macOS**: macOS 10.14 or later (Intel/Apple Silicon)
+- **Windows**: Windows 10 or later (64-bit)
+- **RAM**: 4GB minimum, 8GB recommended
+- **Storage**: 500MB free space
+
+### 🔗 All Releases
+View all releases and download older versions: [GitHub Releases](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/releases)
+
 ---
 
 **Version**: 1.0.0
