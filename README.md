@@ -3,21 +3,6 @@
 A powerful Python desktop application for **AI-driven disease detection and management**—across **plants, humans, and animals**.  
 Leverage pre-trained machine learning models to assist with preliminary diagnosis and empower your research or field work with data-driven insights.
 
-<!-- Demo: click poster image to open video on GitHub (blob page contains the video preview/player).
-     Replace `main` in the URLs below with your branch name if different. -->
-
-## Project demo
-
-Click the image below to open and play the demo video in GitHub's file viewer (this reliably shows a player):
-
-[![Project demo — click to play](https://raw.githubusercontent.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/main/assets/images/demo-poster.png)](https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/blob/main/assets/videos/demo.mp4)
-
-Direct links (use these to verify the files are reachable):
-- Poster image (raw): https://raw.githubusercontent.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/main/assets/images/demo-poster.png
-- Video (blob viewer — plays in GitHub): https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/blob/main/assets/videos/demo.mp4
-- Video (raw download): https://raw.githubusercontent.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System/main/assets/videos/demo.mp4
-
----
 
 ## 🚀 Key Information
 
@@ -227,6 +212,7 @@ Visual overview of the core project architecture:
 ├── setup.py                       # Package installation script
 └── README.md                      # 📖 You're here!
 ```
+
 ---
 
 ## 🧭 How It Works: Process Flow
