@@ -1,97 +1,162 @@
 name: Build and Release
 
+# Triggers: on tag push (v*) and manual dispatch
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write    # allow creating releases and uploading release assets
+
+env:
+  TZ: UTC
+
 jobs:
   build-macos:
     runs-on: macos-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install py2app
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-    - name: Build macOS app
-      run: |
-        cd DiseaseDetectionApp
-        python setup.py py2app
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install py2app
 
-    - name: Create DMG
-      run: |
-        cd DiseaseDetectionApp
-        hdiutil create -volname "Multi-Species Disease Detection" -srcfolder dist/ -ov -format UDZO Multi-Species-Disease-Detection.dmg
+      - name: Build macOS app (.app bundle and DMG)
+        run: |
+          cd DiseaseDetectionApp
+          # build the .app using py2app (creates dist/)
+          python setup.py py2app
+          # create a compressed DMG from the dist/ folder
+          hdiutil create -volname "Multi-Species Disease Detection" -srcfolder dist/ -ov -format UDZO Multi-Species-Disease-Detection.dmg
+          # move DMG into workspace root for consistency
+          mv Multi-Species-Disease-Detection.dmg $GITHUB_WORKSPACE/macos/Multi-Species-Disease-Detection.dmg
+        working-directory: DiseaseDetectionApp
+      - name: Ensure output directory exists
+        run: mkdir -p macos
 
-    - name: Upload macOS build
-      uses: actions/upload-artifact@v3
-      with:
-        name: macos-app
-        path: DiseaseDetectionApp/Multi-Species-Disease-Detection.dmg
+      - name: Create SHA256 checksum for macOS DMG
+        run: |
+          sha256sum macos/Multi-Species-Disease-Detection.dmg > macos/Multi-Species-Disease-Detection.dmg.sha256
+
+      - name: Upload macOS build (artifact)
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-app
+          path: |
+            macos/Multi-Species-Disease-Detection.dmg
+            macos/Multi-Species-Disease-Detection.dmg.sha256
 
   build-windows:
     runs-on: windows-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pyinstaller
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            %USERPROFILE%\\AppData\\Local\\pip\\Cache
+            %USERPROFILE%\\.cache\\pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-    - name: Build Windows executable
-      run: |
-        cd DiseaseDetectionApp
-        pyinstaller --onefile --windowed --name "Multi-Species Disease Detection" main.py
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-    - name: Upload Windows build
-      uses: actions/upload-artifact@v3
-      with:
-        name: windows-exe
-        path: DiseaseDetectionApp/dist/Multi-Species Disease Detection.exe
+      - name: Build Windows executable
+        run: |
+          cd DiseaseDetectionApp
+          # Use a hyphenated single-file name (avoid spaces in filenames)
+          pyinstaller --onefile --windowed --name "Multi-Species-Disease-Detection" main.py
+          mkdir -p $Env:GITHUB_WORKSPACE\windows
+          Move-Item -Path .\dist\Multi-Species-Disease-Detection.exe -Destination $Env:GITHUB_WORKSPACE\windows\Multi-Species-Disease-Detection.exe
+        shell: pwsh
+        working-directory: DiseaseDetectionApp
+
+      - name: Create SHA256 checksum for Windows EXE
+        run: |
+          Get-FileHash -Algorithm SHA256 windows\Multi-Species-Disease-Detection.exe | ForEach-Object { "$($_.Hash)  $($_.Path)" } | Out-File -Encoding ascii windows\Multi-Species-Disease-Detection.exe.sha256
+        shell: pwsh
+
+      - name: Upload Windows build (artifact)
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-exe
+          path: |
+            windows/Multi-Species-Disease-Detection.exe
+            windows/Multi-Species-Disease-Detection.exe.sha256
 
   release:
     needs: [build-macos, build-windows]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
-
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     steps:
-    - name: Download macOS build
-      uses: actions/download-artifact@v3
-      with:
-        name: macos-app
+      - name: Create directories for downloaded artifacts
+        run: |
+          mkdir -p macos windows
 
-    - name: Download Windows build
-      uses: actions/download-artifact@v3
-      with:
-        name: windows-exe
+      - name: Download macOS build
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-app
+          path: macos
 
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          Multi-Species-Disease-Detection.dmg
-          Multi-Species Disease Detection.exe
-        generate_release_notes: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download Windows build
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-exe
+          path: windows
+
+      - name: Show artifact summary
+        run: |
+          echo "macOS artifacts:"
+          ls -lh macos || true
+          echo "Windows artifacts:"
+          ls -lh windows || true
+
+      - name: Create Release (with attached assets)
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            macos/Multi-Species-Disease-Detection.dmg
+            macos/Multi-Species-Disease-Detection.dmg.sha256
+            windows/Multi-Species-Disease-Detection.exe
+            windows/Multi-Species-Disease-Detection.exe.sha256
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+# Notes:
+# - Artifact filenames use hyphens instead of spaces to avoid issues on some runners.
+# - We compute and upload SHA256 checksums for each artifact.
+# - Pip cache is used to speed up dependency installs.
+# - If you need code signing for macOS (.dmg) or Windows (.exe), add signing steps and store signing keys/certificates in Secrets.
+# - Consider adding matrix for multiple Python versions if you want broader coverage.
