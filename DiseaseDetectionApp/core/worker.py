@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from PyQt5.QtCore import QObject, pyqtSignal
 from core.ml_processor import predict_from_symptoms
-from core.ncbi_integration import get_pubmed_summary
+from core.ncbi_integration import get_pubmed_summary, generate_ncbi_report
 
 class DiagnosisWorker(QObject):
     """
@@ -109,8 +109,8 @@ class DiagnosisWorker(QObject):
                 else:
                     self.progress.emit("Fetching recent research from PubMed...")
                     try:
-                        # This is the actual network call.
-                        pubmed_summary = get_pubmed_summary(disease_name)
+                    # This is the actual network call.
+                        pubmed_summary = get_pubmed_summary(disease_name, domain=self.domain)
                         # Store the result in the cache for next time.
                         self.pubmed_cache[disease_name] = pubmed_summary
                     except Exception as e:
