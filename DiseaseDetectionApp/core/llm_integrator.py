@@ -1,8 +1,3 @@
-                                            
-                              
-                                                            
-                                                                      
-                                                                  
 
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
@@ -15,7 +10,7 @@ def check_watermark():
         import sys
         sys.exit(1)
 
-                         
+
 check_watermark()
 
 import os

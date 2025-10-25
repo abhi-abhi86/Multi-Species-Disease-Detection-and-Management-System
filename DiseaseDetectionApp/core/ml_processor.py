@@ -39,7 +39,7 @@ CLASS_MAP_PATH = os.path.join(BASE_DIR, '..', 'class_to_name.json')
 IMG_SIZE = 224
 
                                                  
-IMAGE_CONFIDENCE_THRESHOLD = 0.50
+IMAGE_CONFIDENCE_THRESHOLD = 0.40
 SYMPTOM_CONFIDENCE_THRESHOLD_STRONG = 75
 SYMPTOM_CONFIDENCE_THRESHOLD_WEAK = 60
 HEALTHY_CLASS_NAMES = ('healthy', 'normal', 'clear_skin')

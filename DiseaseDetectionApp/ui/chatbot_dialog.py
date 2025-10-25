@@ -85,7 +85,7 @@ class ChatbotWorker(QObject):
 
     def run(self):
         """ Processes the user's message to provide a helpful response. """
-                                                       
+
         if not self.message:
             return
             

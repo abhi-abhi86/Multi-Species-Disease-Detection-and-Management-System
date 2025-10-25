@@ -1,8 +1,4 @@
-                                       
-                              
-                                                            
-                                                                      
-                                                                  
+
 
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
@@ -448,6 +444,7 @@ class MainWindow(QMainWindow):
         opacity_effect = QGraphicsOpacityEffect(result_group)
         result_group.setGraphicsEffect(opacity_effect)
         result_group.setVisible(False)
+        main_widget.result_layout = result_layout
         reference_image_label = QLabel("Reference image will appear here.")
         reference_image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         reference_image_label.setFixedSize(300, 300)
