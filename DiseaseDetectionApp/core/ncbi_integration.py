@@ -81,8 +81,8 @@ def generate_ncbi_report(disease_name, pubmed_summary, domain=None, output_path=
         <title>NCBI PubMed Report for {disease_name}</title>
         <style>
             body {{ font-family: Arial, sans-serif; margin: 20px; }}
-            h1 {{ color: 
-            h2 {{ color: 
+            h1 {{ color: #333; }}
+            h2 {{ color: #555; }}
             .summary {{ margin-bottom: 20px; }}
         </style>
     </head>
