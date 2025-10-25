@@ -3,7 +3,6 @@
 A powerful Python desktop application for **AI-driven disease detection and management**—across **plants, humans, and animals**.  
 Leverage pre-trained machine learning models to assist with preliminary diagnosis and empower your research or field work with data-driven insights.
 
----
 
 ## 🚀 Key Information
 
@@ -259,7 +258,7 @@ Visual overview of the core project architecture:
     <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1565C0">1. INPUT</text>
     <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Image or</text>
     <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Symptoms</text>
-    <image x="45" y="85" width="30" height="30" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0IDE0VjE2SDR2LTRoMTB6TTE0IDhINHY0aDEweiIvPgo8L3N2Zz4K"/>
+    <image x="45" y="85" width="30" height="30" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated for brevity]" />
   </g>
 
   <!-- Step 2: AI Processing -->
@@ -277,7 +276,7 @@ Visual overview of the core project architecture:
     <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#6A1B9A">3. ENRICHMENT</text>
     <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Wikipedia</text>
     <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">PubMed</text>
-    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDI0IDMuOSA4IDggNi45IDggNiA5LjEgNiAxMEwxMiAxOFoiIGZpbGw9IiM5QzI3QjAiLz4KPC9zdmc+Cg=="/>
+    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated]" />
   </g>
 
   <!-- Step 4: Results -->
@@ -286,7 +285,7 @@ Visual overview of the core project architecture:
     <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2E7D32">4. RESULTS</text>
     <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Diagnosis</text>
     <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Treatment</text>
-    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDIxTDcuMzgzIDkuNjdMMiA2bDEuNTQ1LTEuMjg5TDcuMzgzIDguMzJMMTEuNjE3IDJsMS41NDUgMS4yODlMMTEuNjE3IDYuNjhMMTEuNjE3IDZsMS41NDUgMS4yODlMMTEuNjE3IDguMzJMMTEuNjE3IDEwbDEuNTQ1IDEuMjg5TDExLjYxNyAxMnoiIGZpbGw9IiM0Q0FGNTAiLz4KPC9zdmc+Cg=="/>
+    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated]" />
   </g>
 
   <!-- Step 5: Report Generation -->
@@ -295,7 +294,7 @@ Visual overview of the core project architecture:
     <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FF6F00">5. REPORT</text>
     <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">PDF Export</text>
     <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Save Data</text>
-    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0IDJINWMtMS4xIDAtMiAuOS0yIDJ2MTZjMCAxLjEgLjkgMiAyIDJoMTJjMS4xIDAgMi0uOSAyLTJWOGwxLTUtNnoiIGZpbGw9IiNGRkMTA3Ii8+Cjwvc3ZnPgo="/>
+    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated]" />
   </g>
 
   <!-- Flow arrows -->
@@ -570,8 +569,6 @@ For more assistance, check the [Issues](https://github.com/abhi-abhi86/Multi-Spe
 
 Future development plans:
 
-
-
 - **Q4 2025:** 
   - Integration with smartphone camera for real-time diagnosis
   - Enhanced geographic tracking with outbreak prediction
@@ -665,4 +662,4 @@ A: The futuristic edition includes OpenAI GPT integration for enhanced chatbot r
 
 ---
 
-> **Note:** This application is intended for research, educational purposes, and preliminary screening only. Always consult with qualified healthcare professionals or specialists for definitive diagnosis and treatment.
+> **Note:** This application is intended for research, educational purposes, and preliminary screening only. Always consult with qualified healthcare professionals or specialists for definitive diagnosis and treatment recommendations.
