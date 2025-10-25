@@ -1,7 +1,7 @@
 import base64
 import os
 
-# Base64 encoded data for a simple, transparent 32x32px animated spinner GIF
+                                                                            
 GIF_BASE64_DATA = """
 R0lGODlhIAAgAPMAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh
 /hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAIAAgAAAE5xDISWlZ
@@ -79,18 +79,18 @@ t-"""
 
 def create_gif():
     """Decodes the base64 string and writes the spinner.gif file."""
-    # Define the path for the GIF, relative to the script's location
-    # This assumes the script is run from the project root.
-    # A more robust path would be needed if run from elsewhere.
+                                                                    
+                                                           
+                                                               
     output_dir = os.path.join(os.path.dirname(__file__))
     os.makedirs(output_dir, exist_ok=True)
     file_path = os.path.join(output_dir, 'spinner.gif')
 
     try:
-        # Decode the base64 string to get the binary image data
+                                                               
         gif_data = base64.b64decode(GIF_BASE64_DATA)
         
-        # Write the binary data to the file
+                                           
         with open(file_path, 'wb') as f:
             f.write(gif_data)
         

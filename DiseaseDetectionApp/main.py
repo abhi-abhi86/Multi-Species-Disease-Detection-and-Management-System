@@ -2,10 +2,10 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
-# --- WATERMARK PROTECTION ---
-# This code is protected by watermark. Made by "abhi-abhi86"
-# Unauthorized copying, modification, or redistribution is prohibited.
-# If this watermark is removed, the application will not function.
+                              
+                                                            
+                                                                      
+                                                                  
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
 
@@ -16,13 +16,13 @@ def check_watermark():
         print("Made by: abhi-abhi86")
         sys.exit(1)
 
-# Execute watermark check
+                         
 check_watermark()
 
-# --- Path Fix ---
-# This adds the project's root directory (the one containing the 'DiseaseDetectionApp' folder)
-# to the Python path. This is crucial for making the absolute imports work correctly
-# when you run this script directly.
+                  
+                                                                                              
+                                                                                    
+                                    
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from DiseaseDetectionApp.ui.main_window import MainWindow
@@ -35,13 +35,13 @@ def main():
     """
     app = QApplication(sys.argv)
 
-    # It's good practice to set application-level metadata
+                                                          
     app.setApplicationName("Multi-Species Disease Detection and Management System")
     app.setOrganizationName("AI-Diagnosis-System")
 
     window = MainWindow()
 
-    # Check if the AI model was loaded successfully. If not, inform the user.
+                                                                             
     if not window.ml_processor or not window.ml_processor.model:
         QMessageBox.critical(
             None,
@@ -50,7 +50,7 @@ def main():
             "Please run the `train_disease_classifier.py` script from your terminal to train the model before starting the application.\n\n"
             "The application will now close."
         )
-        sys.exit(1)  # Exit if the core component is missing
+        sys.exit(1)                                         
 
     window.show()
     sys.exit(app.exec())

@@ -1,8 +1,8 @@
-# DiseaseDetectionApp/core/ml_processor.py
-# --- WATERMARK PROTECTION ---
-# This code is protected by watermark. Made by "abhi-abhi86"
-# Unauthorized copying, modification, or redistribution is prohibited.
-# If this watermark is removed, the application will not function.
+                                          
+                              
+                                                            
+                                                                      
+                                                                  
 
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
@@ -15,7 +15,7 @@ def check_watermark():
         import sys
         sys.exit(1)
 
-# Execute watermark check
+                         
 check_watermark()
 
 import torch
@@ -32,13 +32,13 @@ try:
 except ImportError:
     process = None
 
-# --- Configuration Constants ---
+                                 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, '..', 'disease_model.pt')
 CLASS_MAP_PATH = os.path.join(BASE_DIR, '..', 'class_to_name.json')
 IMG_SIZE = 224
 
-# --- Confidence Thresholds & Special Classes ---
+                                                 
 IMAGE_CONFIDENCE_THRESHOLD = 0.50
 SYMPTOM_CONFIDENCE_THRESHOLD_STRONG = 75
 SYMPTOM_CONFIDENCE_THRESHOLD_WEAK = 60
@@ -95,14 +95,14 @@ class MLProcessor:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
 
-        # Cache for model predictions to avoid redundant processing
+                                                                   
         self.prediction_cache = {}
 
     def predict_from_image(self, image_path, domain, database):
         if not self.model:
             return None, 0, "The AI model is not loaded.", "Error"
 
-        # Check cache first
+                           
         cache_key = f"{image_path}_{domain}"
         if cache_key in self.prediction_cache:
             return self.prediction_cache[cache_key]
@@ -129,7 +129,7 @@ class MLProcessor:
                 return healthy_result, primary_confidence * 100, "N/A", "Healthy"
 
             if primary_confidence < IMAGE_CONFIDENCE_THRESHOLD:
-                # Logic for uncertain results
+                                             
                 uncertain_result = {
                     'name': 'No Confident Match Found',
                     'description': 'The AI model could not identify a known disease with high confidence.',
@@ -137,12 +137,12 @@ class MLProcessor:
                 }
                 return uncertain_result, primary_confidence * 100, "N/A", "Uncertain"
 
-            # --- FIXED LOGIC V3 ---
-            # Find the correct disease in the database using a more robust matching strategy.
+                                    
+                                                                                             
             best_match_disease = None
             predicted_name_lower = predicted_class_name.lower()
 
-            # 1. First, try for an exact match by internal_id (most reliable)
+                                                                             
             for disease_data in database:
                 if disease_data.get("domain", "").lower() == domain.lower():
                     db_internal_id = disease_data.get("internal_id", "")
@@ -150,7 +150,7 @@ class MLProcessor:
                         best_match_disease = disease_data
                         break
 
-            # 2. If no internal_id match, try for an exact match by name
+                                                                        
             if not best_match_disease:
                 for disease_data in database:
                     if disease_data.get("domain", "").lower() == domain.lower():
@@ -160,28 +160,28 @@ class MLProcessor:
                             best_match_disease = disease_data
                             break
 
-            # 3. If no exact match, try a 'contains' match as a fallback
+                                                                        
             if not best_match_disease:
                 print(f"No exact match for '{predicted_name_lower}'. Trying a contains-match fallback.")
                 for disease_data in database:
                     if disease_data.get("domain", "").lower() == domain.lower():
                         db_name = disease_data.get("name", "")
                         sanitized_db_name = re.sub(r'[\s/\\:*?"<>|]+', '_', db_name).lower()
-                        # Check if the shorter name is a part of the longer name
+                                                                                
                         if predicted_name_lower in sanitized_db_name or sanitized_db_name in predicted_name_lower:
                             print(
                                 f"Found a partial match: AI predicted '{predicted_name_lower}', matched with DB entry '{sanitized_db_name}'")
                             best_match_disease = disease_data
                             break
-            # --- END OF FIX ---
+                                
 
             if best_match_disease:
-                # Wikipedia summary is now cached in worker, so we can skip fetching here or use a lighter call
+                                                                                                               
                 wiki_summary = get_wikipedia_summary(best_match_disease['name'])
                 return best_match_disease, primary_confidence * 100, wiki_summary, "Detected from Image"
             else:
-                # This fallback will now only be reached if both matching strategies fail.
-                # First, check if the prediction matches a disease in a different domain
+                                                                                          
+                                                                                        
                 predicted_clean = predicted_class_name.replace('_', ' ')
                 for other_domain in ["Plant", "Human", "Animal"]:
                     if other_domain.lower() != domain.lower():
@@ -201,19 +201,19 @@ class MLProcessor:
                                         'preventive_measures': '',
                                         'image_url': disease_data.get('image_url', '')
                                     }, primary_confidence * 100, "", f"Suggested: Switch to {other_domain} Tab"
-                # Try fuzzy matching for partial matches within the current domain
+                                                                                  
                 print(f"No exact match for '{predicted_class_name}'. Attempting fuzzy matching fallback.")
                 from fuzzywuzzy import process
                 disease_names = [d.get("name", "") for d in database if d.get("domain", "").lower() == domain.lower()]
                 if disease_names:
                     best_match, score = process.extractOne(predicted_clean, disease_names)
-                    if score >= 60:  # Threshold for fuzzy match
+                    if score >= 60:                             
                         print(f"Fuzzy match found: '{predicted_class_name}' -> '{best_match}' (score: {score})")
                         for disease_data in database:
                             if disease_data.get("domain", "").lower() == domain.lower() and disease_data.get("name", "") == best_match:
                                 wiki_summary = get_wikipedia_summary(disease_data['name'])
                                 return disease_data, primary_confidence * 100, wiki_summary, "Detected from Image (Fuzzy Match)"
-                # If fuzzy match fails, attempt web search
+                                                          
                 print(
                     f"AI prediction '{predicted_class_name}' not in local DB for domain '{domain}'. Attempting web search...")
                 google_summary = search_google_for_summary(predicted_clean)
@@ -230,14 +230,14 @@ class MLProcessor:
                     error_msg = f"AI's prediction '{predicted_class_name}' was not found in the local database for the '{domain}' domain, and the online search feature is either not configured or failed."
                     result = (None, 0, error_msg, "Database Mismatch")
 
-            # Cache the result
+                              
             self.prediction_cache[cache_key] = result
             return result
 
         except Exception as e:
             print(f"Unexpected error during image prediction: {e}")
             result = (None, 0, f"An error occurred while processing the image: {e}", "Processing Error")
-            # Cache error results too to avoid repeated failures
+                                                                
             self.prediction_cache[cache_key] = result
             return result
 
@@ -251,10 +251,10 @@ def predict_from_symptoms(symptoms, domain, database):
     if not domain_candidates:
         return None, 0, f"No diseases found for the '{domain}' domain.", "Not applicable"
 
-    # Create choices as a list of disease names for fuzzy matching
+                                                                  
     disease_names = list(domain_candidates.keys())
 
-    # Extract matches
+                     
     results = process.extract(symptoms.lower(), disease_names, limit=3)
 
     if not results or results[0][1] < SYMPTOM_CONFIDENCE_THRESHOLD_WEAK:

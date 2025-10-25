@@ -1,13 +1,13 @@
-# DiseaseDetectionApp/core/google_search.py
+                                           
 import os
 import requests
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-# --- IMPORTANT ---
-# You must set up a Google Custom Search Engine (CSE) and get an API key.
-# See the README-API.md file for instructions.
-# Store your credentials as environment variables for security.
+                   
+                                                                         
+                                              
+                                                               
 API_KEY = os.environ.get("GOOGLE_API_KEY")
 CSE_ID = os.environ.get("GOOGLE_CSE_ID")
 
@@ -33,14 +33,14 @@ def search_google_images(query):
     Searches Google Images for the given query using the official API and returns the URL of the first image.
     """
     print(f"Performing API image search for: '{query}'")
-    # searchType='image' specifies an image search.
-    # num=1 requests only one result.
+                                                   
+                                     
     results = _google_search_api_call(query, searchType='image', num=1)
     
     if "error" in results:
         return None
 
-    # Extract the image link from the first item, if it exists.
+                                                               
     if 'items' in results and len(results['items']) > 0:
         return results['items'][0].get('link')
     
@@ -52,13 +52,13 @@ def search_google_for_summary(query):
     Performs a Google search using the official API and returns the summary snippet of the first result.
     """
     print(f"Performing API summary search for: '{query}'")
-    # We request one result (num=1).
+                                    
     results = _google_search_api_call(query, num=1)
 
     if "error" in results:
         return f"Could not perform search. Please check API setup. Error: {results['error']}"
 
-    # Extract the descriptive snippet from the first item.
+                                                          
     if 'items' in results and len(results['items']) > 0:
         return results['items'][0].get('snippet')
         

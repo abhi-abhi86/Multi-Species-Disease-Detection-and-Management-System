@@ -1,9 +1,9 @@
-# DiseaseDetectionApp/ui/image_search_dialog.py
-# DiseaseDetectionApp/ui/image_search_dialog.py
-# --- WATERMARK PROTECTION ---
-# This code is protected by watermark. Made by "abhi-abhi86"
-# Unauthorized copying, modification, or redistribution is prohibited.
-# If this watermark is removed, the application will not function.
+                                               
+                                               
+                              
+                                                            
+                                                                      
+                                                                  
 
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
@@ -16,7 +16,7 @@ def check_watermark():
         import sys
         sys.exit(1)
 
-# Execute watermark check
+                         
 check_watermark()
 
 import requests
@@ -42,16 +42,16 @@ class ImageFetchWorker(QObject):
 
     def run(self):
         try:
-            # First, try to get an image from Wikipedia
+                                                       
             image_url = self.get_wikipedia_image(self.disease_name)
             if not image_url:
-                # Fallback to Google search if Wikipedia doesn't provide an image
+                                                                                 
                 image_url = search_google_images(self.disease_name + " disease")
                 if not image_url:
                     self.error.emit(f"No image found online for '{self.disease_name}'.")
                     return
 
-            # Fetch the image data
+                                  
             response = requests.get(image_url, timeout=10)
             response.raise_for_status()
             self.finished.emit(response.content)
@@ -70,11 +70,11 @@ class ImageFetchWorker(QObject):
         try:
             page = wikipedia.page(disease_name, auto_suggest=False, redirect=True)
             if page.images:
-                # Return the first image URL that is likely a valid image (not SVG or icon)
+                                                                                           
                 for img_url in page.images:
                     if img_url.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
-                        # Note: Even if accessible via HEAD, GET might fail due to user-agent blocks
-                        # But we try to return it, and let the main fetch handle errors
+                                                                                                    
+                                                                                       
                         return img_url
             return None
         except wikipedia.exceptions.PageError:
@@ -101,11 +101,11 @@ class ImageSearchDialog(QDialog):
 
         self.layout = QVBoxLayout(self)
 
-        # --- NEW: Intuitive Search Bar Layout ---
+                                                  
         search_layout = QHBoxLayout()
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText("Type a disease name to search...")
-        self.search_input.returnPressed.connect(self.start_image_search) # Allow pressing Enter to search
+        self.search_input.returnPressed.connect(self.start_image_search)                                 
         self.search_input.setStyleSheet("padding: 5px; border-radius: 5px;")
 
         self.search_button = QPushButton("Search")
@@ -117,7 +117,7 @@ class ImageSearchDialog(QDialog):
 
         search_layout.addWidget(self.search_input)
         search_layout.addWidget(self.search_button)
-        # --- End of New Layout ---
+                                   
 
         self.image_label = QLabel("Enter a disease name above and click 'Search'.")
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -127,11 +127,11 @@ class ImageSearchDialog(QDialog):
         self.close_button = QPushButton("Close")
         self.close_button.clicked.connect(self.accept)
 
-        self.layout.addLayout(search_layout) # Add the new search bar layout
-        self.layout.addWidget(self.image_label, 1) # The '1' makes the image label expand
+        self.layout.addLayout(search_layout)                                
+        self.layout.addWidget(self.image_label, 1)                                       
         self.layout.addWidget(self.close_button)
 
-        # If initial_disease is provided, set it and start search
+                                                                 
         if initial_disease:
             self.search_input.setText(initial_disease)
             self.start_image_search()
@@ -145,18 +145,18 @@ class ImageSearchDialog(QDialog):
             self.image_label.setText("Please enter a disease name to search.")
             return
 
-        # Clear previous results and disable search button
+                                                          
         self.current_pixmap = None
         self.image_label.setPixmap(QPixmap())
         self.image_label.setText(f"Searching for images of '{disease_name}'...")
         self.search_button.setEnabled(False)
 
-        # Ensure any previous worker is stopped
+                                               
         if self.worker_thread and self.worker_thread.isRunning():
             self.worker_thread.quit()
             self.worker_thread.wait()
 
-        # Set up and start the new background worker
+                                                    
         self.worker_thread = QThread()
         self.worker = ImageFetchWorker(disease_name)
         self.worker.moveToThread(self.worker_thread)
@@ -165,7 +165,7 @@ class ImageSearchDialog(QDialog):
         self.worker.finished.connect(self.on_search_finished)
         self.worker.error.connect(self.on_search_error)
         
-        # Connect signals for cleanup
+                                     
         self.worker.finished.connect(self.cleanup_thread)
         self.worker.error.connect(self.cleanup_thread)
         
@@ -179,7 +179,7 @@ class ImageSearchDialog(QDialog):
         if self.current_pixmap.isNull():
             self.image_label.setText("Failed to load the downloaded image data.")
         else:
-            self.image_label.setText("")  # Clear "Searching..." text
+            self.image_label.setText("")                             
             self.display_scaled_image()
 
     def on_search_error(self, error_message):

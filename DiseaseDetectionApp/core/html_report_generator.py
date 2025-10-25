@@ -1,6 +1,6 @@
-# DiseaseDetectionApp/core/html_report_generator.py
-# HTML Report Generator for Disease Diagnosis
-# Generates HTML reports from diagnosis data, with embedded images for portability.
+                                                   
+                                             
+                                                                                   
 
 import datetime
 import os
@@ -27,7 +27,7 @@ def generate_html_report(diagnosis_data, file_path):
         domain = diagnosis_data.get('domain', 'general').lower()
         domain_title = f"{domain.capitalize()} Disease Diagnosis Report" if domain != 'general' else "Disease Diagnosis Report"
 
-        # HTML Template
+                       
         html_content = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -39,12 +39,12 @@ def generate_html_report(diagnosis_data, file_path):
         body {{
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f4f7fc;
-            color: #2c3e50;
+            background-color: 
+            color: 
         }}
         .header {{
             text-align: center;
-            background-color: #1d2c5e;
+            background-color: 
             color: white;
             padding: 20px;
             border-radius: 10px;
@@ -54,7 +54,7 @@ def generate_html_report(diagnosis_data, file_path):
             font-size: 24px;
         }}
         .summary {{
-            background-color: #ffffff;
+            background-color: 
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
@@ -67,22 +67,22 @@ def generate_html_report(diagnosis_data, file_path):
         .summary th, .summary td {{
             padding: 10px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid 
         }}
         .summary th {{
-            background-color: #f4f7fc;
+            background-color: 
             font-weight: bold;
         }}
         .section {{
-            background-color: #ffffff;
+            background-color: 
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
         .section h2 {{
-            color: #4a6baf;
-            border-bottom: 2px solid #4a6baf;
+            color: 
+            border-bottom: 2px solid 
             padding-bottom: 5px;
         }}
         .image-container {{
@@ -96,19 +96,19 @@ def generate_html_report(diagnosis_data, file_path):
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
         .stages {{
-            background-color: #e9f5e9;
+            background-color: 
             padding: 10px;
             border-radius: 5px;
         }}
         .solution {{
-            background-color: #ffeaa7;
+            background-color: 
             padding: 10px;
             border-radius: 5px;
-            color: #d63031;
+            color: 
             font-weight: bold;
         }}
         .disclaimer {{
-            background-color: #fab1a0;
+            background-color: 
             padding: 10px;
             border-radius: 5px;
             text-align: center;
@@ -118,7 +118,7 @@ def generate_html_report(diagnosis_data, file_path):
             text-align: center;
             margin-top: 20px;
             font-size: 12px;
-            color: #7f8c8d;
+            color: 
         }}
     </style>
 </head>
@@ -139,10 +139,10 @@ def generate_html_report(diagnosis_data, file_path):
     </div>
 """
 
-        # Image Section
+                       
         image_path = diagnosis_data.get('image_path')
         if image_path and os.path.exists(image_path):
-            # Encode image to base64 for embedding
+                                                  
             with open(image_path, "rb") as img_file:
                 encoded_string = base64.b64encode(img_file.read()).decode('utf-8')
             image_ext = os.path.splitext(image_path)[1].lower()
@@ -169,7 +169,7 @@ def generate_html_report(diagnosis_data, file_path):
     </div>
 """
 
-        # Description
+                     
         description = diagnosis_data.get('description', 'Not Available')
         if description and description != 'Not Available':
             html_content += f"""
@@ -179,7 +179,7 @@ def generate_html_report(diagnosis_data, file_path):
     </div>
 """
 
-        # Stages
+                
         stages = diagnosis_data.get("stages")
         if stages and isinstance(stages, dict):
             stages_html = "<br>".join([f"<strong>{k}:</strong> {v}" for k, v in stages.items()])
@@ -192,7 +192,7 @@ def generate_html_report(diagnosis_data, file_path):
     </div>
 """
 
-        # Causes
+                
         causes = diagnosis_data.get('causes', 'Not Available')
         if causes and causes != 'Not Available':
             html_content += f"""
@@ -202,7 +202,7 @@ def generate_html_report(diagnosis_data, file_path):
     </div>
 """
 
-        # Preventive Measures
+                             
         preventive = diagnosis_data.get('preventive_measures', 'Not Available')
         if preventive and preventive != 'Not Available':
             html_content += f"""
@@ -212,7 +212,7 @@ def generate_html_report(diagnosis_data, file_path):
     </div>
 """
 
-        # Solution
+                  
         solution = diagnosis_data.get('solution', 'No specific solution provided in the database.')
         html_content += f"""
     <div class="section">
@@ -223,7 +223,7 @@ def generate_html_report(diagnosis_data, file_path):
     </div>
 """
 
-        # Disclaimer
+                    
         html_content += f"""
     <div class="disclaimer">
         <strong>Disclaimer:</strong> This report is generated by an automated system and should be used for informational purposes only. Consult a qualified professional for a definitive diagnosis.
@@ -236,7 +236,7 @@ def generate_html_report(diagnosis_data, file_path):
 </html>
 """
 
-        # Write to file
+                       
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(html_content)
 

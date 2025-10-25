@@ -1,8 +1,8 @@
-# DiseaseDetectionApp/core/llm_integrator.py
-# --- WATERMARK PROTECTION ---
-# This code is protected by watermark. Made by "abhi-abhi86"
-# Unauthorized copying, modification, or redistribution is prohibited.
-# If this watermark is removed, the application will not function.
+                                            
+                              
+                                                            
+                                                                      
+                                                                  
 
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
@@ -15,7 +15,7 @@ def check_watermark():
         import sys
         sys.exit(1)
 
-# Execute watermark check
+                         
 check_watermark()
 
 import os
@@ -38,12 +38,12 @@ class LLMIntegrator:
 
         if self.llm_available:
             openai.api_key = self.api_key
-            self.model = "gpt-3.5-turbo"  # Use GPT-3.5 for cost-effectiveness, can upgrade to GPT-4
+            self.model = "gpt-3.5-turbo"                                                            
         else:
             print("Warning: OpenAI API key not found. LLM features disabled. Set OPENAI_API_KEY environment variable for enhanced AI responses.")
 
-        self.conversation_history = []  # For context-aware queries
-        self.cache = {}  # Simple cache for repeated queries
+        self.conversation_history = []                             
+        self.cache = {}                                     
 
     def generate_response(self, query: str, context: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -54,7 +54,7 @@ class LLMIntegrator:
         if not self.llm_available:
             return "LLM features are disabled. Please set OPENAI_API_KEY environment variable for enhanced AI responses. Falling back to database search."
 
-        # Check cache first for repeated queries
+                                                
         cache_key = (query, str(context) if context else None)
         if cache_key in self.cache:
             return self.cache[cache_key]
@@ -66,21 +66,21 @@ class LLMIntegrator:
                 messages=messages,
                 max_tokens=300,
                 temperature=0.7,
-                timeout=10  # Add 10-second timeout to prevent hanging
+                timeout=10                                            
             )
             bot_response = response.choices[0].message['content'].strip()
-            # Add to conversation history for memory
+                                                    
             self.conversation_history.append({"role": "user", "content": query})
             self.conversation_history.append({"role": "assistant", "content": bot_response})
-            # Keep history limited to last 10 exchanges
+                                                       
             if len(self.conversation_history) > 20:
                 self.conversation_history = self.conversation_history[-20:]
 
-            # Cache the response for future use
+                                               
             self.cache[cache_key] = bot_response
-            # Limit cache size to prevent memory issues
+                                                       
             if len(self.cache) > 50:
-                # Remove oldest entries (simple FIFO)
+                                                     
                 oldest_keys = list(self.cache.keys())[:10]
                 for key in oldest_keys:
                     del self.cache[key]
@@ -148,10 +148,10 @@ class LLMIntegrator:
         """
         messages = [{"role": "system", "content": system_prompt}]
 
-        # Add conversation history
-        messages.extend(self.conversation_history[-10:])  # Last 5 exchanges
+                                  
+        messages.extend(self.conversation_history[-10:])                    
 
-        # Add context if provided
+                                 
         if context:
             context_str = f"Context: {context}"
             messages.append({"role": "user", "content": context_str})
@@ -162,4 +162,4 @@ class LLMIntegrator:
     def reset_memory(self):
         """Reset conversation history for a new session."""
         self.conversation_history = []
-        self.cache = {}  # Also clear cache on reset
+        self.cache = {}                             

@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
-# DiseaseDetectionApp/developer_access.py
-# Developer information access script - only accessible with correct username
+                      
+                                         
+                                                                             
 
 import json
 import os
@@ -11,27 +11,27 @@ def get_developer_info():
     """
     Access developer information - only available to authorized developer.
     """
-    # Get the project root directory
+                                    
     project_root = Path(__file__).parent
 
-    # Path to the hidden developer info file
+                                            
     info_file = project_root / '.developer_info.json'
 
-    # Check if the file exists
+                              
     if not info_file.exists():
         print("❌ Developer information file not found.")
         return False
 
-    # Prompt for username
+                         
     username = input("Enter developer username: ").strip()
 
-    # Check if username matches
+                               
     if username != "abhi-abhi86":
         print("❌ Access denied. Invalid username.")
         return False
 
     try:
-        # Load and display developer information
+                                                
         with open(info_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
 

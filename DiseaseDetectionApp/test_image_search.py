@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Test script for the updated ImageFetchWorker to verify Wikipedia prioritization and Google fallback.
 """
@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from ui.image_search_dialog import ImageFetchWorker
 
-# Initialize QApplication for PyQt5
+                                   
 app = QApplication(sys.argv)
 
 class TestWorker(QObject):
@@ -31,7 +31,7 @@ class TestWorker(QObject):
 
         thread.started.connect(worker.run)
         thread.start()
-        thread.wait()  # Wait for completion
+        thread.wait()                       
 
         return self.result, self.error_msg
 
@@ -54,8 +54,8 @@ def test_disease(disease_name):
     print()
 
 if __name__ == "__main__":
-    # Test cases
-    test_disease("Lumpy Skin Disease")  # Should have Wikipedia image
-    test_disease("Nonexistent Disease")  # Should fallback to Google or error
-    test_disease("Ringworm")  # Ambiguous, might disambiguate
-    test_disease("")  # Invalid
+                
+    test_disease("Lumpy Skin Disease")                               
+    test_disease("Nonexistent Disease")                                      
+    test_disease("Ringworm")                                 
+    test_disease("")           

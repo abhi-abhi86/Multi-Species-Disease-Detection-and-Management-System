@@ -36,10 +36,10 @@
     "error": null
   },
   "ui.main_window": {
-    "status": "PASS",
+    "status": "FAIL",
     "type": "import",
     "description": "Main window UI module",
-    "error": null
+    "error": "Import failed: unterminated f-string literal (detected at line 636) (main_window.py, line 636)"
   },
   "ui.create_spinner": {
     "status": "PASS",
@@ -54,10 +54,10 @@
     "error": null
   },
   "main": {
-    "status": "PASS",
+    "status": "FAIL",
     "type": "import",
     "description": "Import test for Main application entry point",
-    "error": null
+    "error": "Import failed: unterminated f-string literal (detected at line 636) (main_window.py, line 636)"
   },
   "predict_disease.py": {
     "status": "PASS",
@@ -108,10 +108,10 @@
     "error": null
   },
   "disease_model.pt": {
-    "status": "PASS",
+    "status": "FAIL",
     "type": "file",
     "description": "Trained ML model file",
-    "error": null
+    "error": "File not found"
   },
   "class_to_name.json": {
     "status": "PASS",
@@ -167,6 +167,6 @@
     "type": "function",
     "description": "Function call test",
     "error": null,
-    "result": "<core.ml_processor.MLProcessor object at 0x11d2fb8c0>"
+    "result": "<core.ml_processor.MLProcessor object at 0x10fc78050>"
   }
 }

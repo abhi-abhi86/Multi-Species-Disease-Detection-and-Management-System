@@ -1,4 +1,4 @@
-# DiseaseDetectionApp/core/ncbi_integration.py
+                                              
 import requests
 import xml.etree.ElementTree as ET
 import re
@@ -12,14 +12,14 @@ def get_pubmed_summary(disease_name, max_results=2, domain=None):
     print(f"Searching PubMed for articles related to: '{disease_name}' in domain: '{domain}'")
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 
-    # Refine search term: Clean disease name, add domain if provided
+                                                                    
     cleaned_disease = re.sub(r'[^\w\s]', '', disease_name).strip()
     search_term = f'"{cleaned_disease}"[Title/Abstract]'
     if domain and domain.lower() in ['plant', 'human', 'animal']:
         search_term += f' AND {domain}[Title/Abstract]'
 
     try:
-        # Step 1: Search PubMed for article IDs (PMIDs).
+                                                        
         search_url = f"{base_url}esearch.fcgi?db=pubmed&term={search_term}&retmax={max_results}&sort=relevance"
         response = requests.get(search_url, timeout=10)
         response.raise_for_status()
@@ -31,7 +31,7 @@ def get_pubmed_summary(disease_name, max_results=2, domain=None):
             print("No relevant articles found on PubMed.")
             return "No recent research articles were found on PubMed for this topic."
 
-        # Step 2: Fetch the summaries for the found article IDs.
+                                                                
         ids = ",".join(id_list)
         fetch_url = f"{base_url}efetch.fcgi?db=pubmed&id={ids}&retmode=xml&rettype=abstract"
         fetch_response = requests.get(fetch_url, timeout=10)
@@ -48,7 +48,7 @@ def get_pubmed_summary(disease_name, max_results=2, domain=None):
             title = title_elem.text if title_elem is not None and title_elem.text else "No Title Available"
             abstract = abstract_elem.text if abstract_elem is not None and abstract_elem.text else "No Abstract Available"
 
-            # Format for UI display
+                                   
             summary_texts.append(f"  • <b>{title}</b><br>    <i>{abstract[:200]}...</i>")
 
         if not summary_texts:
@@ -81,8 +81,8 @@ def generate_ncbi_report(disease_name, pubmed_summary, domain=None, output_path=
         <title>NCBI PubMed Report for {disease_name}</title>
         <style>
             body {{ font-family: Arial, sans-serif; margin: 20px; }}
-            h1 {{ color: #333; }}
-            h2 {{ color: #666; }}
+            h1 {{ color: 
+            h2 {{ color: 
             .summary {{ margin-bottom: 20px; }}
         </style>
     </head>

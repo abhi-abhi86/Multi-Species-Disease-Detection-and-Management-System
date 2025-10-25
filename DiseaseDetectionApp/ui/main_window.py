@@ -1,8 +1,8 @@
-# DiseaseDetectionApp/ui/main_window.py
-# --- WATERMARK PROTECTION ---
-# This code is protected by watermark. Made by "abhi-abhi86"
-# Unauthorized copying, modification, or redistribution is prohibited.
-# If this watermark is removed, the application will not function.
+                                       
+                              
+                                                            
+                                                                      
+                                                                  
 
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
@@ -15,7 +15,7 @@ def check_watermark():
         import sys
         sys.exit(1)
 
-# Execute watermark check
+                         
 check_watermark()
 
 import csv
@@ -34,10 +34,10 @@ from PyQt5.QtGui import QPixmap, QFont, QCursor, QMovie
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings, QEvent
 
-# Add the parent directory to the path for imports
+                                                  
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# --- Import local modules ---
+                              
 try:
     from ui.add_disease_dialog import AddNewDiseaseDialog
 except ImportError:
@@ -80,14 +80,14 @@ try:
 except ImportError:
     LLMIntegrator = None
 
-# Try to import LLM integrator for enhanced features
+                                                    
 try:
     llm_available = True
 except ImportError:
     llm_available = False
     LLMIntegrator = None
 
-# Check for missing critical dependencies
+                                         
 missing_deps = []
 if load_database is None:
     missing_deps.append("data_handler")
@@ -119,17 +119,17 @@ class SettingsDialog(QDialog):
         self.setWindowTitle("Settings")
         self.layout = QFormLayout(self)
         self.settings = QSettings("DiseaseDetectionApp", "UserPreferences")
-        # Default folders
+                         
         self.image_folder = QLineEdit(self.settings.value("image_folder", os.path.expanduser("~")))
         self.pdf_folder = QLineEdit(self.settings.value("pdf_folder", os.path.expanduser("~")))
-        # Theme selection
+                         
         self.theme_combo = QComboBox()
         self.theme_combo.addItems(["Light", "Dark"])
         self.theme_combo.setCurrentText(self.settings.value("theme", "Light"))
         self.layout.addRow("Default Image Folder:", self.image_folder)
         self.layout.addRow("Default PDF Save Folder:", self.pdf_folder)
         self.layout.addRow("Theme:", self.theme_combo)
-        # Buttons
+                 
         btns = QHBoxLayout()
         self.ok_btn = QPushButton("OK")
         self.cancel_btn = QPushButton("Cancel")
@@ -270,7 +270,7 @@ class MainWindow(QMainWindow):
         self.diagnosis_worker = None
         self.base_app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.result_animation = None
-        # Set initial window opacity for fade-in
+                                                
         self.setWindowOpacity(0.0)
         self.setup_menu()
         self.status_bar = QStatusBar()
@@ -286,7 +286,7 @@ class MainWindow(QMainWindow):
     def setup_menu(self):
         menubar = self.menuBar()
 
-        # File Menu
+                   
         file_menu = menubar.addMenu("File")
         add_action = QAction("Add New Disease...", self)
         add_action.setShortcut("Ctrl+N")
@@ -313,7 +313,7 @@ class MainWindow(QMainWindow):
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
 
-        # Edit Menu
+                   
         edit_menu = menubar.addMenu("Edit")
         clear_action = QAction("Clear All", self)
         clear_action.setShortcut("Ctrl+L")
@@ -321,7 +321,7 @@ class MainWindow(QMainWindow):
         clear_action.triggered.connect(self.clear_all_inputs)
         edit_menu.addAction(clear_action)
 
-        # Tools Menu
+                    
         tools_menu = menubar.addMenu("Tools")
         chatbot_action = QAction("Disease Chatbot...", self)
         chatbot_action.setShortcut("Ctrl+B")
@@ -361,7 +361,7 @@ class MainWindow(QMainWindow):
         settings_action.triggered.connect(self.open_settings_dialog)
         tools_menu.addAction(settings_action)
 
-        # Help Menu
+                   
         help_menu = menubar.addMenu("Help")
         about_action = QAction("About...", self)
         about_action.setShortcut("F1")
@@ -420,7 +420,7 @@ class MainWindow(QMainWindow):
         cancel_btn.setVisible(False)
         spinner = SpinnerLabel()
         spinner.setFixedSize(32, 32)
-        # Image preview metadata display
+                                        
         preview_meta = QLabel("")
         preview_meta.setWordWrap(True)
         preview_meta.setStyleSheet("font-size:11px; color:#666;")
@@ -441,7 +441,7 @@ class MainWindow(QMainWindow):
         input_layout.addWidget(location_input, 2, 2)
         location_input.setStyleSheet("background-color: #ffffff; color: #2c3e50; border: 1px solid #bdc3c7; border-radius: 5px; padding: 5px;")
         input_layout.addWidget(button_container, 3, 1, 1, 2)
-        input_layout.setRowStretch(6, 1)  # Add stretch to make layout more spacious
+        input_layout.setRowStretch(6, 1)                                            
         main_layout.addWidget(input_group)
         result_group = QGroupBox("2. Diagnosis Result")
         result_layout = QGridLayout(result_group)
@@ -467,7 +467,7 @@ class MainWindow(QMainWindow):
         image_search_button.setEnabled(False)
         result_layout.addWidget(reference_image_label, 0, 0)
         result_layout.addWidget(result_display, 0, 1)
-        # Reports menu button
+                             
         reports_menu_button = AnimatedButton("Reports")
         reports_menu = QMenu(reports_menu_button)
         reports_menu.addAction("Save as PDF", lambda: self.save_report_as_pdf(domain_name))
@@ -499,7 +499,7 @@ class MainWindow(QMainWindow):
         cancel_btn.clicked.connect(lambda: self.cancel_diagnosis(domain_name))
         return main_widget
 
-    # --- IMAGE PREVIEW & VALIDATION ---
+                                        
     def set_image(self, file_path, domain):
         tab = self.domain_tabs[domain]
         is_valid, meta = self.validate_image(file_path)
@@ -524,7 +524,7 @@ class MainWindow(QMainWindow):
         tab.diagnosis_data = None
         tab.reference_image_label.setText("Reference image will appear here.")
         tab.reference_image_label.clear()
-        tab.preview_meta.setText(meta)  # Show metadata for preview
+        tab.preview_meta.setText(meta)                             
 
     def upload_image(self, domain):
         image_folder = self.settings.value("image_folder", os.path.expanduser("~"))
@@ -534,13 +534,13 @@ class MainWindow(QMainWindow):
             self.set_image(file_path, domain)
 
     def validate_image(self, file_path):
-        # Only png, jpg, jpeg allowed
+                                     
         valid_exts = ('.png', '.jpg', '.jpeg')
         if not file_path.lower().endswith(valid_exts):
             return False, "Supported image types: PNG, JPG, JPEG."
         try:
             size_bytes = os.path.getsize(file_path)
-            max_size = 5 * 1024 * 1024  # 5MB
+            max_size = 5 * 1024 * 1024       
             if size_bytes > max_size:
                 return False, f"Image is too large ({size_bytes // 1024} KB). Max allowed size: {max_size // 1024} KB."
             pixmap = QPixmap(file_path)
@@ -554,16 +554,16 @@ class MainWindow(QMainWindow):
         except Exception as ex:
             return False, f"Error reading image: {ex}"
 
-    # --- USER PREFERENCES / SETTINGS DIALOG ---
+                                                
     def open_settings_dialog(self):
         before_theme = self.settings.value("theme", "Light")
         result = SettingsDialog.get_settings(self)
         if result:
-            # Apply theme immediately
+                                     
             self.apply_theme(result.get("theme", "Light"))
-            # Optionally: update file dialogs' default folder on next use
+                                                                         
 
-    # --- DIAGNOSIS LOGIC ---
+                             
     def run_diagnosis(self, domain):
         if self.worker_thread and self.worker_thread.isRunning():
             QMessageBox.warning(self, "Busy", "A diagnosis is already in progress. Please wait or cancel it.")
@@ -623,24 +623,24 @@ class MainWindow(QMainWindow):
         tab.diagnosis_data = {**result, 'confidence': confidence, 'stage': predicted_stage,
                               'image_path': self.current_image_paths[domain]}
 
-        # Check if diagnosis failed (low confidence or "No Confident Match Found")
+                                                                                  
         if result.get('name') == "No Confident Match Found" or confidence < 50.0:
-            # Add "Add New Disease" button dynamically
+                                                      
             add_disease_button = AnimatedButton("Add New Disease", primary_color="#17a2b8", hover_color="#138496")
             add_disease_button.clicked.connect(lambda: self.open_add_disease_dialog_with_prefill(domain))
-            # Add button to the result layout
-            tab.result_layout.addWidget(add_disease_button, 2, 0)  # Below reports menu button
+                                             
+            tab.result_layout.addWidget(add_disease_button, 2, 0)                             
 
         stages_str = "\n".join([f"  • <b>{k}:</b> {v}" for k, v in result.get("stages", {}).items()])
         output_html = (
-            f"<h2 style='font-family: Arial, sans-serif; font-size: 18px; color: #2c3e50; margin-bottom: 10px;'>Diagnosis: {result.get('name', 'N/A')}</h2>"
-            f"<p style='font-size: 14px;'><b>Confidence Score:</b> <span style='color:#27ae60; font-weight:bold; font-size: 16px;'>{confidence:.1f}%</span></p>"
-            f"<p style='font-size: 14px;'><b>Predicted Stage:</b> <span style='color:#3498db;'>{predicted_stage}</span></p>"
-            f"<p style='font-size: 14px;'><b>Description:</b><br><span style='color:#34495e;'>{result.get('description', 'N/A')}</span></p>"
-            f"<p style='font-size: 14px;'><b>Wikipedia Summary:</b><br><span style='color:#34495e;'>{wiki_summary if wiki_summary else 'No summary available.'}</span></p>"
-            f"<p style='font-size: 14px;'><b>Known Stages:</b><br><span style='color:#34495e;'>{stages_str if stages_str else 'No stages information available.'}</span></p>"
-            f"<p style='font-size: 14px;'><b style='color:#e74c3c;'>Solution/Cure:</b><br><span style='color:#e74c3c; font-weight: bold;'>{result.get('solution', 'No solution available.')}</span></p>"
-            f"<p style='font-size: 14px;'><b>Recent Research (PubMed):</b><br><span style='color:#34495e;'>{pubmed_summary if pubmed_summary else 'No recent research available.'}</span></p>"
+            f"<h2 style='font-family: Arial, sans-serif; font-size: 18px; color: #2c3e50;'>{result.get('name', 'Unknown Disease')}</h2>"
+            f"<p style='font-size: 14px;'><b>Confidence Score:</b> <span style='color: {'green' if confidence >= 70 else 'orange' if confidence >= 50 else 'red'};'>{confidence:.1f}%</span></p>"
+            f"<p style='font-size: 14px;'><b>Predicted Stage:</b> <span style='color: #2c3e50;'>{predicted_stage}</span></p>"
+            f"<p style='font-size: 14px;'><b>Description:</b><br><span style='color: #2c3e50;'>{result.get('description', 'No description available.')}</span></p>"
+            f"<p style='font-size: 14px;'><b>Wikipedia Summary:</b><br><span style='color: #2c3e50;'>{wiki_summary or 'No summary available.'}</span></p>"
+            f"<p style='font-size: 14px;'><b>Known Stages:</b><br><span style='color: #2c3e50;'>{stages_str}</span></p>"
+            f"<p style='font-size: 14px;'><b>Solution/Cure:</b><br><span style='color: #2c3e50;'>{result.get('solution', 'No solution available.')}</span></p>"
+            f"<p style='font-size: 14px;'><b>Recent Research (PubMed):</b><br><span style='color: #2c3e50;'>{pubmed_summary or 'No recent research available.'}</span></p>"
         )
         tab.result_display.setHtml(output_html)
         tab.reports_menu_button.setEnabled(True)
@@ -656,23 +656,23 @@ class MainWindow(QMainWindow):
                 tab.reference_image_label.setStyleSheet("border: 2px solid #27ae60; border-radius: 10px; background-color: #ffffff; padding: 5px;")
                 image_displayed = True
             else:
-                # Try to find a similar image in the same folder
+                                                                
                 image_dir = os.path.dirname(full_image_path)
                 if os.path.exists(image_dir):
                     image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
                     if image_files:
-                        # Pick the first available image
+                                                        
                         fallback_image_path = os.path.join(image_dir, image_files[0])
                         pixmap = QPixmap(fallback_image_path)
                         tab.reference_image_label.setPixmap(
                             pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
                                           Qt.TransformationMode.SmoothTransformation))
                         tab.reference_image_label.setStyleSheet("border: 2px solid #f39c12; border-radius: 10px; background-color: #fff3cd; padding: 5px;")
-                        # Update the result to reflect the fallback
+                                                                   
                         result['image_url'] = os.path.relpath(fallback_image_path, self.base_app_dir).replace('\\', '/')
                         image_displayed = True
                     else:
-                        # No images in folder, use uploaded image if available
+                                                                              
                         uploaded_image = self.current_image_paths.get(domain)
                         if uploaded_image and os.path.exists(uploaded_image):
                             pixmap = QPixmap(uploaded_image)
@@ -680,14 +680,14 @@ class MainWindow(QMainWindow):
                                 pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
                                               Qt.TransformationMode.SmoothTransformation))
                             tab.reference_image_label.setStyleSheet("border: 2px solid #3498db; border-radius: 10px; background-color: #d4e6f1; padding: 5px;")
-                            # Update the result to use uploaded image for report
+                                                                                
                             result['image_url'] = os.path.relpath(uploaded_image, self.base_app_dir).replace('\\', '/')
                             image_displayed = True
                         else:
                             tab.reference_image_label.setText(f"No reference images found in:\n{image_dir}\nPlease check the database.")
                             tab.reference_image_label.setStyleSheet("border: 2px solid #e74c3c; border-radius: 10px; background-color: #f8d7da; color: #721c24; padding: 5px;")
                 else:
-                    # Directory doesn't exist, use uploaded image
+                                                                 
                     uploaded_image = self.current_image_paths.get(domain)
                     if uploaded_image and os.path.exists(uploaded_image):
                         pixmap = QPixmap(uploaded_image)
@@ -695,14 +695,14 @@ class MainWindow(QMainWindow):
                             pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
                                           Qt.TransformationMode.SmoothTransformation))
                         tab.reference_image_label.setStyleSheet("border: 2px solid #3498db; border-radius: 10px; background-color: #d4e6f1; padding: 5px;")
-                        # Update the result to use uploaded image for report
+                                                                            
                         result['image_url'] = os.path.relpath(uploaded_image, self.base_app_dir).replace('\\', '/')
                         image_displayed = True
                     else:
                         tab.reference_image_label.setText(f"Reference image not found:\n{relative_image_path}\nPlease check the database.")
                         tab.reference_image_label.setStyleSheet("border: 2px solid #e74c3c; border-radius: 10px; background-color: #f8d7da; color: #721c24; padding: 5px;")
         else:
-            # No image_url in result, use uploaded image
+                                                        
             uploaded_image = self.current_image_paths.get(domain)
             if uploaded_image and os.path.exists(uploaded_image):
                 pixmap = QPixmap(uploaded_image)
@@ -710,7 +710,7 @@ class MainWindow(QMainWindow):
                     pixmap.scaled(tab.reference_image_label.size(), Qt.AspectRatioMode.KeepAspectRatio,
                                   Qt.TransformationMode.SmoothTransformation))
                 tab.reference_image_label.setStyleSheet("border: 2px solid #3498db; border-radius: 10px; background-color: #d4e6f1; padding: 5px;")
-                # Update the result to use uploaded image for report
+                                                                    
                 result['image_url'] = os.path.relpath(uploaded_image, self.base_app_dir).replace('\\', '/')
                 image_displayed = True
             else:
@@ -739,7 +739,7 @@ class MainWindow(QMainWindow):
         tab.diagnose_btn.setVisible(True)
         tab.cancel_btn.setVisible(False)
         if canceled:
-            tab.result_display.setHtml("<p style='color:#dc3545;'>Diagnosis was canceled by the user.</p>")
+            tab.result_display.setHtml("<p style='color: orange;'>Diagnosis canceled.</p>")
             self.animate_result_fade_in(tab)
             self.status_bar.showMessage("Diagnosis canceled.", 4000)
         if self.worker_thread and self.worker_thread.isRunning():
@@ -778,7 +778,7 @@ class MainWindow(QMainWindow):
             success, error_msg = save_disease(data)
             if success:
                 self.database = load_database()
-                # Ask user if they want to retrain the model immediately
+                                                                        
                 reply = QMessageBox.question(self, "Retrain Model",
                                            f"Disease '{data.get('name', '')}' has been saved successfully.\n\n"
                                            "Would you like to retrain the ML model now to include this new disease?\n"
@@ -806,10 +806,10 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Retraining in Progress", "Model retraining is already in progress.")
             return
 
-        # Show loading message
+                              
         self.status_bar.showMessage("Retraining model in background, please wait...", 0)
 
-        # Create retraining worker
+                                  
         from core.retraining_worker import RetrainingWorker
         self.retraining_worker = RetrainingWorker()
         self.retraining_thread = QThread()
@@ -826,11 +826,11 @@ class MainWindow(QMainWindow):
     def on_retraining_complete(self):
         """Handle successful retraining completion."""
         self.status_bar.showMessage("Model retraining completed successfully!", 5000)
-        # Reload database and reinitialize ML processor
+                                                       
         self.database = load_database()
         self.ml_processor = MLProcessor()
 
-        # Count newly trained diseases
+                                      
         import os
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         user_added_dir = os.path.join(base_dir, 'user_added_diseases')
@@ -875,7 +875,7 @@ class MainWindow(QMainWindow):
         if not tab.diagnosis_data:
             QMessageBox.warning(self, "No Data", "Please run a diagnosis before saving a report.")
             return
-        html_folder = self.settings.value("pdf_folder", os.path.expanduser("~"))  # Reuse PDF folder setting
+        html_folder = self.settings.value("pdf_folder", os.path.expanduser("~"))                            
         safe_name = re.sub(r'[\s/:*?"<>|]+', '_', tab.diagnosis_data.get('name', '')).lower()
         default_path = os.path.join(html_folder, f"{safe_name}_report.html")
         file_path, _ = QFileDialog.getSaveFileName(self, "Save HTML Report", default_path, "HTML Files (*.html)")
@@ -883,7 +883,7 @@ class MainWindow(QMainWindow):
             success, error_msg = generate_html_report(tab.diagnosis_data, file_path)
             if success:
                 QMessageBox.information(self, "Success", f"Report saved successfully to:\n{file_path}")
-                # Optionally open in browser
+                                            
                 webbrowser.open(f"file://{file_path}")
             else:
                 QMessageBox.critical(self, "HTML Error", f"Failed to generate HTML report:\n{error_msg}")
@@ -893,7 +893,7 @@ class MainWindow(QMainWindow):
         if not tab.diagnosis_data:
             QMessageBox.warning(self, "No Data", "Please run a diagnosis before saving a report.")
             return
-        csv_folder = self.settings.value("pdf_folder", os.path.expanduser("~"))  # Reuse PDF folder setting
+        csv_folder = self.settings.value("pdf_folder", os.path.expanduser("~"))                            
         safe_name = re.sub(r'[\s/:*?"<>|]+', '_', tab.diagnosis_data.get('name', '')).lower()
         default_path = os.path.join(csv_folder, f"{safe_name}_report.csv")
         file_path, _ = QFileDialog.getSaveFileName(self, "Save CSV Report", default_path, "CSV Files (*.csv)")
@@ -909,7 +909,7 @@ class MainWindow(QMainWindow):
                     writer.writerow({'Field': 'Predicted Stage', 'Value': data.get('stage', 'N/A')})
                     writer.writerow({'Field': 'Description', 'Value': data.get('description', 'N/A')})
                     writer.writerow({'Field': 'Solution/Cure', 'Value': data.get('solution', 'N/A')})
-                    # Handle stages as a single string
+                                                      
                     stages = data.get('stages', {})
                     if stages:
                         stages_str = '; '.join([f"{k}: {v}" for k, v in stages.items()])
@@ -949,7 +949,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "No Diagnosis", "Please run a diagnosis first to search for images.")
             return
         disease_name = tab.diagnosis_data.get('name', '')
-        # Open Google Images search in browser
+                                              
         query = f"{disease_name} disease images"
         url = f"https://www.google.com/search?tbm=isch&q={query.replace(' ', '+')}"
         webbrowser.open(url)
@@ -962,9 +962,9 @@ class MainWindow(QMainWindow):
     def showEvent(self, event):
         """Override showEvent to trigger fade-in animation when window is shown."""
         super().showEvent(event)
-        # Start fade-in animation using window opacity
+                                                      
         self.fade_in_animation = QPropertyAnimation(self, b"windowOpacity")
-        self.fade_in_animation.setDuration(1000)  # 1 second
+        self.fade_in_animation.setDuration(1000)            
         self.fade_in_animation.setStartValue(0.0)
         self.fade_in_animation.setEndValue(1.0)
         self.fade_in_animation.setEasingCurve(QEasingCurve.Type.InOutQuad)
@@ -982,7 +982,7 @@ class MainWindow(QMainWindow):
             pass
         event.accept()
 
-    # --- NEW MENU ACTION METHODS ---
+                                     
 
     def import_disease_database(self):
         """Import diseases from a JSON file."""
@@ -994,13 +994,13 @@ class MainWindow(QMainWindow):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     imported_data = json.load(f)
 
-                # Validate imported data structure
+                                                  
                 if not isinstance(imported_data, list):
                     QMessageBox.warning(self, "Invalid Format",
                                         "The imported file must contain a list of disease objects.")
                     return
 
-                # Import each disease
+                                     
                 imported_count = 0
                 for disease_data in imported_data:
                     if isinstance(disease_data, dict) and 'name' in disease_data:
@@ -1066,7 +1066,7 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout(dialog)
 
-        # Calculate statistics
+                              
         total_diagnoses = len(self.diagnosis_locations)
         disease_counts = {}
         location_counts = {}
@@ -1078,7 +1078,7 @@ class MainWindow(QMainWindow):
             disease_counts[disease] = disease_counts.get(disease, 0) + 1
             location_counts[location] = location_counts.get(location, 0) + 1
 
-        # Display statistics
+                            
         stats_text = QTextEdit()
         stats_text.setReadOnly(True)
 
@@ -1107,7 +1107,7 @@ class MainWindow(QMainWindow):
 
     def manual_retrain_model(self):
         """Manually trigger model retraining."""
-        # Check if there are any new diseases that need training
+                                                                
         import os
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         user_added_dir = os.path.join(base_dir, 'user_added_diseases')

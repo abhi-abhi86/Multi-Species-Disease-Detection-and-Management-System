@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+                      
 """
 Comprehensive test script for disease detection across all species (plant, human, animal).
 Tests image analysis, symptom analysis, and report generation for each disease type.
@@ -15,7 +15,7 @@ from core.worker import DiagnosisWorker
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 
-# Initialize QApplication for PyQt5
+                                   
 app = QApplication(sys.argv) if not QApplication.instance() else QApplication.instance()
 
 class DiagnosisTester(QObject):
@@ -37,25 +37,25 @@ class DiagnosisTester(QObject):
     def run_test(self):
         """Run the diagnosis test and return results."""
         try:
-            # Load database and ML processor
+                                            
             database = load_database()
             ml_processor = MLProcessor()
 
-            # Create worker thread
+                                  
             thread = QThread()
             worker = DiagnosisWorker(ml_processor, self.image_path, self.symptoms, self.domain, database)
             worker.moveToThread(thread)
 
-            # Connect signals
+                             
             worker.finished.connect(self.on_finished)
             worker.error.connect(self.on_error)
 
-            # Start thread
+                          
             thread.started.connect(worker.run)
             thread.start()
-            thread.wait(10000)  # Wait up to 10 seconds
+            thread.wait(10000)                         
 
-            # Clean up
+                      
             if thread.isRunning():
                 worker.stop()
                 thread.quit()
@@ -103,7 +103,7 @@ def test_plant_diseases():
         print(f"\nTesting Plant Disease: {disease}")
         print("-" * 30)
 
-        # Test with symptoms
+                            
         symptoms = f"I have a plant with {disease} symptoms"
         tester = DiagnosisTester("plant", symptoms=symptoms)
         result = tester.run_test()
@@ -132,7 +132,7 @@ def test_human_diseases():
         print(f"\nTesting Human Disease: {disease}")
         print("-" * 30)
 
-        # Test with symptoms
+                            
         symptoms = f"I have symptoms of {disease}"
         tester = DiagnosisTester("human", symptoms=symptoms)
         result = tester.run_test()
@@ -160,7 +160,7 @@ def test_animal_diseases():
         print(f"\nTesting Animal Disease: {disease}")
         print("-" * 30)
 
-        # Test with symptoms
+                            
         symptoms = f"My animal has {disease} symptoms"
         tester = DiagnosisTester("animal", symptoms=symptoms)
         result = tester.run_test()
@@ -178,7 +178,7 @@ def test_image_analysis():
     print("\n🖼️  TESTING IMAGE ANALYSIS")
     print("=" * 50)
 
-    # Test with sample images if available
+                                          
     image_dir = "sample_images"
     if os.path.exists(image_dir):
         for file in os.listdir(image_dir):
@@ -187,8 +187,8 @@ def test_image_analysis():
                 print(f"\nTesting Image: {file}")
                 print("-" * 30)
 
-                # Determine domain based on filename or use default
-                domain = "plant"  # Default to plant
+                                                                   
+                domain = "plant"                    
                 if "human" in file.lower():
                     domain = "human"
                 elif "animal" in file.lower():
@@ -214,7 +214,7 @@ def main():
     print()
 
     try:
-        # Load and display database info
+                                        
         database = load_database()
         print(f"📚 Database loaded: {len(database)} diseases")
         domains = {}
@@ -229,7 +229,7 @@ def main():
             print(f"   {domain.capitalize()}: {count} diseases")
         print()
 
-        # Run tests
+                   
         test_plant_diseases()
         test_human_diseases()
         test_animal_diseases()

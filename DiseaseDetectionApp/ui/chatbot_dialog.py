@@ -1,9 +1,9 @@
-# DiseaseDetectionApp/ui/chatbot_dialog.py
-# DiseaseDetectionApp/ui/chatbot_dialog.py
-# --- WATERMARK PROTECTION ---
-# This code is protected by watermark. Made by "abhi-abhi86"
-# Unauthorized copying, modification, or redistribution is prohibited.
-# If this watermark is removed, the application will not function.
+                                          
+                                          
+                              
+                                                            
+                                                                      
+                                                                  
 
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
@@ -16,7 +16,7 @@ def check_watermark():
         import sys
         sys.exit(1)
 
-# Execute watermark check
+                         
 check_watermark()
 
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTextEdit, QLineEdit, QPushButton, QLabel
@@ -24,13 +24,13 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal, QObject
 import re
 import wikipedia
 
-# Try to import fuzzywuzzy, but allow the chatbot to function without it.
+                                                                         
 try:
     from fuzzywuzzy import process
 except ImportError:
     process = None
 
-# Try to import LLM integrator for enhanced responses
+                                                     
 try:
     from ..core.llm_integrator import LLMIntegrator
     llm_available = True
@@ -85,7 +85,7 @@ class ChatbotWorker(QObject):
 
     def run(self):
         """ Processes the user's message to provide a helpful response. """
-        # --- Pre-computation and Greeting Handling ---
+                                                       
         if not self.message:
             return
             
@@ -96,25 +96,25 @@ class ChatbotWorker(QObject):
 
         if process is None:
             self.response_ready.emit("Chatbot functionality is limited. For better matching, please install 'fuzzywuzzy' and 'python-Levenshtein' (`pip install fuzzywuzzy python-Levenshtein`).")
-            # Fallback to simple keyword search if fuzzywuzzy is not available.
+                                                                               
             self.simple_search()
             return
 
-        # --- Fuzzy Matching Logic ---
+                                      
         disease_names = [d['name'] for d in self.database]
 
-        # Extract the best matching disease name from the query.
-        # `process.extractOne` returns a tuple: (best_match, score)
+                                                                
+                                                                   
         best_match, score = process.extractOne(self.message, disease_names)
 
-        # Set a confidence threshold. If the match score is too low, try LLM or Wikipedia.
+                                                                                          
         if score < 55:
-            # Try LLM for enhanced response if available
+                                                        
             if self.llm_integrator:
                 llm_response = self.llm_integrator.generate_response(self.message)
                 self.response_ready.emit(llm_response)
             else:
-                # Fallback to Wikipedia
+                                       
                 wiki_response = self.get_wikipedia_info(self.message)
                 if wiki_response:
                     self.response_ready.emit(wiki_response)
@@ -122,18 +122,18 @@ class ChatbotWorker(QObject):
                     self.response_ready.emit(f"I'm sorry, I couldn't find any information related to '{self.message}' in my database or on Wikipedia. Please check the spelling or try a different disease.")
             return
 
-        # Retrieve the full data for the matched disease.
+                                                         
         matched_disease = next((d for d in self.database if d['name'] == best_match), None)
         if not matched_disease:
             self.response_ready.emit(f"An unexpected error occurred while looking up '{best_match}'.")
             return
 
-        # --- Intent Detection and LLM Enhancement ---
-        # Determine what specific piece of information the user wants.
+                                                      
+                                                                      
         response = self.get_info_by_intent(matched_disease)
-        # Enhance response with LLM if available for more detailed explanations
-        if self.llm_integrator and len(response) < 200:  # Only enhance short responses
-            # Use a more efficient prompt for quick enhancement
+                                                                               
+        if self.llm_integrator and len(response) < 200:                                
+                                                               
             enhanced_response = self.llm_integrator.generate_response(
                 f"Provide a brief, detailed explanation for: {response}",
                 {"disease": matched_disease['name'], "query": self.message}
@@ -159,7 +159,7 @@ class ChatbotWorker(QObject):
             response = self.get_info_by_intent(best_match_disease)
             self.response_ready.emit(response)
         else:
-            # Try Wikipedia if no match in database
+                                                   
             wiki_response = self.get_wikipedia_info(self.message)
             if wiki_response:
                 self.response_ready.emit(wiki_response)
@@ -182,7 +182,7 @@ class ChatbotWorker(QObject):
         elif any(word in self.message for word in ['solution', 'cure', 'treat']):
             return disease_data.get('solution', f"Solution information is not available for {disease_data['name']}.")
         else:
-            # Default to the general description if no specific intent is found.
+                                                                                
             return disease_data.get('description', 'No description available for this disease.')
 
     def get_wikipedia_info(self, query):
@@ -196,7 +196,7 @@ class ChatbotWorker(QObject):
         except wikipedia.exceptions.PageError:
             return None
         except wikipedia.exceptions.DisambiguationError as e:
-            # If ambiguous, try the first option
+                                                
             try:
                 first_option = e.options[0]
                 summary = wikipedia.summary(first_option, sentences=3, auto_suggest=False)
@@ -217,12 +217,12 @@ class ChatbotDialog(QDialog):
         self.setStyleSheet("""
             QDialog {
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #f0f8ff, stop:1 #e6f3ff);
+                    stop:0 
                 border-radius: 10px;
             }
             QTextEdit {
                 background: white;
-                border: 1px solid #ccc;
+                border: 1px solid 
                 border-radius: 5px;
                 padding: 5px;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -230,18 +230,18 @@ class ChatbotDialog(QDialog):
             }
             QLineEdit {
                 background: white;
-                border: 2px solid #0078d4;
+                border: 2px solid 
                 border-radius: 20px;
                 padding: 8px 15px;
                 font-size: 14px;
                 font-family: 'Segoe UI', sans-serif;
             }
             QLineEdit:focus {
-                border-color: #005a9e;
+                border-color: 
             }
             QPushButton {
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #0078d4, stop:1 #005a9e);
+                    stop:0 
                 color: white;
                 border: none;
                 border-radius: 20px;
@@ -252,19 +252,19 @@ class ChatbotDialog(QDialog):
             }
             QPushButton:hover {
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #106ebe, stop:1 #0078d4);
+                    stop:0 
             }
             QPushButton:pressed {
-                background: #005a9e;
+                background: 
             }
         """)
 
-        # --- UI Setup ---
+                          
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(10)
 
-        # Title label
+                     
         title_label = QLabel("🤖 AI Disease Assistant")
         title_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #0078d4; margin-bottom: 10px;")
         self.layout.addWidget(title_label)
@@ -279,9 +279,9 @@ class ChatbotDialog(QDialog):
         else:
             greeting += "."
         greeting += " How can I help?"
-        self.chat_history.setHtml(f"<p style='color:#0078d4; font-weight: bold;'><i>{greeting}</i></p>")
+        self.chat_history.setHtml(f"<p style='color: #0078d4; font-weight: bold;'>{greeting}</p>")
 
-        # Input layout
+                      
         input_layout = QHBoxLayout()
         self.user_input = QLineEdit()
         self.user_input.setPlaceholderText("Ask about diseases or type symptoms...")
@@ -294,27 +294,27 @@ class ChatbotDialog(QDialog):
         self.layout.addWidget(self.chat_history)
         self.layout.addLayout(input_layout)
 
-        # --- Threading ---
+                           
         self.worker_thread = None
 
-        # --- Connections ---
+                             
         self.send_button.clicked.connect(self.handle_user_message)
         self.user_input.returnPressed.connect(self.handle_user_message)
 
-        # Set initial query if provided
+                                       
         if initial_query:
             self.user_input.setText(initial_query)
             self.handle_user_message()
         elif self.disease_from_image:
-            # If disease from image search, automatically fetch Wikipedia info
+                                                                              
             self.fetch_wikipedia_for_disease(self.disease_from_image)
 
     def fetch_wikipedia_for_disease(self, disease_name):
         """Fetch Wikipedia information for a disease detected from image."""
-        self.chat_history.append(f"<p style='color:#0078d4; font-weight: bold;'>🔍 Detected disease from image: <b>{disease_name}</b></p>")
-        self.chat_history.append("<p style='color:#666;'>Fetching detailed information from Wikipedia...</p>")
+        self.chat_history.append(f"<p style='color: #0078d4;'>Fetching Wikipedia information for '{disease_name}'...</p>")
+        self.chat_history.append("<p style='color: #666;'>Please wait...</p>")
 
-        # Run Wikipedia fetch in background thread
+                                                  
         self.worker_thread = QThread()
         worker = WikipediaWorker(disease_name)
         worker.moveToThread(self.worker_thread)
@@ -330,9 +330,9 @@ class ChatbotDialog(QDialog):
     def display_wikipedia_response(self, response):
         """Display the Wikipedia response in the chat history."""
         if response:
-            self.chat_history.append(f"<div style='background:#f0f8ff; padding:10px; border-radius:5px; margin:5px 0;'>{response}</div>")
+            self.chat_history.append(f"<div style='background: #e8f5e8; border-left: 4px solid #28a745; padding: 10px; margin: 5px 0; border-radius: 5px;'>{response}</div>")
         else:
-            self.chat_history.append("<p style='color:#d32f2f;'>❌ Could not fetch information from Wikipedia. Please check your internet connection.</p>")
+            self.chat_history.append("<p style='color: #dc3545;'>No Wikipedia information found for this disease.</p>")
 
     def handle_user_message(self):
         user_text = self.user_input.text().strip()
@@ -343,7 +343,7 @@ class ChatbotDialog(QDialog):
         self.user_input.clear()
         self.set_ui_busy(True)
 
-        # Run lookup logic in a background thread.
+                                                  
         self.worker_thread = QThread()
         worker = ChatbotWorker(user_text, self.database, self.llm_integrator)
         worker.moveToThread(self.worker_thread)
@@ -358,7 +358,7 @@ class ChatbotDialog(QDialog):
         self.worker_thread.start()
 
     def display_bot_response(self, bot_text):
-        self.chat_history.append(f"<b style='color:#0056b3;'>Bot:</b> {bot_text}<br>")
+        self.chat_history.append(f"<b style='color: #0078d4;'>Bot:</b> {bot_text}")
 
     def set_ui_busy(self, is_busy):
         """ Enables or disables the input fields while the bot is 'thinking'. """
@@ -367,7 +367,7 @@ class ChatbotDialog(QDialog):
         self.user_input.setPlaceholderText("Thinking..." if is_busy else "Type your question here...")
 
     def closeEvent(self, event):
-        # Ensure thread is stopped if dialog is closed while bot is running.
+                                                                            
         if self.worker_thread and self.worker_thread.isRunning():
             self.worker_thread.quit()
             self.worker_thread.wait()

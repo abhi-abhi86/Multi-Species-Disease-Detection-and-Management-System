@@ -1,5 +1,5 @@
-# DiseaseDetectionApp/comprehensive_test.py
-# Comprehensive test suite for all modules and files
+                                           
+                                                    
 
 import os
 import sys
@@ -8,7 +8,7 @@ import traceback
 import json
 from pathlib import Path
 
-# Add project root to path
+                          
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
@@ -129,7 +129,7 @@ class ModuleTester:
         print("🧬 COMPREHENSIVE MODULE TEST SUITE")
         print("=" * 50)
 
-        # Test core modules
+                           
         print("\n📁 Testing Core Modules:")
         core_modules = [
             ('core.ml_processor', 'ML processing module'),
@@ -143,7 +143,7 @@ class ModuleTester:
         for module_name, description in core_modules:
             self.test_import(module_name, description)
 
-        # Test UI modules
+                         
         print("\n🖥️  Testing UI Modules:")
         ui_modules = [
             ('ui.main_window', 'Main window UI module'),
@@ -153,7 +153,7 @@ class ModuleTester:
         for module_name, description in ui_modules:
             self.test_import(module_name, description)
 
-        # Test main application files
+                                     
         print("\n🚀 Testing Main Application Files:")
         main_files = [
             ('main.py', 'Main application entry point'),
@@ -163,12 +163,12 @@ class ModuleTester:
 
         for file_name, description in main_files:
             if self.test_file_existence(file_name, description):
-                # Try to import if it's a Python file
+                                                     
                 if file_name.endswith('.py'):
-                    module_name = file_name[:-3]  # Remove .py extension
+                    module_name = file_name[:-3]                        
                     self.test_import(module_name, f"Import test for {description}")
 
-        # Test existing test files
+                                  
         print("\n🧪 Testing Test Files:")
         test_files = [
             ('test_disease_detection.py', 'Disease detection test suite'),
@@ -180,7 +180,7 @@ class ModuleTester:
                 module_name = file_name[:-3]
                 self.test_import(module_name, f"Import test for {description}")
 
-        # Test critical data files
+                                  
         print("\n📊 Testing Data Files:")
         data_files = [
             ('disease_model.pt', 'Trained ML model file'),
@@ -192,22 +192,22 @@ class ModuleTester:
             if file_name.endswith('.json'):
                 self.test_json_validity(file_name)
 
-        # Test disease database structure
+                                         
         print("\n🗂️  Testing Disease Database:")
         diseases_dir = project_root / 'diseases'
         if diseases_dir.exists():
             json_files = list(diseases_dir.rglob('*.json'))
             print(f"Found {len(json_files)} disease JSON files")
-            for json_file in json_files[:5]:  # Test first 5 files
+            for json_file in json_files[:5]:                      
                 rel_path = json_file.relative_to(project_root)
                 self.test_json_validity(str(rel_path))
         else:
             print("✗ diseases directory not found")
 
-        # Test function calls on key modules
+                                            
         print("\n⚙️  Testing Key Functions:")
         try:
-            # Test data loading
+                               
             data_handler = self.test_import('core.data_handler')
             if data_handler:
                 self.test_function('core.data_handler', 'load_database')
@@ -215,14 +215,14 @@ class ModuleTester:
             pass
 
         try:
-            # Test ML processor initialization
+                                              
             ml_proc = self.test_import('core.ml_processor')
             if ml_proc:
                 self.test_function('core.ml_processor', 'MLProcessor')
         except:
             pass
 
-        # Generate summary
+                          
         self.generate_summary()
 
     def generate_summary(self):
@@ -250,7 +250,7 @@ class ModuleTester:
             status_icon = "✓" if result['status'] == 'PASS' else "✗"
             print(f"  {status_icon} {name} ({result['type']})")
 
-        # Save detailed results to file
+                                       
         results_file = project_root / 'test_results.json'
         with open(results_file, 'w') as f:
             json.dump(self.results, f, indent=2)
