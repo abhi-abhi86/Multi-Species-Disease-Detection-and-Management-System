@@ -2,10 +2,10 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
-                              
-                                                            
-                                                                      
-                                                                  
+
+
+
+
 WATERMARK_AUTHOR = "abhi-abhi86"
 WATERMARK_CHECK = True
 
@@ -16,13 +16,13 @@ def check_watermark():
         print("Made by: abhi-abhi86")
         sys.exit(1)
 
-                         
+
 check_watermark()
 
-                  
-                                                                                              
-                                                                                    
-                                    
+
+
+
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from DiseaseDetectionApp.ui.main_window import MainWindow
@@ -35,13 +35,13 @@ def main():
     """
     app = QApplication(sys.argv)
 
-                                                          
+
     app.setApplicationName("Multi-Species Disease Detection and Management System")
     app.setOrganizationName("AI-Diagnosis-System")
 
     window = MainWindow()
 
-                                                                             
+
     if not window.ml_processor or not window.ml_processor.model:
         QMessageBox.critical(
             None,
@@ -50,7 +50,7 @@ def main():
             "Please run the `train_disease_classifier.py` script from your terminal to train the model before starting the application.\n\n"
             "The application will now close."
         )
-        sys.exit(1)                                         
+        sys.exit(1)
 
     window.show()
     sys.exit(app.exec())

@@ -26,7 +26,7 @@ OPTIONS = {
                  'core.google_search', 'ui.main_window', 'ui.create_spinner',
                  'ui.add_disease_dialog', 'core.retraining_worker'],
     'excludes': ['tkinter', 'unittest', 'pdb', 'pydoc'],
-    'iconfile': None,                             
+    'iconfile': None,
     'plist': {
         'CFBundleName': 'Multi-Species Disease Detection',
         'CFBundleDisplayName': 'Multi-Species Disease Detection',

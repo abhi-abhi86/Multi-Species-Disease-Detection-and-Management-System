@@ -1,16 +1,16 @@
-                                          
+
 import os
 import json
 import re
 
-                   
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DISEASES_DIR = os.path.join(BASE_DIR, '..', 'diseases')
 USER_ADDED_DISEASES_DIR = os.path.join(BASE_DIR, '..', 'user_added_diseases')
 LEGACY_DB_PATH = os.path.join(BASE_DIR, '..', 'data', 'disease_database.json')
 
 
-                                                                 
+
 _database_cache = None
 
 def load_database():
@@ -26,7 +26,7 @@ def load_database():
     database = []
     loaded_disease_names = set()
 
-                         
+
     print(f"Searching for disease files in: {DISEASES_DIR}")
     if not os.path.exists(DISEASES_DIR):
         print(f"Warning: The directory '{DISEASES_DIR}' does not exist.")
@@ -42,13 +42,13 @@ def load_database():
                             if isinstance(disease_info, dict) and 'name' in disease_info:
                                 disease_name = disease_info['name'].strip()
                                 if disease_name and disease_name.lower() not in loaded_disease_names:
-                                                                                                        
-                                                                                                 
-                                                                                      
+
+
+
                                     folder_name = os.path.basename(root)
                                     safe_internal_id = re.sub(r'[\s/\\:*?"<>|]+', '_', folder_name).lower()
                                     disease_info['internal_id'] = safe_internal_id
-                                                     
+
 
                                     database.append(disease_info)
                                     loaded_disease_names.add(disease_name.lower())
@@ -59,7 +59,7 @@ def load_database():
                     except (json.JSONDecodeError, Exception) as e:
                         print(f"Error reading or parsing '{file_path}': {e}")
 
-                                    
+
     print(f"Searching for user-added disease files in: {USER_ADDED_DISEASES_DIR}")
     if not os.path.exists(USER_ADDED_DISEASES_DIR):
         print(f"Info: The directory '{USER_ADDED_DISEASES_DIR}' does not exist yet.")
@@ -75,7 +75,7 @@ def load_database():
                             if isinstance(disease_info, dict) and 'name' in disease_info:
                                 disease_name = disease_info['name'].strip()
                                 if disease_name and disease_name.lower() not in loaded_disease_names:
-                                                                                
+
                                     folder_name = os.path.basename(root)
                                     safe_internal_id = re.sub(r'[\s/\\:*?"<>|]+', '_', folder_name).lower()
                                     disease_info['internal_id'] = safe_internal_id
@@ -89,7 +89,7 @@ def load_database():
                     except (json.JSONDecodeError, Exception) as e:
                         print(f"Error reading or parsing '{file_path}': {e}")
 
-                                                 
+
     if os.path.exists(LEGACY_DB_PATH):
         try:
             with open(LEGACY_DB_PATH, 'r', encoding='utf-8') as f:
@@ -109,7 +109,7 @@ def load_database():
     else:
         print(f"Successfully loaded {len(database)} unique disease entries.")
 
-                        
+
     _database_cache = database
     return database
 
@@ -133,22 +133,22 @@ def save_disease(disease_data):
         domain_dir = os.path.join(USER_ADDED_DISEASES_DIR, domain)
         os.makedirs(domain_dir, exist_ok=True)
 
-                                 
+
         images_dir = os.path.join(domain_dir, 'images')
         os.makedirs(images_dir, exist_ok=True)
 
         file_path = os.path.join(domain_dir, safe_filename)
 
-                              
+
         image_url = disease_data.get("image_url")
         if image_url:
-                                                               
+
             if os.path.exists(image_url):
                 import shutil
                 image_filename = os.path.basename(image_url)
                 dest_image_path = os.path.join(images_dir, image_filename)
                 shutil.copy(image_url, dest_image_path)
-                                                   
+
                 disease_data["image_url"] = f"user_added_diseases/{domain}/images/{image_filename}"
             else:
                 print(f"Warning: Image file '{image_url}' not found, skipping copy.")

@@ -1,7 +1,7 @@
 import base64
 import os
 
-                                                                            
+
 GIF_BASE64_DATA = """
 R0lGODlhIAAgAPMAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh
 /hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAIAAgAAAE5xDISWlZ
@@ -79,21 +79,21 @@ t-"""
 
 def create_gif():
     """Decodes the base64 string and writes the spinner.gif file."""
-                                                                    
-                                                           
-                                                               
+
+
+
     output_dir = os.path.join(os.path.dirname(__file__))
     os.makedirs(output_dir, exist_ok=True)
     file_path = os.path.join(output_dir, 'spinner.gif')
 
     try:
-                                                               
+
         gif_data = base64.b64decode(GIF_BASE64_DATA)
-        
-                                           
+
+
         with open(file_path, 'wb') as f:
             f.write(gif_data)
-        
+
         print(f"Successfully created 'spinner.gif' at: {file_path}")
 
     except Exception as e:

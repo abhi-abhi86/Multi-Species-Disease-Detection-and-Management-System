@@ -1,6 +1,6 @@
-                      
-                                         
-                                                                             
+
+
+
 
 import json
 import os
@@ -11,27 +11,27 @@ def get_developer_info():
     """
     Access developer information - only available to authorized developer.
     """
-                                    
+
     project_root = Path(__file__).parent
 
-                                            
+
     info_file = project_root / '.developer_info.json'
 
-                              
+
     if not info_file.exists():
         print("❌ Developer information file not found.")
         return False
 
-                         
+
     username = input("Enter developer username: ").strip()
 
-                               
+
     if username != "abhi-abhi86":
         print("❌ Access denied. Invalid username.")
         return False
 
     try:
-                                                
+
         with open(info_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
 

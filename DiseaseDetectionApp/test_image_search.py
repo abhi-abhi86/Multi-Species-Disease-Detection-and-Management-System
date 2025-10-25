@@ -1,4 +1,4 @@
-                      
+
 """
 Test script for the updated ImageFetchWorker to verify Wikipedia prioritization and Google fallback.
 """
@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QThread, QObject, pyqtSignal
 from ui.image_search_dialog import ImageFetchWorker
 
-                                   
+
 app = QApplication(sys.argv)
 
 class TestWorker(QObject):
@@ -31,7 +31,7 @@ class TestWorker(QObject):
 
         thread.started.connect(worker.run)
         thread.start()
-        thread.wait()                       
+        thread.wait()
 
         return self.result, self.error_msg
 
@@ -54,8 +54,8 @@ def test_disease(disease_name):
     print()
 
 if __name__ == "__main__":
-                
-    test_disease("Lumpy Skin Disease")                               
-    test_disease("Nonexistent Disease")                                      
-    test_disease("Ringworm")                                 
-    test_disease("")           
+
+    test_disease("Lumpy Skin Disease")
+    test_disease("Nonexistent Disease")
+    test_disease("Ringworm")
+    test_disease("")

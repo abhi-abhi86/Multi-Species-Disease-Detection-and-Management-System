@@ -33,12 +33,12 @@ class LLMIntegrator:
 
         if self.llm_available:
             openai.api_key = self.api_key
-            self.model = "gpt-3.5-turbo"                                                            
+            self.model = "gpt-3.5-turbo"
         else:
             print("Warning: OpenAI API key not found. LLM features disabled. Set OPENAI_API_KEY environment variable for enhanced AI responses.")
 
-        self.conversation_history = []                             
-        self.cache = {}                                     
+        self.conversation_history = []
+        self.cache = {}
 
     def generate_response(self, query: str, context: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -49,7 +49,7 @@ class LLMIntegrator:
         if not self.llm_available:
             return "LLM features are disabled. Please set OPENAI_API_KEY environment variable for enhanced AI responses. Falling back to database search."
 
-                                                
+
         cache_key = (query, str(context) if context else None)
         if cache_key in self.cache:
             return self.cache[cache_key]
@@ -61,21 +61,21 @@ class LLMIntegrator:
                 messages=messages,
                 max_tokens=300,
                 temperature=0.7,
-                timeout=10                                            
+                timeout=10
             )
             bot_response = response.choices[0].message['content'].strip()
-                                                    
+
             self.conversation_history.append({"role": "user", "content": query})
             self.conversation_history.append({"role": "assistant", "content": bot_response})
-                                                       
+
             if len(self.conversation_history) > 20:
                 self.conversation_history = self.conversation_history[-20:]
 
-                                               
+
             self.cache[cache_key] = bot_response
-                                                       
+
             if len(self.cache) > 50:
-                                                     
+
                 oldest_keys = list(self.cache.keys())[:10]
                 for key in oldest_keys:
                     del self.cache[key]
@@ -143,10 +143,10 @@ class LLMIntegrator:
         """
         messages = [{"role": "system", "content": system_prompt}]
 
-                                  
-        messages.extend(self.conversation_history[-10:])                    
 
-                                 
+        messages.extend(self.conversation_history[-10:])
+
+
         if context:
             context_str = f"Context: {context}"
             messages.append({"role": "user", "content": context_str})
@@ -157,4 +157,4 @@ class LLMIntegrator:
     def reset_memory(self):
         """Reset conversation history for a new session."""
         self.conversation_history = []
-        self.cache = {}                             
+        self.cache = {}

@@ -1,4 +1,4 @@
-                                              
+
 from PyQt5.QtWidgets import (
     QDialog, QFormLayout, QComboBox, QLineEdit, QTextEdit, QDialogButtonBox,
     QVBoxLayout, QFileDialog
@@ -16,11 +16,11 @@ class AddNewDiseaseDialog(QDialog):
         self.setWindowTitle("Add New Disease Information")
         self.setMinimumWidth(500)
 
-                             
+
         main_layout = QVBoxLayout(self)
         form_layout = QFormLayout()
 
-                             
+
         self.domain_box = QComboBox()
         self.domain_box.addItems(["Plant", "Human", "Animal"])
 
@@ -41,7 +41,7 @@ class AddNewDiseaseDialog(QDialog):
         self.browse_button = QDialogButtonBox(QDialogButtonBox.StandardButton.Open)
         self.browse_button.clicked.connect(self.browse_image)
 
-                                            
+
         form_layout.addRow("Domain:", self.domain_box)
         form_layout.addRow("Disease Name:", self.name_edit)
         form_layout.addRow("Description:", self.desc_edit)
@@ -53,20 +53,20 @@ class AddNewDiseaseDialog(QDialog):
         form_layout.addRow("Reference Image Path:", self.image_url_edit)
         form_layout.addRow("Browse Image:", self.browse_button)
 
-                                
+
         self.button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
 
-                                                     
+
         main_layout.addLayout(form_layout)
         main_layout.addWidget(self.button_box)
 
-                                          
+
         if prefilled_data:
             self.prefill_data(prefilled_data)
 
-                                                            
+
         if image_path:
             self.image_url_edit.setText(image_path)
         if domain:
@@ -109,22 +109,22 @@ class AddNewDiseaseDialog(QDialog):
         """
         stages_text = self.stages_edit.toPlainText().strip()
         stages = {}
-        
-                                                                            
+
+
         for line in stages_text.splitlines():
             line = line.strip()
             if ":" in line:
                 parts = line.split(":", 1)
                 key = parts[0].strip()
                 value = parts[1].strip()
-                if key and value:                                        
+                if key and value:
                     stages[key] = value
-        
-                                                                                                     
+
+
         if not stages and stages_text:
              stages["Info"] = stages_text
 
-                                                       
+
         return {
             "domain": self.domain_box.currentText(),
             "name": self.name_edit.text().strip(),
@@ -134,7 +134,7 @@ class AddNewDiseaseDialog(QDialog):
             "risk_factors": self.risk_factors_edit.toPlainText().strip(),
             "solution": self.solution_edit.toPlainText().strip(),
             "preventive_measures": self.preventive_measures_edit.toPlainText().strip(),
-                                                                                         
+
             "image_url": self.image_url_edit.text().strip().replace("\\", "/") or None,
         }
 
@@ -148,5 +148,5 @@ if __name__ == "__main__":
     if dialog.exec() == QDialog.DialogCode.Accepted:
         data = dialog.get_data()
         print("Disease data:", data)
-                                                                                    
+
     sys.exit(app.exec())

@@ -1,4 +1,4 @@
-                                                 
+
 import os
 import json
 import torch
@@ -9,23 +9,23 @@ import time
 import shutil
 import re
 
-                                     
-                                               
+
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DISEASES_DIR = os.path.join(BASE_DIR, 'diseases')                        
-USER_ADDED_DISEASES_DIR = os.path.join(BASE_DIR, 'user_added_diseases')                     
-DATA_DIR = os.path.join(BASE_DIR, 'dataset')                                    
+DISEASES_DIR = os.path.join(BASE_DIR, 'diseases')
+USER_ADDED_DISEASES_DIR = os.path.join(BASE_DIR, 'user_added_diseases')
+DATA_DIR = os.path.join(BASE_DIR, 'dataset')
 MODEL_PATH = os.path.join(BASE_DIR, 'disease_model.pt')
 CLASS_MAP_PATH = os.path.join(BASE_DIR, 'class_to_name.json')
 
-                     
+
 BATCH_SIZE = 16
 EPOCHS = 20
 LEARNING_RATE = 0.001
 IMG_SIZE = 224
 
 
-                                      
+
 
 def prepare_dataset_for_training():
     """
@@ -46,7 +46,7 @@ def prepare_dataset_for_training():
 
     image_count = 0
     class_count = 0
-                       
+
     for root, _, files in os.walk(DISEASES_DIR):
         if os.path.basename(root) == 'images':
             class_name = os.path.basename(os.path.dirname(root))
@@ -55,7 +55,7 @@ def prepare_dataset_for_training():
             if not safe_class_name:
                 continue
 
-                                         
+
             valid_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
             if not valid_files:
                 continue
@@ -71,7 +71,7 @@ def prepare_dataset_for_training():
                 shutil.copy(source_path, dest_path)
                 image_count += 1
 
-                                  
+
     if os.path.exists(USER_ADDED_DISEASES_DIR):
         for root, _, files in os.walk(USER_ADDED_DISEASES_DIR):
             if os.path.basename(root) == 'images':
@@ -81,7 +81,7 @@ def prepare_dataset_for_training():
                 if not safe_class_name:
                     continue
 
-                                                               
+
                 valid_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
                 if not valid_files:
                     continue
@@ -111,13 +111,13 @@ def train_model():
     Prepares the dataset and then trains a MobileNetV2 model, saving the
     trained model and class-to-name mapping file.
     """
-                                                        
+
     if not prepare_dataset_for_training():
-        return                             
+        return
 
     print("\n--- Starting AI Model Training ---")
 
-                                                                                                  
+
     if torch.backends.mps.is_available():
         device = torch.device("mps")
     elif torch.cuda.is_available():
@@ -126,7 +126,7 @@ def train_model():
         device = torch.device("cpu")
     print(f"Training will be performed on: {device.type.upper()}")
 
-                                                             
+
     train_transforms = transforms.Compose([
         transforms.Resize((IMG_SIZE, IMG_SIZE)),
         transforms.RandomHorizontalFlip(),
@@ -147,14 +147,14 @@ def train_model():
 
     print(f"Found {len(train_data.classes)} classes: {train_data.classes}")
 
-                                                           
+
     class_to_idx = train_data.class_to_idx
     idx_to_class = {v: k for k, v in class_to_idx.items()}
     with open(CLASS_MAP_PATH, 'w') as f:
         json.dump(idx_to_class, f)
     print(f"Class mapping saved to '{CLASS_MAP_PATH}'")
 
-                                       
+
     model = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.IMAGENET1K_V1)
 
     for param in model.parameters():
@@ -163,11 +163,11 @@ def train_model():
     model.classifier[1] = nn.Linear(model.last_channel, len(train_data.classes))
     model = model.to(device)
 
-                                                
+
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.classifier.parameters(), lr=LEARNING_RATE)
 
-                                 
+
     start_time = time.time()
     print("\n--- Training in Progress ---")
     for epoch in range(EPOCHS):
@@ -196,7 +196,7 @@ def train_model():
 
         print(f"Epoch {epoch + 1}/{EPOCHS} | Loss: {epoch_loss:.4f} | Accuracy: {epoch_acc:.4f}")
 
-                                          
+
     torch.save(model.state_dict(), MODEL_PATH)
     end_time = time.time()
     print("\n--- Training Complete ---")
