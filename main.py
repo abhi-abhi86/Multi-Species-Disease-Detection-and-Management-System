@@ -15,3 +15,4 @@ from DiseaseDetectionApp.main import main
 
 if __name__ == "__main__":
     main()
+# cd Multi-Species-Disease-Detection-and-Management-System
