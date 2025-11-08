@@ -39,12 +39,12 @@ def generate_html_report(diagnosis_data, file_path):
         body {{
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color:
-            color:
+            background-color: #f4f4f4;
+            color: #333;
         }}
         .header {{
             text-align: center;
-            background-color:
+            background-color: #007bff;
             color: white;
             padding: 20px;
             border-radius: 10px;
@@ -54,7 +54,7 @@ def generate_html_report(diagnosis_data, file_path):
             font-size: 24px;
         }}
         .summary {{
-            background-color:
+            background-color: #ffffff;
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
@@ -67,22 +67,22 @@ def generate_html_report(diagnosis_data, file_path):
         .summary th, .summary td {{
             padding: 10px;
             text-align: left;
-            border-bottom: 1px solid
+            border-bottom: 1px solid #ddd;
         }}
         .summary th {{
-            background-color:
+            background-color: #f8f9fa;
             font-weight: bold;
         }}
         .section {{
-            background-color:
+            background-color: #ffffff;
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
         .section h2 {{
-            color:
-            border-bottom: 2px solid
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
             padding-bottom: 5px;
         }}
         .image-container {{
@@ -96,19 +96,19 @@ def generate_html_report(diagnosis_data, file_path):
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
         .stages {{
-            background-color:
+            background-color: #e9ecef;
             padding: 10px;
             border-radius: 5px;
         }}
         .solution {{
-            background-color:
+            background-color: #d4edda;
             padding: 10px;
             border-radius: 5px;
-            color:
+            color: #155724;
             font-weight: bold;
         }}
         .disclaimer {{
-            background-color:
+            background-color: #fff3cd;
             padding: 10px;
             border-radius: 5px;
             text-align: center;
@@ -118,7 +118,7 @@ def generate_html_report(diagnosis_data, file_path):
             text-align: center;
             margin-top: 20px;
             font-size: 12px;
-            color:
+            color: #6c757d;
         }}
     </style>
 </head>
@@ -172,10 +172,11 @@ def generate_html_report(diagnosis_data, file_path):
 
         description = diagnosis_data.get('description', 'Not Available')
         if description and description != 'Not Available':
+            description_html = description.replace('\n', '<br>')
             html_content += f"""
     <div class="section">
         <h2>Detailed Description</h2>
-        <p>{description.replace('\n', '<br>')}</p>
+        <p>{description_html}</p>
     </div>
 """
 
