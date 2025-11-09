@@ -21,7 +21,7 @@ import sys
 import traceback
 import webbrowser
 from PyQt5.QtWidgets import (
-    QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout,
+    QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout, QListWidget, QListWidgetItem,
     QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar,
     QLineEdit, QStatusBar, QDialog, QHBoxLayout, QGraphicsOpacityEffect,
     QFormLayout, QComboBox, QMenu
@@ -75,6 +75,10 @@ try:
     from core.llm_integrator import LLMIntegrator
 except ImportError:
     LLMIntegrator = None
+try:
+    from core.search_engine import SearchEngine
+except ImportError:
+    SearchEngine = None
 
 
 try:
@@ -274,6 +278,12 @@ class MainWindow(QMainWindow):
         self.tab_widget = QTabWidget()
         self.setCentralWidget(self.tab_widget)
         self.domain_tabs = {}
+
+        # Initialize the search engine
+        self.search_engine = SearchEngine() if SearchEngine else None
+        self.setup_search_ui()
+
+
         for domain, label in [("Plant", "Plants"), ("Human", "Humans"), ("Animal", "Animals")]:
             tab = self.create_domain_tab(domain)
             self.tab_widget.addTab(tab, label)
@@ -281,6 +291,75 @@ class MainWindow(QMainWindow):
 
     def setup_menu(self):
         menubar = self.menuBar()
+
+    def setup_search_ui(self):
+        """Sets up the global search bar and results list."""
+        self.search_bar = QLineEdit(self)
+        self.search_bar.setPlaceholderText("Instant Search for any disease...")
+        self.search_bar.setStyleSheet("padding: 5px; border: 1px solid #ccc; border-radius: 5px;")
+        self.search_bar.setFixedWidth(300)
+        
+        # Add search bar to a toolbar for better placement
+        toolbar = self.addToolBar("Search")
+        toolbar.addWidget(QLabel("Search: "))
+        toolbar.addWidget(self.search_bar)
+
+        self.search_results_list = QListWidget(self)
+        self.search_results_list.setWindowFlags(Qt.WindowType.Popup)
+        self.search_results_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.search_results_list.setMouseTracking(True)
+        self.search_results_list.itemClicked.connect(self.on_search_result_clicked)
+
+        self.search_bar.textChanged.connect(self.on_search_query_changed)
+
+    def on_search_query_changed(self, text):
+        """Handles live updates as the user types in the search bar."""
+        if not text.strip() or not self.search_engine:
+            self.search_results_list.hide()
+            return
+
+        results = self.search_engine.search(text)
+        self.search_results_list.clear()
+
+        if results:
+            for disease in results:
+                item = QListWidgetItem(f"{disease.get('name')} ({disease.get('domain')})")
+                item.setData(Qt.ItemDataRole.UserRole, disease) # Store the full object
+                self.search_results_list.addItem(item)
+            
+            # Position and show the results list below the search bar
+            pos = self.search_bar.mapToGlobal(self.search_bar.rect().bottomLeft())
+            self.search_results_list.move(pos)
+            self.search_results_list.setFixedWidth(self.search_bar.width())
+            self.search_results_list.show()
+        else:
+            self.search_results_list.hide()
+
+    def on_search_result_clicked(self, item):
+        """Handles clicking a search result to display its details."""
+        disease_data = item.data(Qt.ItemDataRole.UserRole)
+        self.search_results_list.hide()
+        self.search_bar.clear()
+        
+        # Find the correct tab and populate it with the data
+        domain = disease_data.get('domain')
+        if domain and domain in self.domain_tabs:
+            # Switch to the correct domain tab
+            for i in range(self.tab_widget.count()):
+                if self.tab_widget.tabText(i).lower() == domain.lower() + 's':
+                    self.tab_widget.setCurrentIndex(i)
+                    break
+            
+            # Simulate a diagnosis completion to display the data
+            # We can set dummy values for fields not present in the search result
+            self.on_diagnosis_complete(
+                result=disease_data,
+                confidence=100.0, # Indicate it's a direct lookup
+                wiki_summary="Loaded from database via search.",
+                predicted_stage="N/A",
+                pubmed_summary="Please run a full diagnosis for recent research.",
+                domain=domain
+            )
 
 
         file_menu = menubar.addMenu("File")
@@ -629,15 +708,27 @@ class MainWindow(QMainWindow):
             tab.result_layout.addWidget(add_disease_button, 2, 0)
 
         stages_str = "\n".join([f"  • <b>{k}:</b> {v}" for k, v in result.get("stages", {}).items()])
+        causes = result.get('causes', 'No causes information available.')
+        risk_factors = result.get('risk_factors', 'No risk factors information available.')
+        preventive_measures = result.get('preventive_measures', [])
+        if isinstance(preventive_measures, list):
+            preventive_str = "\n".join([f"  • {measure}" for measure in preventive_measures])
+        else:
+            preventive_str = preventive_measures
+        report_made_by = result.get('report_made_by', 'N/A')
         output_html = (
             f"<h2 style='font-family: Arial, sans-serif; font-size: 18px; color: #2c3e50;'>{result.get('name', 'Unknown Disease')}</h2>"
             f"<p style='font-size: 14px;'><b>Confidence Score:</b> <span style='color: {'green' if confidence >= 70 else 'orange' if confidence >= 50 else 'red'};'>{confidence:.1f}%</span></p>"
             f"<p style='font-size: 14px;'><b>Predicted Stage:</b> <span style='color: #2c3e50;'>{predicted_stage}</span></p>"
             f"<p style='font-size: 14px;'><b>Description:</b><br><span style='color: #2c3e50;'>{result.get('description', 'No description available.')}</span></p>"
+            f"<p style='font-size: 14px;'><b>Causes:</b><br><span style='color: #2c3e50;'>{causes}</span></p>"
+            f"<p style='font-size: 14px;'><b>Risk Factors:</b><br><span style='color: #2c3e50;'>{risk_factors}</span></p>"
+            f"<p style='font-size: 14px;'><b>Preventive Measures:</b><br><span style='color: #2c3e50;'>{preventive_str}</span></p>"
             f"<p style='font-size: 14px;'><b>Wikipedia Summary:</b><br><span style='color: #2c3e50;'>{wiki_summary or 'No summary available.'}</span></p>"
             f"<p style='font-size: 14px;'><b>Known Stages:</b><br><span style='color: #2c3e50;'>{stages_str}</span></p>"
             f"<p style='font-size: 14px;'><b>Solution/Cure:</b><br><span style='color: #2c3e50;'>{result.get('solution', 'No solution available.')}</span></p>"
             f"<p style='font-size: 14px;'><b>Recent Research (PubMed):</b><br><span style='color: #2c3e50;'>{pubmed_summary or 'No recent research available.'}</span></p>"
+            f"<p style='font-size: 14px;'><b>Report Made By:</b> <span style='color: #2c3e50;'>{report_made_by}</span></p>"
         )
         tab.result_display.setHtml(output_html)
         tab.reports_menu_button.setEnabled(True)
@@ -1200,4 +1291,3 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
-
