@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Tomato Late Blight",
+    "description": "A highly destructive and fast-spreading disease affecting tomato and potato plants, caused by the oomycete (water mold) *Phytophthora infestans*. It can rapidly destroy leaves, stems, and fruit, leading to total crop loss.",
+    "image_url": "diseases/plant/late_blight/images/tomato_late_blight.jpg",
+    "stages": {
+        "initial_infection": "Often begins as pale green or dark, water-soaked, irregular-shaped spots, typically near the edges or tips of leaves. In humid conditions, a fuzzy, white mold (sporangia) may appear on the underside of the leaf, especially in the early morning.",
+        "advanced_infection": "The spots rapidly enlarge, turning dark brown to black and becoming necrotic (dead). The entire leaf can be destroyed quickly. The infection spreads to stems, causing large, dark lesions. On fruit, it appears as large, firm, oily-looking, brownish-grey lesions that can rot the entire fruit."
+    },
+    "causes": "Caused by the water mold *Phytophthora infestans*. The pathogen survives in infected potato tubers (seed or 'volunteers') and infected plant debris. Its spores are easily spread long distances by wind and locally by splashing rain.",
+    "risk_factors": "Cool, moist weather is ideal for late blight. High humidity (over 90%), frequent rain, fog, or heavy dew, combined with cool to moderate temperatures (typically 15-24°C or 60-75°F) create perfect conditions for infection and explosive spread.",
+    "preventive_measures": "Use certified disease-free transplants. Plant resistant or tolerant tomato varieties. Destroy all 'volunteer' potato or tomato plants. Ensure good air circulation with proper spacing and pruning. Water at the base of the plant (e.g., drip irrigation) to keep foliage dry. Monitor weather forecasts for 'blight warnings' and apply preventative fungicides.",
+    "solution": "**Immediate action is critical.** Remove and destroy (burn or bag and dispose, do not compost) all infected plant material immediately. Apply fungicides as soon as symptoms are seen or when conditions are favorable. Fungicides (e.g., chlorothalonil, mancozeb, copper-based products, or specific systemic fungicides) are essential for control. Rotate fungicide types to prevent resistance.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
