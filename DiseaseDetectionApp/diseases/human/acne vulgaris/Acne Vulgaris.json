@@ -1,14 +1,15 @@
 {
-  "domain": "human",
-  "name": "Acne Vulgaris",
-  "description": "A chronic inflammatory skin condition that occurs when hair follicles become clogged with oil and dead skin cells. It is characterized by lesions like pimples, blackheads, whiteheads, and deeper lumps (cysts or nodules), primarily on the face, neck, chest, back, and shoulders.",
-  "image_url": "diseases/human/acne vulgaris/images/Acne Vulgaris.png",
-  "stages": {
-    "mild": "Characterized mainly by comedones (blackheads and whiteheads) with a few scattered papules and pustules (inflamed pimples).",
-    "moderate_to_severe": "Involves a greater number of inflamed papules and pustules. Deeper, painful nodules and cysts may be present, as suggested in the image, which carries a much higher risk of causing permanent scarring."
-  },
-  "causes": "Acne is caused by a combination of four main factors: excess sebum (oil) production, hair follicles clogged by oil and dead skin cells, proliferation of the bacterium Cutibacterium acnes, and inflammation.",
-  "risk_factors": "Hormonal fluctuations (especially during puberty, menstruation, and pregnancy), a family history of acne, stress, certain medications (like corticosteroids), and potentially high-glycemic diets or certain dairy products in some individuals.",
-  "preventive_measures": "While not always fully preventable, management includes washing the face gently twice a day, using non-comedogenic (non-pore-clogging) skincare and makeup, avoiding picking or squeezing lesions, and maintaining a healthy lifestyle.",
-  "solution": "Treatment depends on severity. Mild acne can be managed with over-the-counter topical treatments containing benzoyl peroxide or salicylic acid. Moderate to severe acne often requires prescription treatments from a dermatologist, which can include topical retinoids, topical or oral antibiotics, hormonal therapies for females, or oral isotretinoin for severe, persistent cases."
+    "domain": "human",
+    "name": "Acne Vulgaris",
+    "description": "A chronic inflammatory skin condition that occurs when hair follicles become clogged with oil and dead skin cells. It is characterized by lesions like pimples, blackheads, whiteheads, and deeper lumps (cysts or nodules), primarily on the face, neck, chest, back, and shoulders.",
+    "image_url": "diseases/human/acne vulgaris/images/Acne Vulgaris.png",
+    "stages": {
+        "mild": "Characterized mainly by comedones (blackheads and whiteheads) with a few scattered papules and pustules (inflamed pimples).",
+        "moderate_to_severe": "Involves a greater number of inflamed papules and pustules. Deeper, painful nodules and cysts may be present, as suggested in the image, which carries a much higher risk of causing permanent scarring."
+    },
+    "causes": "Acne is caused by a combination of four main factors: excess sebum (oil) production, hair follicles clogged by oil and dead skin cells, proliferation of the bacterium Cutibacterium acnes, and inflammation.",
+    "risk_factors": "Hormonal fluctuations (especially during puberty, menstruation, and pregnancy), a family history of acne, stress, certain medications (like corticosteroids), and potentially high-glycemic diets or certain dairy products in some individuals.",
+    "preventive_measures": "While not always fully preventable, management includes washing the face gently twice a day, using non-comedogenic (non-pore-clogging) skincare and makeup, avoiding picking or squeezing lesions, and maintaining a healthy lifestyle.",
+    "solution": "Treatment depends on severity. Mild acne can be managed with over-the-counter topical treatments containing benzoyl peroxide or salicylic acid. Moderate to severe acne often requires prescription treatments from a dermatologist, which can include topical retinoids, topical or oral antibiotics, hormonal therapies for females, or oral isotretinoin for severe, persistent cases.",
+    "report_made_by": "https://github.com/abhi-abhi86"
 }

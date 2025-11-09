@@ -15,6 +15,7 @@ check_watermark()
 
 import os
 import openai
+from collections import OrderedDict
 from typing import Optional, Dict, Any
 
 class LLMIntegrator:
@@ -31,14 +32,15 @@ class LLMIntegrator:
         self.api_key = api_key or os.getenv('OPENAI_API_KEY')
         self.llm_available = bool(self.api_key)
 
+        self.client = None
         if self.llm_available:
-            openai.api_key = self.api_key
+            self.client = openai.OpenAI(api_key=self.api_key)
             self.model = "gpt-3.5-turbo"
         else:
             print("Warning: OpenAI API key not found. LLM features disabled. Set OPENAI_API_KEY environment variable for enhanced AI responses.")
 
         self.conversation_history = []
-        self.cache = {}
+        self.cache: OrderedDict[tuple, str] = OrderedDict()
 
     def generate_response(self, query: str, context: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -56,12 +58,12 @@ class LLMIntegrator:
 
         try:
             messages = self._build_messages(query, context)
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
                 max_tokens=300,
                 temperature=0.7,
-                timeout=10
+                timeout=15
             )
             bot_response = response.choices[0].message['content'].strip()
 
@@ -72,20 +74,16 @@ class LLMIntegrator:
                 self.conversation_history = self.conversation_history[-20:]
 
 
+            if len(self.cache) >= 50:
+                self.cache.popitem(last=False) # Remove the least recently used item
             self.cache[cache_key] = bot_response
 
-            if len(self.cache) > 50:
-
-                oldest_keys = list(self.cache.keys())[:10]
-                for key in oldest_keys:
-                    del self.cache[key]
-
             return bot_response
-        except openai.error.Timeout as e:
+        except openai.Timeout as e:
             return "Response timed out. Please try again or check your internet connection."
-        except openai.error.RateLimitError as e:
+        except openai.RateLimitError as e:
             return "API rate limit reached. Please wait a moment and try again."
-        except openai.error.AuthenticationError as e:
+        except openai.AuthenticationError as e:
             return "Authentication failed. Please check your OpenAI API key."
         except Exception as e:
             return f"Sorry, I encountered an error generating a response: {str(e)}. Falling back to database search."

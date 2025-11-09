@@ -1,14 +1,15 @@
 {
-  "domain": "Animal",
-  "name": "Lumpy Skin Disease",
-  "description": "An infectious viral disease of cattle and water buffalo characterized by fever, depression, and the development of firm, circumscribed skin nodules (lumps) across the body. It can lead to significant economic losses in the livestock industry.",
-  "image_url": "diseases/animal/lumpy Skin Disease/images/Lumpy Skin Disease.jpg",
-  "stages": {
-    "Acute": "Begins with a high fever, followed by the eruption of multiple, firm, painful nodules on the skin, typically 1-5 cm in diameter. Animals show reduced appetite, lethargy, and a sharp drop in milk production.",
-    "Chronic/Recovery": "The skin nodules may become necrotic, ulcerate, and form hard scabs (known as 'sit-fasts'). Secondary bacterial infections are common. Recovery is slow, and the disease can result in permanent scarring, damaged hides, and prolonged weakness."
-  },
-  "causes": "Caused by the Lumpy Skin Disease Virus (LSDV), a member of the Capripoxvirus genus in the Poxviridae family. It is transmitted primarily by biting insects like mosquitoes and flies.",
-  "risk_factors": "Presence of blood-feeding insect vectors, introduction of infected animals into a naive herd, warm and humid climates that favor vector populations, and lack of vaccination.",
-  "preventive_measures": "The most effective prevention is vaccination with a live attenuated vaccine. Other key measures include controlling insect vector populations, implementing strict quarantine for new animals, and maintaining good farm biosecurity.",
-  "solution": "There is no specific antiviral treatment. The solution focuses on supportive care to manage symptoms and prevent complications. This includes administering antibiotics for secondary bacterial infections, providing anti-inflammatory drugs to reduce fever and swelling, and ensuring proper nutrition and hydration to aid recovery."
+    "domain": "Animal",
+    "name": "Lumpy Skin Disease",
+    "description": "An infectious viral disease of cattle and water buffalo characterized by fever, depression, and the development of firm, circumscribed skin nodules (lumps) across the body. It can lead to significant economic losses in the livestock industry.",
+    "image_url": "diseases/animal/lumpy Skin Disease/images/Lumpy Skin Disease.jpg",
+    "stages": {
+        "Acute": "Begins with a high fever, followed by the eruption of multiple, firm, painful nodules on the skin, typically 1-5 cm in diameter. Animals show reduced appetite, lethargy, and a sharp drop in milk production.",
+        "Chronic/Recovery": "The skin nodules may become necrotic, ulcerate, and form hard scabs (known as 'sit-fasts'). Secondary bacterial infections are common. Recovery is slow, and the disease can result in permanent scarring, damaged hides, and prolonged weakness."
+    },
+    "causes": "Caused by the Lumpy Skin Disease Virus (LSDV), a member of the Capripoxvirus genus in the Poxviridae family. It is transmitted primarily by biting insects like mosquitoes and flies.",
+    "risk_factors": "Presence of blood-feeding insect vectors, introduction of infected animals into a naive herd, warm and humid climates that favor vector populations, and lack of vaccination.",
+    "preventive_measures": "The most effective prevention is vaccination with a live attenuated vaccine. Other key measures include controlling insect vector populations, implementing strict quarantine for new animals, and maintaining good farm biosecurity.",
+    "solution": "There is no specific antiviral treatment. The solution focuses on supportive care to manage symptoms and prevent complications. This includes administering antibiotics for secondary bacterial infections, providing anti-inflammatory drugs to reduce fever and swelling, and ensuring proper nutrition and hydration to aid recovery.",
+    "report_made_by": "https://github.com/abhi-abhi86"
 }

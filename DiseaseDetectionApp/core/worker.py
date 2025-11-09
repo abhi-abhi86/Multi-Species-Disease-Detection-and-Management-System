@@ -38,11 +38,11 @@ class DiagnosisWorker(QObject):
     It now includes caching for PubMed results to reduce redundant network calls.
     """
 
-    pubmed_cache = {}
-
-    wiki_cache = {}
-
-
+    # A single, size-limited cache for both PubMed and Wikipedia data
+    # The key will be a tuple like ('pubmed', 'disease_name') or ('wiki', 'disease_name')
+    # Using a class attribute for a shared cache across all worker instances.
+    _cache = {}
+    _cache_max_size = 100
 
     finished = pyqtSignal(dict, float, str, str, str, str)
 
@@ -94,25 +94,25 @@ class DiagnosisWorker(QObject):
                 wiki_summary = wiki
 
 
-                if disease_name in self.wiki_cache:
+                if ('wiki', disease_name) in self._cache:
                     self.progress.emit("Fetching Wikipedia data from cache...")
-                    wiki_summary = self.wiki_cache[disease_name]
+                    wiki_summary = self._cache[('wiki', disease_name)]
                 else:
 
                     if wiki and wiki != "N/A":
-                        self.wiki_cache[disease_name] = wiki
+                        self._add_to_cache(('wiki', disease_name), wiki)
 
 
-                if disease_name in self.pubmed_cache:
+                if ('pubmed', disease_name) in self._cache:
                     self.progress.emit("Fetching research data from cache...")
-                    pubmed_summary = self.pubmed_cache[disease_name]
+                    pubmed_summary = self._cache[('pubmed', disease_name)]
                 else:
                     self.progress.emit("Fetching recent research from PubMed...")
                     try:
 
                         pubmed_summary = get_pubmed_summary(disease_name, domain=self.domain)
 
-                        self.pubmed_cache[disease_name] = pubmed_summary
+                        self._add_to_cache(('pubmed', disease_name), pubmed_summary)
                     except Exception as e:
 
                         print(f"Network error while fetching from PubMed: {e}")
@@ -136,3 +136,10 @@ class DiagnosisWorker(QObject):
     def stop(self):
         """Allows the main thread to signal this worker to stop."""
         self.is_running = False
+
+    @classmethod
+    def _add_to_cache(cls, key, value):
+        """Adds an item to the cache and evicts the oldest if the max size is exceeded."""
+        if len(cls._cache) >= cls._cache_max_size:
+            cls._cache.pop(next(iter(cls._cache))) # Evict the first (oldest) item
+        cls._cache[key] = value

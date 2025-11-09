@@ -16,3 +16,4 @@ fuzzywuzzy==0.18.0
 python-Levenshtein==0.25.0
 reportlab==4.1.0
 openai==0.28.1
+rank-bm25==0.2.2

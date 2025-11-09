@@ -4,11 +4,12 @@
     "description": "A common fungal disease of roses and other plants, caused by the fungus Diplocarpon rosae. It weakens the plant by interrupting photosynthesis and causing significant leaf drop (defoliation).",
     "image_url": "diseases/plant/rose_black_spot/images/rose_black_spot.png",
     "stages": {
-      "Initial": "Small, dark-brown to black circular spots with fringed or feathery margins appear on the upper surface of leaves.",
-      "Developed": "The spots enlarge up to half an inch in diameter. The leaf tissue surrounding the spots turns yellow. Eventually, the infected leaves fall off the plant prematurely."
+        "Initial": "Small, dark-brown to black circular spots with fringed or feathery margins appear on the upper surface of leaves.",
+        "Developed": "The spots enlarge up to half an inch in diameter. The leaf tissue surrounding the spots turns yellow. Eventually, the infected leaves fall off the plant prematurely."
     },
     "causes": "The fungus Diplocarpon rosae, whose spores are spread by water from rain splash or overhead irrigation. The fungus overwinters on infected fallen leaves and stems.",
     "risk_factors": "Warm, wet, and humid weather. Poor air circulation around the plant. Susceptible rose varieties. Overhead watering that leaves foliage wet for extended periods.",
     "preventive_measures": "Choose disease-resistant varieties. Ensure proper spacing and pruning for good air circulation. Water at the base of the plant in the morning. Remove and destroy fallen leaves and infected canes.",
-    "solution": "Prune and dispose of infected leaves and stems. Apply a preventative fungicide early in the season. Common active ingredients in effective fungicides include Chlorothalonil, Myclobutanil, and Tebuconazole. Neem oil can also be used as a less toxic alternative."
+    "solution": "Prune and dispose of infected leaves and stems. Apply a preventative fungicide early in the season. Common active ingredients in effective fungicides include Chlorothalonil, Myclobutanil, and Tebuconazole. Neem oil can also be used as a less toxic alternative.",
+    "report_made_by": "https://github.com/abhi-abhi86"
 }
