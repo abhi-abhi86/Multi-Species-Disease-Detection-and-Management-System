@@ -31,6 +31,7 @@ Leverage pre-trained machine learning models to assist with preliminary diagnosi
 - **Offline Mode:** Core functionality works without internet connectivity.
 - **Batch Processing:** Analyze multiple images simultaneously for research projects.
 - **Export Capabilities:** Save results in multiple formats (PDF, CSV, JSON).
+- **🔒 Developer File Protection:** Developer information is protected with immutability and version control exclusion to prevent unauthorized modifications and cloning, ensuring project integrity.
 
 ### 🚀 Futuristic AI Enhancements (Latest Update)
 
@@ -217,138 +218,77 @@ Visual overview of the core project architecture:
 
 ## 🧭 How It Works: Process Flow
 
-### Interactive Process Animation
+### Interactive Data Flow Visualization
 
-<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Gradient definitions -->
-    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#2196F3;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
-    </linearGradient>
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+  <h3 style="color: white; text-align: center; margin-bottom: 20px; font-family: 'Arial', sans-serif;">🔄 AI Disease Detection Workflow</h3>
 
-    <!-- Animated arrow marker -->
-    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#4CAF50" />
-    </marker>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+    <!-- Step 1 -->
+    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 10px;">📥</div>
+      <h4 style="color: #FFD700; margin: 5px 0;">1. Input</h4>
+      <p style="color: white; font-size: 0.9em; margin: 0;">Image Upload or Symptom Text</p>
+      <div style="width: 100%; height: 3px; background: #FFD700; margin-top: 10px; border-radius: 2px;"></div>
+    </div>
 
-    <!-- Pulse animation -->
-    <style>
-      @keyframes pulse {
-        0% { r: 15; opacity: 0.8; }
-        50% { r: 20; opacity: 1; }
-        100% { r: 15; opacity: 0.8; }
-      }
-      @keyframes flow {
-        0% { stroke-dashoffset: 100; }
-        100% { stroke-dashoffset: 0; }
-      }
-      .pulse-circle { animation: pulse 2s infinite; }
-      .flow-path { animation: flow 3s infinite linear; }
-    </style>
-  </defs>
+    <!-- Arrow -->
+    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
 
-  <!-- Background -->
-  <rect width="800" height="400" fill="#f8f9fa" rx="10"/>
+    <!-- Step 2 -->
+    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 10px;">🤖</div>
+      <h4 style="color: #FF6B6B; margin: 5px 0;">2. AI Processing</h4>
+      <p style="color: white; font-size: 0.9em; margin: 0;">ML Model Analysis</p>
+      <div style="width: 100%; height: 3px; background: #FF6B6B; margin-top: 10px; border-radius: 2px; animation: progress 3s ease-in-out infinite;"></div>
+    </div>
 
-  <!-- Step 1: User Input -->
-  <g transform="translate(50, 50)">
-    <circle cx="60" cy="60" r="50" fill="#E3F2FD" stroke="#2196F3" stroke-width="3"/>
-    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1565C0">1. INPUT</text>
-    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Image or</text>
-    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Symptoms</text>
-    <image x="45" y="85" width="30" height="30" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated for brevity]" />
-  </g>
+    <!-- Arrow -->
+    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
 
-  <!-- Step 2: AI Processing -->
-  <g transform="translate(200, 50)">
-    <circle cx="60" cy="60" r="50" fill="#FFF3E0" stroke="#FF9800" stroke-width="3"/>
-    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#E65100">2. AI ANALYSIS</text>
-    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">ML Model</text>
-    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Processing</text>
-    <circle cx="60" cy="95" r="8" fill="#FF9800" class="pulse-circle"/>
-  </g>
+    <!-- Step 3 -->
+    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 10px;">📚</div>
+      <h4 style="color: #4ECDC4; margin: 5px 0;">3. Data Enrichment</h4>
+      <p style="color: white; font-size: 0.9em; margin: 0;">Wikipedia & PubMed</p>
+      <div style="width: 100%; height: 3px; background: #4ECDC4; margin-top: 10px; border-radius: 2px;"></div>
+    </div>
 
-  <!-- Step 3: Data Enrichment -->
-  <g transform="translate(350, 50)">
-    <circle cx="60" cy="60" r="50" fill="#F3E5F5" stroke="#9C27B0" stroke-width="3"/>
-    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#6A1B9A">3. ENRICHMENT</text>
-    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Wikipedia</text>
-    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">PubMed</text>
-    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated]" />
-  </g>
+    <!-- Arrow -->
+    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
 
-  <!-- Step 4: Results -->
-  <g transform="translate(500, 50)">
-    <circle cx="60" cy="60" r="50" fill="#E8F5E8" stroke="#4CAF50" stroke-width="3"/>
-    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2E7D32">4. RESULTS</text>
-    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Diagnosis</text>
-    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Treatment</text>
-    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated]" />
-  </g>
+    <!-- Step 4 -->
+    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 10px;">📊</div>
+      <h4 style="color: #45B7D1; margin: 5px 0;">4. Results</h4>
+      <p style="color: white; font-size: 0.9em; margin: 0;">Diagnosis & Treatment</p>
+      <div style="width: 100%; height: 3px; background: #45B7D1; margin-top: 10px; border-radius: 2px;"></div>
+    </div>
 
-  <!-- Step 5: Report Generation -->
-  <g transform="translate(650, 50)">
-    <circle cx="60" cy="60" r="50" fill="#FFF8E1" stroke="#FFC107" stroke-width="3"/>
-    <text x="60" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FF6F00">5. REPORT</text>
-    <text x="60" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">PDF Export</text>
-    <text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Save Data</text>
-    <image x="50" y="85" width="20" height="20" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAv...[truncated]" />
-  </g>
+    <!-- Arrow -->
+    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
 
-  <!-- Flow arrows -->
-  <path d="M 150 100 Q 175 125 200 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
-  <path d="M 300 100 Q 325 125 350 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
-  <path d="M 450 100 Q 475 125 500 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
-  <path d="M 600 100 Q 625 125 650 100" fill="none" stroke="url(#flowGradient)" stroke-width="4" marker-end="url(#arrowhead)" class="flow-path" stroke-dasharray="10,5"/>
+    <!-- Step 5 -->
+    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
+      <div style="font-size: 2em; margin-bottom: 10px;">📄</div>
+      <h4 style="color: #FFA07A; margin: 5px 0;">5. Report</h4>
+      <p style="color: white; font-size: 0.9em; margin: 0;">PDF Export</p>
+      <div style="width: 100%; height: 3px; background: #FFA07A; margin-top: 10px; border-radius: 2px;"></div>
+    </div>
+  </div>
 
-  <!-- AI Enhancement Indicator -->
-  <g transform="translate(350, 200)">
-    <rect x="0" y="0" width="100" height="40" fill="#E3F2FD" stroke="#2196F3" stroke-width="2" rx="5"/>
-    <text x="50" y="15" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#1565C0">🤖 AI ENHANCED</text>
-    <text x="50" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#666">GPT Integration</text>
-  </g>
-
-  <!-- Data Flow Labels -->
-  <text x="175" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Image/Symptom Data</text>
-  <text x="325" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">External Research</text>
-  <text x="475" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Diagnosis Results</text>
-  <text x="625" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Export Options</text>
-
-  <!-- Species Icons -->
-  <g transform="translate(50, 250)">
-    <circle cx="30" cy="30" r="20" fill="#C8E6C9"/>
-    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#2E7D32">🌱</text>
-    <text x="60" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Plants</text>
-  </g>
-
-  <g transform="translate(150, 250)">
-    <circle cx="30" cy="30" r="20" fill="#BBDEFB"/>
-    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1565C0">👤</text>
-    <text x="60" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Humans</text>
-  </g>
-
-  <g transform="translate(250, 250)">
-    <circle cx="30" cy="30" r="20" fill="#FFECB3"/>
-    <text x="30" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#FF6F00">🐾</text>
-    <text x="60" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Animals</text>
-  </g>
-
-  <!-- Technology Stack -->
-  <g transform="translate(400, 250)">
-    <text x="0" y="15" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">Tech Stack:</text>
-    <text x="0" y="30" font-family="Arial, sans-serif" font-size="10" fill="#666">PyTorch • OpenAI GPT • MobileNetV2</text>
-    <text x="0" y="45" font-family="Arial, sans-serif" font-size="10" fill="#666">PyQt6 • ReportLab • Wikipedia API</text>
-  </g>
-
-  <!-- Processing Time Indicator -->
-  <g transform="translate(650, 250)">
-    <text x="0" y="15" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">Processing:</text>
-    <text x="0" y="30" font-family="Arial, sans-serif" font-size="10" fill="#666">~2-5 seconds</text>
-    <text x="0" y="45" font-family="Arial, sans-serif" font-size="10" fill="#666">per analysis</text>
-  </g>
-</svg>
+  <style>
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes progress {
+      0% { width: 0%; }
+      50% { width: 100%; }
+      100% { width: 0%; }
+    }
+  </style>
+</div>
 
 ### Detailed Process Flow
 
