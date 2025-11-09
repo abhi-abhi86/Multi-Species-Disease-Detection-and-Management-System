@@ -1,0 +1,23 @@
+{
+    "domain": "plant",
+    "name": "Pepper (Bell) - Healthy",
+    "description": "Represents a healthy, disease-free bell pepper leaf. This is the ideal state of the plant, indicating it has adequate nutrients, water, and sunlight, and is free from pathogens and pests.",
+    "image_url": "conditions/plant/healthy/images/pepper_bell_healthy.jpg",
+    "stages": {
+        "visual_indicators": "Leaves are uniformly green (ranging from bright to deep green depending on age and variety), firm, and turgid. The leaf surface is smooth and may have a slight natural gloss. Veins are clear with no discoloration.",
+        "plant_vigor": "The plant shows active new growth, strong stems, and is capable of flowering and setting fruit. There is no sign of wilting, yellowing (chlorosis), or spotting."
+    },
+    "causes": "This is a healthy state, not a disease. It is 'caused' by providing optimal growing conditions.",
+    "risk_factors": "N/A. This section is replaced by 'Key Requirements for Health'.",
+    "key_requirements_for_health": {
+        "sunlight": "Requires full sun, meaning at least 6-8 hours of direct sunlight per day.",
+        "soil": "Prefers well-drained, fertile, loamy soil with a slightly acidic to neutral pH (6.0-7.0).",
+        "watering": "Needs consistent watering to keep the soil evenly moist, but not waterlogged. About 1-2 inches of water per week is typical.",
+        "temperature": "Thrives in warm weather, with ideal daytime temperatures between 21-29°C (70-85°F).",
+        "nutrients": "Requires balanced nutrition. A fertilizer lower in nitrogen and higher in phosphorus and potassium (e.g., 5-10-10) is often recommended after fruit set."
+    },
+    "preventive_measures": "N/A. This section is replaced by 'Best Practices for Maintenance'.",
+    "best_practices_for_maintenance": "Mulch the soil to retain moisture and suppress weeds. Ensure good air circulation through proper plant spacing. Monitor regularly for the first signs of pests (like aphids or spider mites) or disease. Avoid over-fertilizing with nitrogen, which can promote leaf growth at the expense of fruit.",
+    "solution": "N/A. The 'solution' is to maintain the best practices to keep the plant in this healthy state.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
