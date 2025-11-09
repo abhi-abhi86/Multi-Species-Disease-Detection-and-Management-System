@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Tomato Leaf Mold",
+    "description": "A common fungal disease of tomatoes, particularly in high-humidity environments like greenhouses, caused by *Passalora fulva*. It is characterized by yellow spots on the upper leaf surface and a velvety, olive-green mold on the corresponding underside.",
+    "image_url": "diseases/plant/leaf_mold/images/tomato_leaf_mold.jpg",
+    "stages": {
+        "initial_infection": "Begins as pale green or yellowish, indefinite spots on the upper surface of older, lower leaves. The corresponding underside of the leaf may show a slight, pale gray mold.",
+        "advanced_infection": "The yellow spots on the upper surface enlarge and become more distinct. On the leaf underside, a dense, velvety, olive-green to brownish fungal growth (spores) develops. Severely infected leaves turn yellow, then brown, wither, die, and may fall off (defoliation), progressing up the plant. The disease can also infect blossoms and fruit."
+    },
+    "causes": "Caused by the fungus *Passalora fulva* (formerly *Fulvia fulva* or *Cladosporium fulvum*). The fungus survives on infected plant debris in the soil and on greenhouse structures. Spores are easily spread by wind, splashing water, contaminated tools, and clothing.",
+    "risk_factors": "**High relative humidity (above 85%)** is the most critical factor for infection. Poor air circulation due to crowded planting, lack of pruning, or enclosed greenhouse environments. Long periods of leaf wetness. Moderate temperatures (18-26°C / 65-79°F) favor its development.",
+    "preventive_measures": "**Managing humidity and airflow is key.** Ensure wide plant spacing, stake or trellis plants, and prune lower leaves to improve circulation. Water at the base of the plant (e.g., drip irrigation) early in the day so foliage dries quickly. In greenhouses, ensure good ventilation and heating to reduce humidity. Use resistant tomato varieties. Remove and destroy all plant debris at the end of the season.",
+    "solution": "Remove and destroy infected leaves as soon as they are spotted. Apply protective fungicides (e.g., copper-based, chlorothalonil, mancozeb), ensuring thorough coverage, especially on the undersides of leaves. Fungicides are most effective when applied preventatively or at the very first sign of disease, especially when high-humidity conditions are expected.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
