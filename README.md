@@ -220,6 +220,8 @@ Visual overview of the core project architecture:
 
 ### Data Flow Animation (Sequential Processing)
 
+🎥 **[Watch the Interactive Data Flow Animation Video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)** (Click to see the animated workflow in action!)
+
 ```
 [1] 📥 INPUT STAGE
     ↓
