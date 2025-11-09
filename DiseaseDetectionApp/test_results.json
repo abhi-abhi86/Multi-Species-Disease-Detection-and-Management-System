@@ -160,13 +160,13 @@
     "type": "function",
     "description": "Function call test",
     "error": null,
-    "result": "[{'domain': 'plant', 'name': 'Powdery Mildew', 'description': 'A common fungal disease that affects "
+    "result": "[{'domain': 'plant', 'name': 'Tomato - Healthy', 'description': 'Represents a healthy, disease-free "
   },
   "core.ml_processor.MLProcessor": {
     "status": "PASS",
     "type": "function",
     "description": "Function call test",
     "error": null,
-    "result": "<core.ml_processor.MLProcessor object at 0x113b5aa50>"
+    "result": "<core.ml_processor.MLProcessor object at 0x117f51010>"
   }
 }
