@@ -218,77 +218,16 @@ Visual overview of the core project architecture:
 
 ## 🧭 How It Works: Process Flow
 
-### Interactive Data Flow Visualization
+### Data Flow Visualization
 
-<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
-  <h3 style="color: white; text-align: center; margin-bottom: 20px; font-family: 'Arial', sans-serif;">🔄 AI Disease Detection Workflow</h3>
-
-  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-    <!-- Step 1 -->
-    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
-      <div style="font-size: 2em; margin-bottom: 10px;">📥</div>
-      <h4 style="color: #FFD700; margin: 5px 0;">1. Input</h4>
-      <p style="color: white; font-size: 0.9em; margin: 0;">Image Upload or Symptom Text</p>
-      <div style="width: 100%; height: 3px; background: #FFD700; margin-top: 10px; border-radius: 2px;"></div>
-    </div>
-
-    <!-- Arrow -->
-    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
-
-    <!-- Step 2 -->
-    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
-      <div style="font-size: 2em; margin-bottom: 10px;">🤖</div>
-      <h4 style="color: #FF6B6B; margin: 5px 0;">2. AI Processing</h4>
-      <p style="color: white; font-size: 0.9em; margin: 0;">ML Model Analysis</p>
-      <div style="width: 100%; height: 3px; background: #FF6B6B; margin-top: 10px; border-radius: 2px; animation: progress 3s ease-in-out infinite;"></div>
-    </div>
-
-    <!-- Arrow -->
-    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
-
-    <!-- Step 3 -->
-    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
-      <div style="font-size: 2em; margin-bottom: 10px;">📚</div>
-      <h4 style="color: #4ECDC4; margin: 5px 0;">3. Data Enrichment</h4>
-      <p style="color: white; font-size: 0.9em; margin: 0;">Wikipedia & PubMed</p>
-      <div style="width: 100%; height: 3px; background: #4ECDC4; margin-top: 10px; border-radius: 2px;"></div>
-    </div>
-
-    <!-- Arrow -->
-    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
-
-    <!-- Step 4 -->
-    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
-      <div style="font-size: 2em; margin-bottom: 10px;">📊</div>
-      <h4 style="color: #45B7D1; margin: 5px 0;">4. Results</h4>
-      <p style="color: white; font-size: 0.9em; margin: 0;">Diagnosis & Treatment</p>
-      <div style="width: 100%; height: 3px; background: #45B7D1; margin-top: 10px; border-radius: 2px;"></div>
-    </div>
-
-    <!-- Arrow -->
-    <div style="color: white; font-size: 1.5em; animation: pulse 2s infinite;">➡️</div>
-
-    <!-- Step 5 -->
-    <div style="flex: 1; min-width: 150px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
-      <div style="font-size: 2em; margin-bottom: 10px;">📄</div>
-      <h4 style="color: #FFA07A; margin: 5px 0;">5. Report</h4>
-      <p style="color: white; font-size: 0.9em; margin: 0;">PDF Export</p>
-      <div style="width: 100%; height: 3px; background: #FFA07A; margin-top: 10px; border-radius: 2px;"></div>
-    </div>
-  </div>
-
-  <style>
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    @keyframes progress {
-      0% { width: 0%; }
-      50% { width: 100%; }
-      100% { width: 0%; }
-    }
-  </style>
-</div>
+```
+📥 Input → 🤖 AI Processing → 📚 Data Enrichment → 📊 Results → 📄 Report
+    ↓         ↓                   ↓                ↓         ↓
+Upload     ML Model           Wikipedia        Diagnosis   PDF
+Images     Analysis           & PubMed         & Treatment Export
+or Text    Processing
+Symptoms
+```
 
 ### Detailed Process Flow
 
