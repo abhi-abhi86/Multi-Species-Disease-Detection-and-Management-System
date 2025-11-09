@@ -1,0 +1,23 @@
+{
+    "domain": "plant",
+    "name": "Tomato - Healthy",
+    "description": "Represents a healthy, disease-free tomato leaf. This indicates the plant is growing vigorously, free from pathogens and pests, and has access to adequate light, water, and nutrients necessary for robust growth and fruit production.",
+    "image_url": "conditions/plant/healthy/images/tomato_healthy.jpg",
+    "stages": {
+        "visual_indicators": "Leaves are a uniform, rich green color and fully expanded. The leaf surface is turgid (firm), may have a slightly fuzzy texture (due to trichomes), and is free of any spots, lesions, yellowing, or distortion. Stems are strong and new growth is active.",
+        "plant_vigor": "The plant exhibits strong vegetative growth, with normal internode spacing and healthy development of new leaves and flower trusses. It shows no signs of stunting, wilting, or nutrient deficiency."
+    },
+    "causes": "This is a healthy state, not a disease. It is 'caused' by providing optimal growing conditions.",
+    "risk_factors": "N/A. This section is replaced by 'Key Requirements for Health'.",
+    "key_requirements_for_health": {
+        "sunlight": "Requires full sun, meaning at least 6-8 hours of direct sunlight per day.",
+        "soil": "Prefers well-drained, fertile soil rich in organic matter, with a pH between 6.0-6.8.",
+        "watering": "Needs consistent, deep watering to keep the soil evenly moist, but not waterlogged. About 1-2 inches of water per week is typical, applied at the base of the plant.",
+        "temperature": "Thrives in warm weather, with ideal daytime temperatures between 21-29°C (70-85°F).",
+        "nutrients": "Requires a balanced supply of nutrients. Benefits from a fertilizer higher in phosphorus and potassium once fruit begins to set, in addition to adequate nitrogen for foliage."
+    },
+    "preventive_measures": "N/A. This section is replaced by 'Best Practices for Maintenance'.",
+    "best_practices_for_maintenance": "Stake or cage plants to keep fruit and leaves off the ground and improve air circulation. Mulch the soil to retain moisture, regulate soil temperature, and prevent soil-borne diseases from splashing onto leaves. Prune lower leaves (suckers) as needed to improve airflow. Monitor regularly for early signs of pests or disease. Practice crop rotation.",
+    "solution": "N/A. The 'solution' is to maintain the best practices to keep the plant in this healthy state.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
