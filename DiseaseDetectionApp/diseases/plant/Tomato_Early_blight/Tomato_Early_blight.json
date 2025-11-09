@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Tomato Early Blight",
+    "description": "A common fungal disease of tomato and potato plants caused by the fungus *Alternaria solani*. It primarily affects leaves and stems, and can also infect fruit, leading to defoliation, reduced plant vigor, and significant yield loss.",
+    "image_url": "diseases/plant/early_blight/images/tomato_early_blight.jpg",
+    "stages": {
+        "initial_infection": "Typically begins on older, lower leaves as small, dark brown to black, circular spots. These spots may be overlooked and can be surrounded by a small yellow area.",
+        "advanced_infection": "The spots enlarge (up to 1.5 cm) and develop characteristic concentric rings, creating a 'target-board' or 'bullseye' appearance. A yellow halo often surrounds the lesion. Lesions can merge (coalesce), causing large areas of the leaf to turn yellow (chlorotic) and then brown (necrotic) before dying and falling off. This defoliation starts from the bottom of the plant and moves upward. Dark, sunken lesions can also form on stems and fruit (often at the stem end), which may also show concentric rings."
+    },
+    "causes": "Caused by the fungus *Alternaria solani*. The fungus survives the winter in infected plant debris left in the field, in the soil, and can also be seed-borne. Spores (conidia) are produced and spread to healthy plants by wind, splashing rain, and overhead irrigation.",
+    "risk_factors": "Warm, humid weather with frequent rainfall, heavy dews, or overhead irrigation (long periods of leaf wetness). The disease thrives in conditions with alternating wet and dry periods. Plant stress from poor nutrition (especially low nitrogen), drought, or heavy fruit load makes the plant more susceptible. It is most common on plants as they mature.",
+    "preventive_measures": "Use certified disease-free seeds and transplants. Plant resistant or tolerant tomato varieties. Practice crop rotation with non-solanaceous crops (e.g., grains, corn) for at least 3-4 years. Remove and destroy all plant debris after harvest. Mulch the soil to create a barrier against spores splashing up. Water at the base of the plant (e.g., drip irrigation) to keep foliage dry. Stake or trellis plants to improve air circulation.",
+    "solution": "Monitor plants regularly, especially older leaves. Remove and destroy infected lower leaves as soon as they appear to reduce the spread. Apply protective fungicides (e.g., chlorothalonil, mancozeb, copper-based products) before the disease appears or at the very first sign of symptoms, especially when weather conditions are favorable. Ensure adequate plant nutrition, particularly nitrogen, to maintain plant vigor.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
