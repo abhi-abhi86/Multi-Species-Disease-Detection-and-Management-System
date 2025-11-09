@@ -218,16 +218,35 @@ Visual overview of the core project architecture:
 
 ## 🧭 How It Works: Process Flow
 
-### Data Flow Visualization
+### Data Flow Animation (Sequential Processing)
 
 ```
-📥 Input → 🤖 AI Processing → 📚 Data Enrichment → 📊 Results → 📄 Report
-    ↓         ↓                   ↓                ↓         ↓
-Upload     ML Model           Wikipedia        Diagnosis   PDF
-Images     Analysis           & PubMed         & Treatment Export
-or Text    Processing
-Symptoms
+[1] 📥 INPUT STAGE
+    ↓
+   Upload Images or Enter Symptom Text
+    ↓
+[2] 🤖 AI PROCESSING STAGE
+    ↓
+   ML Model Analysis & Classification
+   [████████████████████████] 100%
+    ↓
+[3] 📚 DATA ENRICHMENT STAGE
+    ↓
+   Fetch Wikipedia Summaries & PubMed Research
+   [████████████████████████] 100%
+    ↓
+[4] 📊 RESULTS STAGE
+    ↓
+   Generate Diagnosis with Confidence Scores
+   Display Treatment Options & Prevention
+    ↓
+[5] 📄 REPORT STAGE
+    ↓
+   Export Comprehensive PDF Report
+   [████████████████████████] 100%
 ```
+
+**Animation Flow:** Data moves through each stage sequentially, with progress bars filling up as processing completes. Each stage activates only after the previous one finishes, ensuring accurate and comprehensive disease analysis.
 
 ### Detailed Process Flow
 
