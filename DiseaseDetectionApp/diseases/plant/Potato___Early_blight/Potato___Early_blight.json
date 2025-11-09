@@ -1,0 +1,23 @@
+{
+    "domain": "plant",
+    "name": "Potato Early Blight",
+    "description": "A common fungal disease of potato and tomato plants caused by the fungus *Alternaria solani*. It is characterized by distinctive 'target-spot' or 'bullseye' lesions on leaves, which can lead to premature defoliation, reduced tuber size, and significant yield loss.",
+    "image_url": "diseases/plant/early_blight/images/potato_early_blight.jpg",
+    "stages": {
+        "initial_infection": "Begins as small, dark brown to black, circular or irregular spots on the older, lower leaves. These spots are often overlooked and may appear as simple flecks.",
+        "advanced_infection": "The spots enlarge and develop characteristic concentric rings, resembling a 'target-board' or 'bullseye'. A yellow halo may form around the lesion. Lesions can merge (coalesce), covering large areas of the leaf. Severely infected leaves turn yellow, become necrotic, and die, but often remain attached to the plant.",
+        "tuber_infection": "The disease can also cause dark, sunken, circular to irregular lesions on tubers. These lesions are often surrounded by a raised, purplish border. Underneath the skin, the flesh shows a brown, dry, corky rot, which is usually shallow (1/8 to 1/4 inch deep). Tuber blight reduces quality and storability."
+    },
+    "causes": "Caused by the fungus *Alternaria solani*. The fungus survives the winter in infected plant debris left in the field, in the soil, and on infected tubers. Spores (conidia) are produced and spread to healthy plants by wind, splashing rain, and overhead irrigation.",
+    "risk_factors": "Key risk factors include: warm (75-85°F or 24-29°C), humid weather with frequent rainfall, heavy dews, or overhead irrigation. The disease thrives in conditions with alternating wet and dry periods. Plant stress from poor nutrition (especially low nitrogen), drought, insect damage, or other diseases makes the plant more susceptible. It typically appears on plants as they mature, especially after flowering.",
+    "preventive_measures": [
+        "Use certified disease-free seed tubers to avoid introducing the pathogen.",
+        "Practice crop rotation with non-solanaceous crops (e.g., grains, corn, legumes) for at least 3-4 years.",
+        "Remove and destroy all plant debris and volunteer potato plants after harvest to reduce fungal survival.",
+        "Maintain optimal plant nutrition and soil moisture to reduce plant stress.",
+        "Use drip irrigation or soaker hoses instead of overhead sprinklers to keep foliage dry.",
+        "Choose potato varieties that are known to be resistant or tolerant to early blight."
+    ],
+    "solution": "Monitor plants regularly, especially older leaves, for first signs of infection. Remove and destroy infected leaves to reduce the spread. Apply protective fungicides (e.g., chlorothalonil, mancozeb, copper-based products, or azoxystrobin) before the disease appears or at the very first sign of symptoms, especially when weather conditions are favorable. It is crucial to rotate fungicides with different modes of action to prevent fungal resistance.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
