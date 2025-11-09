@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Tomato Septoria Leaf Spot",
+    "description": "A very common and destructive fungal disease of tomato plants, caused by *Septoria lycopersici*. It is characterized by numerous small, circular spots on the leaves, which leads to severe yellowing, browning, and defoliation, weakening the plant and reducing fruit yield.",
+    "image_url": "diseases/plant/septoria_leaf_spot/images/tomato_septoria_leaf_spot.jpg",
+    "stages": {
+        "initial_infection": "Begins as small (1-3 mm), water-soaked, circular spots, primarily on the undersides of older, lower leaves. These spots are often numerous.",
+        "advanced_infection": "The spots enlarge and become well-defined, developing a characteristic appearance: a dark brown or black border with a lighter tan or grayish-white center. Tiny black dots (pycnidia, the fungal fruiting bodies) can often be seen in the center of the spots. As the spots multiply, the leaves turn yellow, then brown, wither, and fall off (defoliation). This defoliation progresses rapidly from the bottom of the plant upwards, leaving stems bare and exposing fruit to sunscald."
+    },
+    "causes": "Caused by the fungus *Septoria lycopersici*. The fungus survives the winter on infected plant debris left in the field, on tomato stakes, and on some solanaceous weeds (like nightshade). Spores are spread by splashing water (rain, overhead irrigation) and wind-driven rain.",
+    "risk_factors": "Warm (20-25°C / 68-77°F), wet, and humid conditions. Long periods of high humidity and leaf wetness are essential for infection. Crowded planting and poor air circulation exacerbate the disease by keeping leaves wet for longer.",
+    "preventive_measures": "Use certified disease-free seeds and transplants. Practice crop rotation (a 3-4 year rotation away from tomatoes, peppers, and eggplant is ideal). **Remove and destroy all plant debris** at the end of the season. Mulch the soil heavily to create a barrier against spores splashing up onto the lower leaves. Water at the base of the plant (e.g., drip irrigation) to keep foliage dry. Stake or trellis plants and prune lower leaves to improve air circulation.",
+    "solution": "Remove and destroy infected leaves as soon as they appear to reduce the spread. Apply protective fungicides (e.g., chlorothalonil, mancozeb, copper-based) preventatively or at the first sign of disease. It is crucial to start applications before the disease becomes severe and to reapply according to label instructions, especially after rain.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
