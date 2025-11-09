@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Tomato Mosaic Virus (ToMV)",
+    "description": "A highly infectious viral disease affecting tomato plants, along with other members of the nightshade family. It is characterized by mosaic patterns, mottling, and malformation of leaves, leading to stunted plants and reduced fruit yield and quality.",
+    "image_url": "diseases/plant/tomato_mosaic_virus/images/tomato_mosaic_virus.jpg",
+    "stages": {
+        "initial_infection": "Often appears on younger leaves as light green or yellowish mottling, or a 'mosaic' pattern of light and dark green areas. Vein clearing (where the veins appear lighter than the leaf tissue) can also be an early symptom.",
+        "advanced_infection": "Leaves become severely distorted, puckered, blistered, and stunted. Leaflets may become fern-like, narrow, or 'stringy'. The entire plant's growth is often stunted. Fruits may be small, malformed, ripen unevenly, or show internal browning (blotchy ripening)."
+    },
+    "causes": "Caused by the **Tomato mosaic virus (ToMV)**, a very stable plant pathogenic virus. It is easily transmitted mechanically through contaminated hands, clothing, and tools (pruners, stakes). It can also be spread through infected seed and can persist in dried plant debris or sap for years. It is closely related to the Tobacco Mosaic Virus (TMV).",
+    "risk_factors": "Handling plants (especially when pruning, tying, or harvesting) can easily spread the virus from an infected plant to a healthy one. Using contaminated tools without sanitation. Tobacco users (smokers, chewers) handling plants, as the virus can be present in tobacco products and transferred via hands. Planting infected seeds or transplants.",
+    "preventive_measures": "Use certified disease-free seeds and transplants. Choose ToMV-resistant tomato varieties. Wash hands thoroughly with soap and water before and during the handling of plants (especially important for tobacco users). Regularly sanitize all tools (e.g., with a 10% bleach solution or by dipping in a strong milk solution). Remove and destroy (do not compost) any plants showing symptoms immediately. Practice crop rotation and avoid planting tomatoes or other solanaceous crops (peppers, eggplant) in the same soil for at least two years.",
+    "solution": "**There is no cure** for plants infected with Tomato Mosaic Virus. The only effective 'solution' is immediate removal and destruction of the entire infected plant (including roots) to prevent the virus from spreading. Management relies entirely on strict sanitation and the preventive measures listed above.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
