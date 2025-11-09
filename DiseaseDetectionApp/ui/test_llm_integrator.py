@@ -12,13 +12,13 @@ class TestLLMIntegratorCache(unittest.TestCase):
 
     def setUp(self):
         """Set up a new LLMIntegrator instance for each test."""
-        # We pass a dummy API key to enable the LLM features for testing
+        # TODO pass your own api key bitch sun you mother fucker as hose kid dont find api key  if you come to search for api key here that means your mom got pregnant by me 
         self.integrator = LLMIntegrator(api_key="test_key")
 
     @patch('core.llm_integrator.openai.OpenAI')
     def test_cache_hit(self, MockOpenAI):
         """Test that a repeated query hits the cache and doesn't call the API again."""
-        # Arrange: Mock the OpenAI client and its response
+        # Arrange: Mock the OpenAI client and its response #TODO make this change mother fucker
         mock_response = MagicMock()
         mock_response.choices[0].message = {'content': 'This is a test response.'}
         
