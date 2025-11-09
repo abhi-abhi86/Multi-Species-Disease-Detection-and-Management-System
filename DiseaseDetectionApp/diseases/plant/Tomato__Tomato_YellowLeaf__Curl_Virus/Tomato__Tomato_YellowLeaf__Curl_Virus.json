@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Tomato Yellow Leaf Curl Virus (TYLCV)",
+    "description": "A highly destructive viral disease affecting tomato plants, transmitted by the silverleaf whitefly. It is characterized by severe stunting of the plant, and upward curling and yellowing of the leaves, leading to significant or total loss of fruit yield.",
+    "image_url": "diseases/plant/tomato_yellow_leaf_curl_virus/images/tomato_yellow_leaf_curl_virus.jpg",
+    "stages": {
+        "initial_infection": "Often appears on new growth. Young leaves show slight yellowing (chlorosis), especially on the margins, and begin to curl upwards. The plant's growth rate may start to slow down.",
+        "advanced_infection": "Leaves become severely stunted, thickened, leathery, and cup strongly upwards. Leaf margins are bright yellow, often with green remaining along the veins. The entire plant becomes severely dwarfed or stunted, with shortened internodes giving it a 'bushy' appearance. Flower production is drastically reduced, and any fruit that sets is small, malformed, and unmarketable. Infection at an early stage often results in total yield loss."
+    },
+    "causes": "Caused by various species of viruses in the genus *Begomovirus* (family Geminiviridae). The virus is **not** seed-borne or mechanically transmitted; it is spread almost exclusively by the silverleaf whitefly (*Bemisia tabaci*). The whitefly acquires the virus while feeding on an infected plant and transmits it to healthy plants in a persistent manner (once infected, the whitefly can transmit the virus for life).",
+    "risk_factors": "High populations of the silverleaf whitefly vector. Warm, tropical, and subtropical climates where whiteflies thrive year-round. Presence of infected tomato plants or alternative weed hosts (like nightshade or mallow) that act as a virus reservoir. Planting susceptible tomato varieties.",
+    "preventive_measures": "Planting TYLCV-resistant or tolerant tomato varieties is the **most effective** control measure. Use certified, virus-free transplants. Control whitefly populations using yellow sticky traps, insecticidal soaps, neem oil, or appropriate chemical insecticides (rotate modes of action to prevent resistance). Use fine-mesh netting (insect-proof screens) in greenhouses or on row covers for young plants to exclude whiteflies. Remove and immediately destroy (bag and dispose) any plants showing symptoms. Implement a thorough weed control program in and around the growing area to eliminate alternative hosts.",
+    "solution": "**There is no cure** for a plant infected with TYLCV. All management strategies must focus on prevention and controlling the whitefly vector. Once a plant is confirmed to be infected, it must be carefully removed and destroyed to prevent it from acting as a source of the virus for whiteflies to spread to other healthy plants.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
