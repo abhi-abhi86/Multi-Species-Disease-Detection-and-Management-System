@@ -146,6 +146,7 @@ def generate_pdf_report(diagnosis_data, file_path):
             [Paragraph('<b>Confidence Score:</b>', body_style), Paragraph(f"{diagnosis_data.get('confidence', 0.0):.1f}%", body_style)],
             [Paragraph('<b>Predicted Stage:</b>', body_style), Paragraph(diagnosis_data.get('stage', 'N/A'), body_style)],
         ]
+        # Do not include diagnosis time in PDF reports
         summary_table = Table(summary_data, colWidths=[1.5 * inch, 5.5 * inch])
         summary_table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#F4F7FC')),

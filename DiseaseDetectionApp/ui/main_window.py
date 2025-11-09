@@ -18,6 +18,7 @@ import csv
 import os
 import re
 import sys
+import time
 import traceback
 import webbrowser
 from PyQt5.QtWidgets import (
@@ -270,6 +271,7 @@ class MainWindow(QMainWindow):
         self.diagnosis_worker = None
         self.base_app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.result_animation = None
+        self.diagnosis_start_time = None
 
         self.setWindowOpacity(0.0)
         self.setup_menu()
@@ -660,6 +662,7 @@ class MainWindow(QMainWindow):
         tab.spinner.start()
         tab.result_display.setPlainText("Starting diagnosis...")
         tab.result_group.setVisible(False)
+        self.diagnosis_start_time = time.time()
         self.worker_thread = QThread()
         self.diagnosis_worker = DiagnosisWorker(
             self.ml_processor, image_path, symptoms, domain, self.database
@@ -696,8 +699,9 @@ class MainWindow(QMainWindow):
     def on_diagnosis_complete(self, result, confidence, wiki_summary, predicted_stage, pubmed_summary, domain):
         self.cleanup_worker_and_ui(domain)
         tab = self.domain_tabs[domain]
+        diagnosis_time = time.time() - self.diagnosis_start_time if self.diagnosis_start_time else 0
         tab.diagnosis_data = {**result, 'confidence': confidence, 'stage': predicted_stage,
-                              'image_path': self.current_image_paths[domain]}
+                              'image_path': self.current_image_paths[domain], 'diagnosis_time': diagnosis_time}
 
 
         if result.get('name') == "No Confident Match Found" or confidence < 50.0:
@@ -716,10 +720,12 @@ class MainWindow(QMainWindow):
         else:
             preventive_str = preventive_measures
         report_made_by = result.get('report_made_by', 'N/A')
+        diagnosis_time_str = f"{diagnosis_time:.2f} seconds" if diagnosis_time > 0 else "N/A"
         output_html = (
             f"<h2 style='font-family: Arial, sans-serif; font-size: 18px; color: #2c3e50;'>{result.get('name', 'Unknown Disease')}</h2>"
             f"<p style='font-size: 14px;'><b>Confidence Score:</b> <span style='color: {'green' if confidence >= 70 else 'orange' if confidence >= 50 else 'red'};'>{confidence:.1f}%</span></p>"
             f"<p style='font-size: 14px;'><b>Predicted Stage:</b> <span style='color: #2c3e50;'>{predicted_stage}</span></p>"
+            f"<p style='font-size: 14px;'><b>Diagnosis Time:</b> <span style='color: #2c3e50;'>{diagnosis_time_str}</span></p>"
             f"<p style='font-size: 14px;'><b>Description:</b><br><span style='color: #2c3e50;'>{result.get('description', 'No description available.')}</span></p>"
             f"<p style='font-size: 14px;'><b>Causes:</b><br><span style='color: #2c3e50;'>{causes}</span></p>"
             f"<p style='font-size: 14px;'><b>Risk Factors:</b><br><span style='color: #2c3e50;'>{risk_factors}</span></p>"
