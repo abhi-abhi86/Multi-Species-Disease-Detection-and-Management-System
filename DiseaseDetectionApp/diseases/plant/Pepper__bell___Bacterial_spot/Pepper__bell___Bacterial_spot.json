@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Bacterial Spot (Pepper)",
+    "description": "A common and destructive bacterial disease that affects pepper and tomato plants. It is characterized by small, water-soaked spots on leaves, stems, and fruit, which can lead to significant defoliation, reduced yield, and unmarketable fruit.",
+    "image_url": "diseases/plant/bacterial_spot/images/bacterial_spot_pepper.jpg",
+    "stages": {
+        "initial_infection": "Begins as small (less than 3mm), dark, water-soaked, circular spots on the undersides of leaves. These spots may appear slightly raised and are often more visible when the leaf is held up to the light.",
+        "advanced_infection": "The leaf spots enlarge, the centers turn dark brown to black, and they are often surrounded by a distinct yellow halo. The centers may dry out and fall away, giving the leaf a 'shot-hole' appearance. On fruit, spots are initially small, raised, and scabby, eventually becoming warty and cracked. Severe infection leads to widespread leaf yellowing and leaf drop (defoliation)."
+    },
+    "causes": "Caused by several species of bacteria in the genus *Xanthomonas* (e.g., *Xanthomonas campestris* pv. *vesicatoria*). The pathogen is easily spread by splashing water from rain or overhead irrigation, wind-driven rain, contaminated tools, and handling wet plants. It often enters the plant through natural openings (stomata).",
+    "risk_factors": "Warm, wet, and humid conditions are ideal for the disease. High humidity (>85%) and temperatures between 24-30°C (75-86°F) strongly favor its development. Crowded plantings with poor air circulation also increase the risk and severity.",
+    "preventive_measures": "Use certified disease-free seeds and transplants. Rotate crops (avoid planting peppers or tomatoes in the same location for at least 3-4 years). Ensure good air circulation with proper plant spacing. Use drip irrigation or soaker hoses to avoid wetting foliage. Sanitize tools and hands after handling infected plants. Remove and destroy infected plant debris at the end of the season.",
+    "solution": "Remove and destroy infected leaves or plants as soon as symptoms appear to reduce the spread. Avoid working in the garden when plants are wet. Apply protective sprays containing fixed copper (e.g., copper hydroxide, copper sulfate) or a combination of copper and mancozeb. These are most effective when applied preventatively or at the very first sign of disease. Biological bactericides (e.g., based on *Bacillus subtilis*) can also be used as part of an integrated management program.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
