@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Tomato Target Spot",
+    "description": "A fungal disease affecting tomato plants, caused by *Corynespora cassiicola*. It is identified by its characteristic 'target-like' lesions on leaves and can also infect stems and fruit, leading to defoliation and reduced yield.",
+    "image_url": "diseases/plant/target_spot/images/tomato_target_spot.jpg",
+    "stages": {
+        "initial_infection": "Begins as small, irregular, water-soaked spots, often on older, lower leaves. These spots are typically dark brown with a paler center.",
+        "advanced_infection": "The spots enlarge, reaching up to 1-2 cm in diameter. They develop distinct dark, concentric rings, creating the classic 'target' or 'bullseye' appearance. A yellow halo may surround the lesion. The centers of the spots can dry out and fall away, creating a 'shot-hole' effect. Severe infection leads to leaf yellowing (chlorosis), death (necrosis), and significant leaf drop (defoliation), starting from the bottom of the plant and moving up. The disease can also cause similar sunken lesions on stems and fruit."
+    },
+    "causes": "Caused by the fungus *Corynespora cassiicola*. The fungus survives in infected plant debris in the soil and can be seed-borne. Its spores (conidia) are spread by wind, splashing rain, overhead irrigation, and contaminated tools.",
+    "risk_factors": "High humidity (above 80%) and long periods of leaf wetness (8-16 hours) are ideal for infection. Warm temperatures, typically between 20-30°C (68-86°F), favor disease development. Crowded plantings with poor air circulation trap humidity and increase risk.",
+    "preventive_measures": "Use high-quality, certified disease-free seeds and transplants. Practice crop rotation with non-host crops (like corn or beans) for at least 3 years. Remove and destroy infected plant debris at the end of the season. Stake or trellis plants to improve air circulation and keep foliage off the ground. Water at the base of the plant (e.g., drip irrigation) to avoid wetting the leaves. Mulch the soil to create a barrier against spores splashing up from the soil.",
+    "solution": "Remove and destroy the first infected leaves to reduce the spread. Apply protective fungicides (e.g., chlorothalonil, mancozeb, or copper-based sprays) preventatively, especially when weather conditions are favorable for the disease. Prune lower leaves to increase airflow. Ensure good garden sanitation by cleaning tools.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
