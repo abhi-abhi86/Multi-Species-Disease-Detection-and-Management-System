@@ -1,0 +1,15 @@
+{
+    "domain": "plant",
+    "name": "Potato Late Blight",
+    "description": "A highly destructive fungal-like disease affecting potatoes and tomatoes, caused by the oomycete *Phytophthora infestans*. It can rapidly destroy leaves, stems, and tubers, and is infamous for causing the Irish Potato Famine in the 1840s.",
+    "image_url": "diseases/plant/late_blight/images/potato_late_blight.jpg",
+    "stages": {
+        "initial_infection": "Often begins as pale green or dark, water-soaked, irregular-shaped spots on the edges or tips of leaves. In humid conditions, a fuzzy, white mold (sporangia) may appear on the underside of the leaf, especially in the early morning.",
+        "advanced_infection": "The spots rapidly enlarge, turning dark brown to black and becoming necrotic. The entire leaf can be destroyed in a few days. The infection can spread to stems, causing dark, oily-looking lesions. Infected tubers develop a reddish-brown, corky rot that extends from the skin into the flesh. The disease spreads extremely quickly, capable of destroying an entire field in 1-2 weeks."
+    },
+    "causes": "Caused by the water mold (oomycete) *Phytophthora infestans*. The pathogen survives the winter in infected tubers (seed potatoes or 'volunteers' left in the field) and plant debris. Spores are easily spread by wind and splashing rain to healthy plants.",
+    "risk_factors": "Cool, moist weather is ideal for late blight. High humidity (over 90%), frequent rain, fog, or heavy dew, combined with cool to moderate temperatures (typically 10-24°C or 50-75°F) create perfect conditions for infection and rapid spread.",
+    "preventive_measures": "Use certified disease-free seed tubers. Plant resistant or tolerant potato varieties. Destroy all 'volunteer' potato plants that grow from tubers left in the field. Practice crop rotation (avoiding tomatoes/potatoes in the same spot for 3-4 years). Ensure good air circulation with proper spacing. Water at the base of the plant and avoid overhead irrigation. 'Hill' soil high around plants to protect tubers from spores washing down from the leaves.",
+    "solution": "Monitor weather forecasts; late blight warnings are often issued when conditions are favorable. Apply fungicides *before* the disease appears (preventatively) or at the very first sign. Fungicides (e.g., chlorothalonil, mancozeb, copper-based products, or specific systemic fungicides like metalaxyl) are essential for control. Once infection is established, it is very difficult to stop. Remove and destroy infected plants immediately (burn or bag and dispose) to reduce the source of spores.",
+    "report_made_by": "https://github.com/abhi-abhi86"
+}
