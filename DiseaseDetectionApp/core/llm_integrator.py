@@ -29,7 +29,8 @@ class LLMIntegrator:
         Initialize the LLM integrator with OpenAI API key.
         If no key provided, LLM features will be disabled and fallback to database search.
         """
-        self.api_key = api_key or os.getenv('OPENAI_API_KEY')
+        self.api_key = api_key or os.getenv("OPENAI_API_KEY" )
+        
         self.llm_available = bool(self.api_key)
 
         self.client = None
