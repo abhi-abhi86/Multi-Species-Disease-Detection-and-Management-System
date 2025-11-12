@@ -21,6 +21,8 @@ check_watermark()
 
 import os
 import sys
+from core.wikipedia_integration import get_wikipedia_summary
+import json
 
 
 
@@ -37,12 +39,9 @@ class DiagnosisWorker(QObject):
     Worker object to run the diagnosis in a separate thread, preventing the UI from freezing.
     It now includes caching for PubMed results to reduce redundant network calls.
     """
-
-    # A single, size-limited cache for both PubMed and Wikipedia data
-    # The key will be a tuple like ('pubmed', 'disease_name') or ('wiki', 'disease_name')
-    # Using a class attribute for a shared cache across all worker instances.
-    _cache = {}
-    _cache_max_size = 100
+    _in_memory_cache = {}
+    _cache_file = os.path.join(os.path.dirname(__file__), '..', 'cache.json')
+    _persistent_cache = {}
 
     finished = pyqtSignal(dict, float, str, str, str, str)
 
@@ -61,6 +60,19 @@ class DiagnosisWorker(QObject):
         self.domain = domain
         self.database = database
         self.is_running = True
+        self._load_persistent_cache()
+
+    @classmethod
+    def _load_persistent_cache(cls):
+        if not cls._persistent_cache:
+            try:
+                if os.path.exists(cls._cache_file):
+                    with open(cls._cache_file, 'r', encoding='utf-8') as f:
+                        cls._persistent_cache = json.load(f)
+                        print("Loaded persistent cache with", len(cls._persistent_cache), "items.")
+            except (IOError, json.JSONDecodeError) as e:
+                print(f"Warning: Could not load persistent cache file: {e}")
+                cls._persistent_cache = {}
 
     def run(self):
         """
@@ -90,31 +102,36 @@ class DiagnosisWorker(QObject):
 
             if self.is_running and result:
                 disease_name = result.get('name', 'Unknown Disease')
-                pubmed_summary = ""
-                wiki_summary = wiki
 
-
-                if ('wiki', disease_name) in self._cache:
+                # Centralize all network calls here to leverage caching
+                cache_key = f"wiki_{disease_name}"
+                if cache_key in self._in_memory_cache:
                     self.progress.emit("Fetching Wikipedia data from cache...")
-                    wiki_summary = self._cache[('wiki', disease_name)]
+                    wiki_summary = self._in_memory_cache[cache_key]
+                elif cache_key in self._persistent_cache:
+                    self.progress.emit("Fetching Wikipedia data from persistent cache...")
+                    wiki_summary = self._persistent_cache[cache_key]
+                    self._in_memory_cache[cache_key] = wiki_summary
                 else:
+                    self.progress.emit("Fetching summary from Wikipedia...")
+                    wiki_summary = get_wikipedia_summary(disease_name)
+                    if wiki_summary:
+                        self._add_to_cache(cache_key, wiki_summary)
 
-                    if wiki and wiki != "N/A":
-                        self._add_to_cache(('wiki', disease_name), wiki)
-
-
-                if ('pubmed', disease_name) in self._cache:
+                cache_key = f"pubmed_{disease_name}"
+                if cache_key in self._in_memory_cache:
                     self.progress.emit("Fetching research data from cache...")
-                    pubmed_summary = self._cache[('pubmed', disease_name)]
+                    pubmed_summary = self._in_memory_cache[cache_key]
+                elif cache_key in self._persistent_cache:
+                    self.progress.emit("Fetching research data from persistent cache...")
+                    pubmed_summary = self._persistent_cache[cache_key]
+                    self._in_memory_cache[cache_key] = pubmed_summary
                 else:
                     self.progress.emit("Fetching recent research from PubMed...")
                     try:
-
                         pubmed_summary = get_pubmed_summary(disease_name, domain=self.domain)
-
-                        self._add_to_cache(('pubmed', disease_name), pubmed_summary)
+                        self._add_to_cache(cache_key, pubmed_summary)
                     except Exception as e:
-
                         print(f"Network error while fetching from PubMed: {e}")
                         pubmed_summary = "Could not retrieve online research data. Please check your internet connection."
 
@@ -139,7 +156,11 @@ class DiagnosisWorker(QObject):
 
     @classmethod
     def _add_to_cache(cls, key, value):
-        """Adds an item to the cache and evicts the oldest if the max size is exceeded."""
-        if len(cls._cache) >= cls._cache_max_size:
-            cls._cache.pop(next(iter(cls._cache))) # Evict the first (oldest) item
-        cls._cache[key] = value
+        """Adds an item to both in-memory and persistent caches."""
+        cls._in_memory_cache[key] = value
+        cls._persistent_cache[key] = value
+        try:
+            with open(cls._cache_file, 'w', encoding='utf-8') as f:
+                json.dump(cls._persistent_cache, f, indent=2)
+        except IOError as e:
+            print(f"Warning: Could not write to persistent cache file: {e}")

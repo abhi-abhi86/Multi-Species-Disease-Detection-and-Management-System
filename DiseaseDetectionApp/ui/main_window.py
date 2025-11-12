@@ -23,7 +23,7 @@ import traceback
 import webbrowser
 from PyQt5.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout, QListWidget, QListWidgetItem,
-    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar,
+    QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QCheckBox,
     QLineEdit, QStatusBar, QDialog, QHBoxLayout, QGraphicsOpacityEffect,
     QFormLayout, QComboBox, QMenu
 )
@@ -81,6 +81,11 @@ try:
 except ImportError:
     SearchEngine = None
 
+try:
+    from core.update_worker import UpdateWorker
+except ImportError:
+    UpdateWorker = None
+
 
 try:
     llm_available = True
@@ -127,10 +132,13 @@ class SettingsDialog(QDialog):
         self.theme_combo = QComboBox()
         self.theme_combo.addItems(["Light", "Dark"])
         self.theme_combo.setCurrentText(self.settings.value("theme", "Light"))
+        self.auto_update_check_box = QCheckBox()
+        self.auto_update_check_box.setChecked(self.settings.value("auto_update_check", True, type=bool))
+
         self.layout.addRow("Default Image Folder:", self.image_folder)
         self.layout.addRow("Default PDF Save Folder:", self.pdf_folder)
         self.layout.addRow("Theme:", self.theme_combo)
-
+        self.layout.addRow("Check for updates on startup:", self.auto_update_check_box)
         btns = QHBoxLayout()
         self.ok_btn = QPushButton("OK")
         self.cancel_btn = QPushButton("Cancel")
@@ -144,6 +152,7 @@ class SettingsDialog(QDialog):
         self.settings.setValue("image_folder", self.image_folder.text())
         self.settings.setValue("pdf_folder", self.pdf_folder.text())
         self.settings.setValue("theme", self.theme_combo.currentText())
+        self.settings.setValue("auto_update_check", self.auto_update_check_box.isChecked())
         super().accept()
 
     @staticmethod
@@ -154,7 +163,8 @@ class SettingsDialog(QDialog):
             return {
                 "image_folder": s.value("image_folder", os.path.expanduser("~")),
                 "pdf_folder": s.value("pdf_folder", os.path.expanduser("~")),
-                "theme": s.value("theme", "Light")
+                "theme": s.value("theme", "Light"),
+                "auto_update_check": s.value("auto_update_check", True, type=bool)
             }
         return None
 
@@ -263,15 +273,26 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Multi-Species Disease Detection and Management System")
         self.setGeometry(100, 100, 1000, 800)
         self.database = load_database()
-        self.ml_processor = MLProcessor()
+        try:
+            self.ml_processor = MLProcessor()
+        except FileNotFoundError as e:
+            QMessageBox.critical(self, "Model File Missing",
+                                 f"A required model file could not be found:\n\n{e}\n\nThe diagnosis feature will be disabled. Please ensure all model files are correctly placed and restart the application.")
+            self.ml_processor = None
+        except Exception as e:
+            QMessageBox.critical(self, "Initialization Error",
+                                 f"An unexpected error occurred during ML processor initialization:\n\n{e}\n\nDiagnosis features will be disabled.")
+            self.ml_processor = None
         self.llm_integrator = LLMIntegrator() if llm_available else None
         self.current_image_paths = {"Plant": None, "Human": None, "Animal": None}
         self.diagnosis_locations = []
-        self.worker_thread = None
         self.diagnosis_worker = None
         self.base_app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.result_animation = None
         self.diagnosis_start_time = None
+        self.is_diagnosis_running = False
+        self.worker_thread = QThread(self)
+        self.worker_thread.start()
 
         self.setWindowOpacity(0.0)
         self.setup_menu()
@@ -281,18 +302,107 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.tab_widget)
         self.domain_tabs = {}
 
-        # Initialize the search engine
-        self.search_engine = SearchEngine() if SearchEngine else None
-        self.setup_search_ui()
-
 
         for domain, label in [("Plant", "Plants"), ("Human", "Humans"), ("Animal", "Animals")]:
             tab = self.create_domain_tab(domain)
             self.tab_widget.addTab(tab, label)
             self.domain_tabs[domain] = tab
 
+        if self.settings.value("auto_update_check", True, type=bool):
+            QTimer.singleShot(3000, lambda: self.check_for_updates(silent=True))
+
     def setup_menu(self):
         menubar = self.menuBar()
+        file_menu = menubar.addMenu("File")
+        add_action = QAction("Add New Disease...", self)
+        add_action.setShortcut("Ctrl+N")
+        add_action.setStatusTip("Add a new disease to the database")
+        add_action.triggered.connect(self.open_add_disease_dialog)
+        file_menu.addAction(add_action)
+
+        import_action = QAction("Import Disease Database...", self)
+        import_action.setShortcut("Ctrl+I")
+        import_action.setStatusTip("Import diseases from JSON file")
+        import_action.triggered.connect(self.import_disease_database)
+        file_menu.addAction(import_action)
+
+        export_action = QAction("Export Disease Database...", self)
+        export_action.setShortcut("Ctrl+E")
+        export_action.setStatusTip("Export current disease database")
+        export_action.triggered.connect(self.export_disease_database)
+        file_menu.addAction(export_action)
+
+        file_menu.addSeparator()
+        exit_action = QAction("Exit", self)
+        exit_action.setShortcut("Ctrl+Q")
+        exit_action.setStatusTip("Exit the application")
+        exit_action.triggered.connect(self.close)
+        file_menu.addAction(exit_action)
+
+        edit_menu = menubar.addMenu("Edit")
+        clear_action = QAction("Clear All", self)
+        clear_action.setShortcut("Ctrl+L")
+        clear_action.setStatusTip("Clear all inputs and results")
+        clear_action.triggered.connect(self.clear_all_inputs)
+        edit_menu.addAction(clear_action)
+
+        tools_menu = menubar.addMenu("Tools")
+        chatbot_action = QAction("Disease Chatbot...", self)
+        chatbot_action.setShortcut("Ctrl+B")
+        chatbot_action.setStatusTip("Open AI-powered disease chatbot")
+        chatbot_action.triggered.connect(self.open_chatbot)
+        tools_menu.addAction(chatbot_action)
+
+        search_image_action = QAction("Search Disease Image Online...", self)
+        search_image_action.setShortcut("Ctrl+S")
+        search_image_action.setStatusTip("Search for disease images online")
+        search_image_action.triggered.connect(self.open_image_search_dialog)
+        tools_menu.addAction(search_image_action)
+
+        map_action = QAction("View Disease Map...", self)
+        map_action.setShortcut("Ctrl+M")
+        map_action.setStatusTip("View disease locations on map")
+        map_action.triggered.connect(self.open_map_dialog)
+        tools_menu.addAction(map_action)
+
+        tools_menu.addSeparator()
+        statistics_action = QAction("View Statistics...", self)
+        statistics_action.setShortcut("Ctrl+T")
+        statistics_action.setStatusTip("View diagnosis statistics")
+        statistics_action.triggered.connect(self.show_statistics)
+        tools_menu.addAction(statistics_action)
+
+        retrain_action = QAction("Retrain Model...", self)
+        retrain_action.setShortcut("Ctrl+R")
+        retrain_action.setStatusTip("Retrain the ML model with current data")
+        retrain_action.triggered.connect(self.manual_retrain_model)
+        tools_menu.addAction(retrain_action)
+
+        tools_menu.addSeparator()
+        settings_action = QAction("Settings...", self)
+        settings_action.setShortcut("Ctrl+P")
+        settings_action.setStatusTip("Open application settings")
+        settings_action.triggered.connect(self.open_settings_dialog)
+        tools_menu.addAction(settings_action)
+
+        help_menu = menubar.addMenu("Help")
+        about_action = QAction("About...", self)
+        about_action.setShortcut("F1")
+        about_action.setStatusTip("About this application")
+        about_action.triggered.connect(self.show_about_dialog)
+        help_menu.addAction(about_action)
+
+        developer_action = QAction("Developer Info...", self)
+        developer_action.setShortcut("Ctrl+D")
+        developer_action.setStatusTip("View developer information")
+        developer_action.triggered.connect(self.show_developer_info)
+
+        help_menu.addSeparator()
+        update_action = QAction("Check for Updates...", self)
+        update_action.setStatusTip("Check for a new version of the application")
+        update_action.triggered.connect(lambda: self.check_for_updates(silent=False))
+        help_menu.addAction(update_action)
+        help_menu.addAction(developer_action)
 
     def setup_search_ui(self):
         """Sets up the global search bar and results list."""
@@ -362,95 +472,6 @@ class MainWindow(QMainWindow):
                 pubmed_summary="Please run a full diagnosis for recent research.",
                 domain=domain
             )
-
-
-        file_menu = menubar.addMenu("File")
-        add_action = QAction("Add New Disease...", self)
-        add_action.setShortcut("Ctrl+N")
-        add_action.setStatusTip("Add a new disease to the database")
-        add_action.triggered.connect(self.open_add_disease_dialog)
-        file_menu.addAction(add_action)
-
-        import_action = QAction("Import Disease Database...", self)
-        import_action.setShortcut("Ctrl+I")
-        import_action.setStatusTip("Import diseases from JSON file")
-        import_action.triggered.connect(self.import_disease_database)
-        file_menu.addAction(import_action)
-
-        export_action = QAction("Export Disease Database...", self)
-        export_action.setShortcut("Ctrl+E")
-        export_action.setStatusTip("Export current disease database")
-        export_action.triggered.connect(self.export_disease_database)
-        file_menu.addAction(export_action)
-
-        file_menu.addSeparator()
-        exit_action = QAction("Exit", self)
-        exit_action.setShortcut("Ctrl+Q")
-        exit_action.setStatusTip("Exit the application")
-        exit_action.triggered.connect(self.close)
-        file_menu.addAction(exit_action)
-
-
-        edit_menu = menubar.addMenu("Edit")
-        clear_action = QAction("Clear All", self)
-        clear_action.setShortcut("Ctrl+L")
-        clear_action.setStatusTip("Clear all inputs and results")
-        clear_action.triggered.connect(self.clear_all_inputs)
-        edit_menu.addAction(clear_action)
-
-
-        tools_menu = menubar.addMenu("Tools")
-        chatbot_action = QAction("Disease Chatbot...", self)
-        chatbot_action.setShortcut("Ctrl+B")
-        chatbot_action.setStatusTip("Open AI-powered disease chatbot")
-        chatbot_action.triggered.connect(self.open_chatbot)
-        tools_menu.addAction(chatbot_action)
-
-        search_image_action = QAction("Search Disease Image Online...", self)
-        search_image_action.setShortcut("Ctrl+S")
-        search_image_action.setStatusTip("Search for disease images online")
-        search_image_action.triggered.connect(self.open_image_search_dialog)
-        tools_menu.addAction(search_image_action)
-
-        map_action = QAction("View Disease Map...", self)
-        map_action.setShortcut("Ctrl+M")
-        map_action.setStatusTip("View disease locations on map")
-        map_action.triggered.connect(self.open_map_dialog)
-        tools_menu.addAction(map_action)
-
-        tools_menu.addSeparator()
-        statistics_action = QAction("View Statistics...", self)
-        statistics_action.setShortcut("Ctrl+T")
-        statistics_action.setStatusTip("View diagnosis statistics")
-        statistics_action.triggered.connect(self.show_statistics)
-        tools_menu.addAction(statistics_action)
-
-        retrain_action = QAction("Retrain Model...", self)
-        retrain_action.setShortcut("Ctrl+R")
-        retrain_action.setStatusTip("Retrain the ML model with current data")
-        retrain_action.triggered.connect(self.manual_retrain_model)
-        tools_menu.addAction(retrain_action)
-
-        tools_menu.addSeparator()
-        settings_action = QAction("Settings...", self)
-        settings_action.setShortcut("Ctrl+P")
-        settings_action.setStatusTip("Open application settings")
-        settings_action.triggered.connect(self.open_settings_dialog)
-        tools_menu.addAction(settings_action)
-
-
-        help_menu = menubar.addMenu("Help")
-        about_action = QAction("About...", self)
-        about_action.setShortcut("F1")
-        about_action.setStatusTip("About this application")
-        about_action.triggered.connect(self.show_about_dialog)
-        help_menu.addAction(about_action)
-
-        developer_action = QAction("Developer Info...", self)
-        developer_action.setShortcut("Ctrl+D")
-        developer_action.setStatusTip("View developer information")
-        developer_action.triggered.connect(self.show_developer_info)
-        help_menu.addAction(developer_action)
 
     def apply_theme(self, theme):
         if theme == "Dark":
@@ -643,7 +664,12 @@ class MainWindow(QMainWindow):
 
 
     def run_diagnosis(self, domain):
-        if self.worker_thread and self.worker_thread.isRunning():
+        if not self.ml_processor:
+            QMessageBox.critical(self, "Diagnosis Disabled",
+                                 "The diagnosis feature is currently disabled due to a missing model file or an initialization error. Please check the application setup.")
+            return
+
+        if self.is_diagnosis_running:
             QMessageBox.warning(self, "Busy", "A diagnosis is already in progress. Please wait or cancel it.")
             return
         tab = self.domain_tabs[domain]
@@ -663,20 +689,17 @@ class MainWindow(QMainWindow):
         tab.result_display.setPlainText("Starting diagnosis...")
         tab.result_group.setVisible(False)
         self.diagnosis_start_time = time.time()
-        self.worker_thread = QThread()
         self.diagnosis_worker = DiagnosisWorker(
             self.ml_processor, image_path, symptoms, domain, self.database
         )
-        self.diagnosis_worker.moveToThread(self.worker_thread)
-        self.worker_thread.started.connect(self.diagnosis_worker.run)
         self.diagnosis_worker.finished.connect(self.on_diagnosis_complete)
         self.diagnosis_worker.error.connect(self.on_diagnosis_error)
         self.diagnosis_worker.progress.connect(lambda msg: tab.result_display.setPlainText(msg))
-        self.diagnosis_worker.finished.connect(self.worker_thread.quit)
-        self.worker_thread.finished.connect(self.worker_thread.deleteLater)
-        self.diagnosis_worker.error.connect(self.worker_thread.quit)
-        self.worker_thread.start()
 
+        self.diagnosis_worker.moveToThread(self.worker_thread)
+        QTimer.singleShot(0, self.diagnosis_worker.run)
+        self.is_diagnosis_running = True
+        
     def animate_result_fade_in(self, tab):
         tab.result_group.setVisible(True)
         animation = QPropertyAnimation(tab.result_opacity_effect, b"opacity")
@@ -688,7 +711,7 @@ class MainWindow(QMainWindow):
         self.result_animation = animation
 
     def cancel_diagnosis(self, domain):
-        if self.worker_thread and self.worker_thread.isRunning():
+        if self.is_diagnosis_running:
             try:
                 if self.diagnosis_worker:
                     self.diagnosis_worker.stop()
@@ -700,8 +723,13 @@ class MainWindow(QMainWindow):
         self.cleanup_worker_and_ui(domain)
         tab = self.domain_tabs[domain]
         diagnosis_time = time.time() - self.diagnosis_start_time if self.diagnosis_start_time else 0
-        tab.diagnosis_data = {**result, 'confidence': confidence, 'stage': predicted_stage,
-                              'image_path': self.current_image_paths[domain], 'diagnosis_time': diagnosis_time}
+        tab.diagnosis_data = {**result, 
+                              'confidence': confidence, 
+                              'stage': predicted_stage,
+                              'image_path': self.current_image_paths[domain], 
+                              'diagnosis_time': diagnosis_time,
+                              'wiki_summary': wiki_summary,
+                              'pubmed_summary': pubmed_summary}
 
 
         if result.get('name') == "No Confident Match Found" or confidence < 50.0:
@@ -730,7 +758,8 @@ class MainWindow(QMainWindow):
             f"<p style='font-size: 14px;'><b>Causes:</b><br><span style='color: #2c3e50;'>{causes}</span></p>"
             f"<p style='font-size: 14px;'><b>Risk Factors:</b><br><span style='color: #2c3e50;'>{risk_factors}</span></p>"
             f"<p style='font-size: 14px;'><b>Preventive Measures:</b><br><span style='color: #2c3e50;'>{preventive_str}</span></p>"
-            f"<p style='font-size: 14px;'><b>Wikipedia Summary:</b><br><span style='color: #2c3e50;'>{wiki_summary or 'No summary available.'}</span></p>"
+            f"<h3 style='font-family: Arial, sans-serif; font-size: 16px; color: #2c3e50; margin-top: 15px;'>Wikipedia Summary</h3>"
+            f"<p style='font-size: 14px; color: #2c3e50; margin-bottom: 15px;'>{wiki_summary or 'No summary available.'}</p>"
             f"<p style='font-size: 14px;'><b>Known Stages:</b><br><span style='color: #2c3e50;'>{stages_str}</span></p>"
             f"<p style='font-size: 14px;'><b>Solution/Cure:</b><br><span style='color: #2c3e50;'>{result.get('solution', 'No solution available.')}</span></p>"
             f"<p style='font-size: 14px;'><b>Recent Research (PubMed):</b><br><span style='color: #2c3e50;'>{pubmed_summary or 'No recent research available.'}</span></p>"
@@ -836,11 +865,8 @@ class MainWindow(QMainWindow):
             tab.result_display.setHtml("<p style='color: orange;'>Diagnosis canceled.</p>")
             self.animate_result_fade_in(tab)
             self.status_bar.showMessage("Diagnosis canceled.", 4000)
-        if self.worker_thread and self.worker_thread.isRunning():
-            self.worker_thread.quit()
-            self.worker_thread.wait(2000)
-        self.worker_thread = None
         self.diagnosis_worker = None
+        self.is_diagnosis_running = False
 
     def open_add_disease_dialog(self):
         dialog = AddNewDiseaseDialog(self)
@@ -994,25 +1020,47 @@ class MainWindow(QMainWindow):
         if file_path:
             try:
                 with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                    fieldnames = ['Field', 'Value']
+                    data = tab.diagnosis_data
+                    
+                    # Define headers for a more standard CSV layout
+                    fieldnames = [
+                        'Disease Name', 'Confidence Score', 'Predicted Stage', 'Domain',
+                        'Description', 'Causes', 'Risk Factors', 'Preventive Measures',
+                        'Known Stages', 'Solution/Cure', 'Wikipedia Summary', 
+                        'Recent Research (PubMed)', 'Diagnosis Time (s)', 'Input Image Path'
+                    ]
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                     writer.writeheader()
-                    data = tab.diagnosis_data
-                    writer.writerow({'Field': 'Disease Name', 'Value': data.get('name', 'N/A')})
-                    writer.writerow({'Field': 'Confidence Score', 'Value': f"{data.get('confidence', 0):.1f}%"})
-                    writer.writerow({'Field': 'Predicted Stage', 'Value': data.get('stage', 'N/A')})
-                    writer.writerow({'Field': 'Description', 'Value': data.get('description', 'N/A')})
-                    writer.writerow({'Field': 'Solution/Cure', 'Value': data.get('solution', 'N/A')})
 
+                    # Prepare complex fields for single-cell storage
                     stages = data.get('stages', {})
-                    if stages:
-                        stages_str = '; '.join([f"{k}: {v}" for k, v in stages.items()])
-                        writer.writerow({'Field': 'Known Stages', 'Value': stages_str})
-                    else:
-                        writer.writerow({'Field': 'Known Stages', 'Value': 'No stages information available.'})
-                    writer.writerow({'Field': 'Wikipedia Summary', 'Value': data.get('wiki_summary', 'No summary available.')})
-                    writer.writerow({'Field': 'Recent Research (PubMed)', 'Value': data.get('pubmed_summary', 'No recent research available.')})
-                    writer.writerow({'Field': 'Image Path', 'Value': data.get('image_path', 'N/A')})
+                    stages_str = '; '.join([f"{k}: {v}" for k, v in stages.items()]) if stages else 'N/A'
+                    
+                    preventive = data.get('preventive_measures', [])
+                    preventive_str = '; '.join(preventive) if isinstance(preventive, list) else preventive
+
+                    # Clean summaries by removing newlines to keep the CSV to one row
+                    wiki_summary = (data.get('wiki_summary') or '').replace('\n', ' ').replace('\r', '')
+                    pubmed_summary = (data.get('pubmed_summary') or '').replace('\n', ' ').replace('\r', '')
+
+                    # Write the single data row
+                    writer.writerow({
+                        'Disease Name': data.get('name', 'N/A'),
+                        'Confidence Score': f"{data.get('confidence', 0):.1f}%",
+                        'Predicted Stage': data.get('stage', 'N/A'),
+                        'Domain': data.get('domain', 'N/A'),
+                        'Description': data.get('description', 'N/A'),
+                        'Causes': data.get('causes', 'N/A'),
+                        'Risk Factors': data.get('risk_factors', 'N/A'),
+                        'Preventive Measures': preventive_str,
+                        'Known Stages': stages_str,
+                        'Solution/Cure': data.get('solution', 'N/A'),
+                        'Wikipedia Summary': wiki_summary,
+                        'Recent Research (PubMed)': pubmed_summary,
+                        'Diagnosis Time (s)': f"{data.get('diagnosis_time', 0):.2f}",
+                        'Input Image Path': data.get('image_path', 'N/A')
+                    })
+
                 QMessageBox.information(self, "Success", f"CSV report saved successfully to:\n{file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "CSV Error", f"Failed to generate CSV report:\n{str(e)}")
@@ -1065,15 +1113,8 @@ class MainWindow(QMainWindow):
         self.fade_in_animation.start()
 
     def closeEvent(self, event):
-        try:
-            if self.worker_thread and self.worker_thread.isRunning():
-                if self.diagnosis_worker:
-                    self.diagnosis_worker.stop()
-                self.worker_thread.quit()
-                if not self.worker_thread.wait(1500):
-                    print("Warning: Worker thread did not terminate gracefully.")
-        except Exception:
-            pass
+        self.worker_thread.quit()
+        self.worker_thread.wait()
         event.accept()
 
 
@@ -1289,6 +1330,55 @@ class MainWindow(QMainWindow):
 
         dialog.exec()
 
+    def check_for_updates(self, silent=False):
+        if not UpdateWorker:
+            if not silent:
+                QMessageBox.critical(self, "Error", "The UpdateWorker component is missing.")
+            return
+
+        if hasattr(self, 'update_thread') and self.update_thread.isRunning():
+            if not silent:
+                QMessageBox.information(self, "In Progress", "An update check is already in progress.")
+            return
+
+        self._is_silent_update_check = silent
+
+        if not silent:
+            self.status_bar.showMessage("Checking for updates...", 2000)
+
+        self.update_worker = UpdateWorker()
+        self.update_thread = QThread()
+        self.update_worker.moveToThread(self.update_thread)
+
+        self.update_thread.started.connect(self.update_worker.run)
+        self.update_worker.finished.connect(self.on_update_check_complete)
+        self.update_worker.finished.connect(self.update_thread.quit)
+        self.update_thread.finished.connect(self.update_thread.deleteLater)
+
+        self.update_thread.start()
+
+    def on_update_check_complete(self, update_info, error_message):
+        if error_message:
+            QMessageBox.critical(self, "Update Check Failed", f"An error occurred while checking for updates:\n\n{error_message}")
+        elif update_info:
+            latest_version = update_info.get("latest_version", "N/A")
+            release_notes = update_info.get("release_notes", "No release notes provided.")
+            release_url = update_info.get("release_url")
+
+            msg_box = QMessageBox(self)
+            msg_box.setIcon(QMessageBox.Icon.Information)
+            msg_box.setWindowTitle("Update Available")
+            msg_box.setText(f"A new version ({latest_version}) is available!")
+            msg_box.setInformativeText(f"<b>Release Notes:</b><br>{release_notes.replace('\n', '<br>')}")
+            if release_url:
+                msg_box.addButton("Download", QMessageBox.ButtonRole.AcceptRole).clicked.connect(lambda: webbrowser.open(release_url))
+            msg_box.addButton("Later", QMessageBox.ButtonRole.RejectRole)
+            msg_box.exec()
+        elif not self._is_silent_update_check:
+            QMessageBox.information(self, "Up to Date", "You are currently running the latest version of the application.")
+
+        if not self._is_silent_update_check:
+            self.status_bar.clearMessage()
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication

@@ -176,9 +176,8 @@ class MLProcessor:
 
 
             if best_match_disease:
-
-                wiki_summary = get_wikipedia_summary(best_match_disease['name'])
-                return best_match_disease, primary_confidence * 100, wiki_summary, "Detected from Image"
+                # The worker will handle fetching the Wikipedia summary to enable caching.
+                return best_match_disease, primary_confidence * 100, None, "Detected from Image"
             else:
 
 
@@ -210,9 +209,8 @@ class MLProcessor:
                     if score >= 60:
                         print(f"Fuzzy match found: '{predicted_class_name}' -> '{best_match}' (score: {score})")
                         for disease_data in database:
-                            if disease_data.get("domain", "").lower() == domain.lower() and disease_data.get("name", "") == best_match:
-                                wiki_summary = get_wikipedia_summary(disease_data['name'])
-                                return disease_data, primary_confidence * 100, wiki_summary, "Detected from Image (Fuzzy Match)"
+                            if disease_data.get("domain", "").lower() == domain.lower() and disease_data.get("name", "") == best_match:                                
+                                return disease_data, primary_confidence * 100, None, "Detected from Image (Fuzzy Match)"
 
                 print(
                     f"AI prediction '{predicted_class_name}' not in local DB for domain '{domain}'. Attempting web search...")
@@ -262,8 +260,7 @@ def predict_from_symptoms(symptoms, domain, database):
 
     best_match_name, primary_confidence = results[0]
     best_match_disease = domain_candidates[best_match_name]
-    wiki_summary = get_wikipedia_summary(best_match_disease['name'])
     predicted_stage = "Uncertain (Possible Match)" if primary_confidence < SYMPTOM_CONFIDENCE_THRESHOLD_STRONG else "Inferred from Symptoms"
 
-    return best_match_disease, primary_confidence, wiki_summary, predicted_stage
-
+    # The worker will handle fetching the Wikipedia summary to enable caching.
+    return best_match_disease, primary_confidence, None, predicted_stage

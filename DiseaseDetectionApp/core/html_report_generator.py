@@ -214,6 +214,26 @@ def generate_html_report(diagnosis_data, file_path):
 """
 
 
+        wiki_summary = diagnosis_data.get('wiki_summary', 'Not Available')
+        if wiki_summary and wiki_summary != 'Not Available':
+            html_content += f"""
+    <div class="section">
+        <h2>Wikipedia Summary</h2>
+        <p>{wiki_summary.replace('\n', '<br>')}</p>
+    </div>
+"""
+
+
+        pubmed_summary = diagnosis_data.get('pubmed_summary', 'Not Available')
+        if pubmed_summary and pubmed_summary != 'Not Available':
+            html_content += f"""
+    <div class="section">
+        <h2>Recent Research from PubMed</h2>
+        <div>{pubmed_summary}</div>
+    </div>
+"""
+
+
         solution = diagnosis_data.get('solution', 'No specific solution provided in the database.')
         html_content += f"""
     <div class="section">

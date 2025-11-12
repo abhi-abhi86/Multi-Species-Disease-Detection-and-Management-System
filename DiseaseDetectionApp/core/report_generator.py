@@ -198,13 +198,17 @@ def generate_pdf_report(diagnosis_data, file_path):
         story.append(Spacer(1, 0.2 * inch))
 
 
+        wiki_data = diagnosis_data.get('wiki_summary')
+        if wiki_data and isinstance(wiki_data, str) and wiki_data.strip():
+            story.append(Paragraph("Wikipedia Summary", header_style))
+            story.append(Paragraph(wiki_data, body_style))
+            story.append(Spacer(1, 0.2 * inch))
+
         pubmed_data = diagnosis_data.get('pubmed_summary')
         if pubmed_data and isinstance(pubmed_data, str) and pubmed_data.strip():
             story.append(Paragraph("Recent Research from PubMed", header_style))
 
-            import re
-            clean_pubmed = re.sub(r'<[^>]+>', '', pubmed_data)
-            story.append(Paragraph(clean_pubmed, body_style))
+            story.append(Paragraph(pubmed_data, body_style))
             story.append(Spacer(1, 0.2 * inch))
 
         disclaimer_style = ParagraphStyle('disclaimer', parent=styles['Italic'], fontSize=9, alignment=TA_CENTER)

@@ -29,16 +29,10 @@ class LLMIntegrator:
         Initialize the LLM integrator with OpenAI API key.
         If no key provided, LLM features will be disabled and fallback to database search.
         """
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY" )
-        
-        self.llm_available = bool(self.api_key)
-
+        # This function is currently disabled.
+        self.api_key = None
+        self.llm_available = False
         self.client = None
-        if self.llm_available:
-            self.client = openai.OpenAI(api_key=self.api_key)
-            self.model = "gpt-3.5-turbo"
-        else:
-            print("Warning: OpenAI API key not found. LLM features disabled. Set OPENAI_API_KEY environment variable for enhanced AI responses.")
 
         self.conversation_history = []
         self.cache: OrderedDict[tuple, str] = OrderedDict()
