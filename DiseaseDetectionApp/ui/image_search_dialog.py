@@ -21,11 +21,11 @@ check_watermark()
 
 import requests
 import wikipedia
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QPushButton, QLineEdit, QHBoxLayout
 )
-from PyQt5.QtGui import QPixmap, QCursor
-from PyQt5.QtCore import Qt, QObject, QThread, pyqtSignal
+from PySide6.QtGui import QPixmap, QCursor
+from PySide6.QtCore import Qt, QObject, QThread, Signal
 
 from core.google_search import search_google_images
 
@@ -33,8 +33,8 @@ class ImageFetchWorker(QObject):
     """
     Worker to fetch an image from a URL in the background.
     """
-    finished = pyqtSignal(bytes)
-    error = pyqtSignal(str)
+    finished = Signal(bytes)
+    error = Signal(str)
 
     def __init__(self, disease_name):
         super().__init__()

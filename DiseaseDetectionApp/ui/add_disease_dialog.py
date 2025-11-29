@@ -1,5 +1,5 @@
 
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QFormLayout, QComboBox, QLineEdit, QTextEdit, QDialogButtonBox,
     QVBoxLayout, QFileDialog
 )
@@ -141,7 +141,7 @@ class AddNewDiseaseDialog(QDialog):
 
 if __name__ == "__main__":
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from PySide6.QtWidgets import QApplication
 
     app = QApplication(sys.argv)
     dialog = AddNewDiseaseDialog()

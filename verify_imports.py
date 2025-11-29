@@ -12,9 +12,9 @@ def test_imports():
     
     # Test each dependency
     dependencies = [
-        ("PyQt5", "from PyQt5.QtWidgets import QApplication"),
-        ("PyQt5.QtCore", "from PyQt5.QtCore import Qt, pyqtSignal, QThread"),
-        ("PyQt5.QtGui", "from PyQt5.QtGui import QPixmap, QFont"),
+        ("PySide6", "from PySide6.QtWidgets import QApplication"),
+        ("PySide6.QtCore", "from PySide6.QtCore import Qt, Signal, QThread"),
+        ("PySide6.QtGui", "from PySide6.QtGui import QPixmap, QFont"),
         ("torch", "import torch"),
         ("torchvision", "from torchvision import models, transforms"),
         ("PIL", "from PIL import Image"),

@@ -12,8 +12,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 from core.ml_processor import MLProcessor
 from core.data_handler import load_database
 from core.worker import DiagnosisWorker
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QThread, QObject, pyqtSignal
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QThread, QObject, Signal
 
 
 app = QApplication(sys.argv) if not QApplication.instance() else QApplication.instance()

@@ -1,11 +1,11 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 from .update_checker import check_for_updates
 
 class UpdateWorker(QObject):
     """
     A worker that checks for updates in a background thread.
     """
-    finished = pyqtSignal(object, str)  # Emits update_info and error_message
+    finished = Signal(object, str)  # Emits update_info and error_message
 
     def run(self):
         """

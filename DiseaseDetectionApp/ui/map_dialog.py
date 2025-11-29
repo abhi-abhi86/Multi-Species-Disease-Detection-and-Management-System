@@ -1,12 +1,12 @@
 
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton
-from PyQt5.QtCore import QObject, QThread, pyqtSignal
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton
+from PySide6.QtCore import QObject, QThread, Signal
 
 class GeocoderWorker(QObject):
     """Worker to geocode locations in the background."""
-    location_found = pyqtSignal(str)
-    finished = pyqtSignal()
-    error = pyqtSignal(str)
+    location_found = Signal(str)
+    finished = Signal()
+    error = Signal(str)
 
     def __init__(self, diagnosis_locations):
         super().__init__()

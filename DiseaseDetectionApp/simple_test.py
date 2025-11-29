@@ -1,6 +1,6 @@
 
 """
-Simple test for Wikipedia image fetching without PyQt5 threading.
+Simple test for Wikipedia image fetching without PySide6 threading.
 """
 
 import wikipedia

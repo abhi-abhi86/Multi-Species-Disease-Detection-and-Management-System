@@ -7,8 +7,8 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QThread, QObject, pyqtSignal
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QThread, QObject, Signal
 from ui.image_search_dialog import ImageFetchWorker
 
 

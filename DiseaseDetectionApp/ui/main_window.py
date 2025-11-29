@@ -21,15 +21,15 @@ import sys
 import time
 import traceback
 import webbrowser
-from PyQt5.QtWidgets import (
+from PySide6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QVBoxLayout, QGroupBox, QGridLayout, QListWidget, QListWidgetItem,
     QLabel, QPushButton, QTextEdit, QMessageBox, QFileDialog, QMenuBar, QCheckBox,
     QLineEdit, QStatusBar, QDialog, QHBoxLayout, QGraphicsOpacityEffect,
     QFormLayout, QComboBox, QMenu
 )
-from PyQt5.QtGui import QPixmap, QFont, QCursor, QMovie
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtCore import Qt, pyqtSignal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings, QEvent
+from PySide6.QtGui import QPixmap, QFont, QCursor, QMovie
+from PySide6.QtGui import QAction
+from PySide6.QtCore import Qt, Signal, QThread, QPropertyAnimation, QEasingCurve, QTimer, QSettings, QEvent
 
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -230,7 +230,7 @@ class SpinnerLabel(QLabel):
 
 
 class CustomDropLabel(QLabel):
-    fileDropped = pyqtSignal(str)
+    fileDropped = Signal(str)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -1193,7 +1193,7 @@ class MainWindow(QMainWindow):
 
     def show_statistics(self):
         """Show diagnosis statistics dialog."""
-        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel, QTextEdit
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QTextEdit
 
         dialog = QDialog(self)
         dialog.setWindowTitle("Diagnosis Statistics")
@@ -1267,7 +1267,7 @@ class MainWindow(QMainWindow):
 
     def show_about_dialog(self):
         """Show about dialog."""
-        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel
 
         dialog = QDialog(self)
         dialog.setWindowTitle("About")
@@ -1280,7 +1280,7 @@ class MainWindow(QMainWindow):
         <h2>Multi-Species Disease Detection and Management System</h2>
         <p><b>Version:</b> 1.0.0</p>
         <p><b>Description:</b> AI-powered disease detection system for plants, humans, and animals</p>
-        <p><b>Technologies:</b> Python, PyQt5, PyTorch, Machine Learning</p>
+        <p><b>Technologies:</b> Python, PySide6, PyTorch, Machine Learning</p>
         <p><b>Developer:</b> Abhishek MG</p>
         """)
         about_text.setWordWrap(True)
@@ -1290,7 +1290,7 @@ class MainWindow(QMainWindow):
 
     def show_developer_info(self):
         """Show developer information dialog."""
-        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLabel
+        from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel
 
         dialog = QDialog(self)
         dialog.setWindowTitle("Developer Information")
@@ -1382,7 +1382,7 @@ class MainWindow(QMainWindow):
             self.status_bar.clearMessage()
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PySide6.QtWidgets import QApplication
     import sys
     app = QApplication(sys.argv)
     window = MainWindow()

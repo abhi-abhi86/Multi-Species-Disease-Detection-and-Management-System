@@ -20,7 +20,7 @@ DATA_FILES = [
 ]
 OPTIONS = {
     'argv_emulation': True,
-    'packages': ['PyQt5', 'torch', 'torchvision', 'PIL', 'requests', 'bs4'],
+    'packages': ['PySide6', 'torch', 'torchvision', 'PIL', 'requests', 'bs4'],
     'includes': ['core.ml_processor', 'core.worker', 'core.data_handler',
                  'core.wikipedia_integration', 'core.ncbi_integration',
                  'core.google_search', 'ui.main_window', 'ui.create_spinner',

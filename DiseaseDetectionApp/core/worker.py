@@ -30,7 +30,7 @@ import json
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 from core.ml_processor import predict_from_symptoms
 from core.ncbi_integration import get_pubmed_summary, generate_ncbi_report
 
@@ -43,14 +43,14 @@ class DiagnosisWorker(QObject):
     _cache_file = os.path.join(os.path.dirname(__file__), '..', 'cache.json')
     _persistent_cache = {}
 
-    finished = pyqtSignal(dict, float, str, str, str, str)
+    finished = Signal(dict, float, str, str, str, str)
 
 
 
-    error = pyqtSignal(str, str)
+    error = Signal(str, str)
 
 
-    progress = pyqtSignal(str)
+    progress = Signal(str)
 
     def __init__(self, ml_processor, image_path, symptoms, domain, database):
         super().__init__()

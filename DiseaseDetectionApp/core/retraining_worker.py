@@ -1,7 +1,7 @@
 
 import os
 import sys
-from PyQt5.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -11,8 +11,8 @@ class RetrainingWorker(QThread):
     Worker thread for running model retraining in the background.
     Emits signals for completion or error.
     """
-    finished = pyqtSignal()
-    error = pyqtSignal(str)
+    finished = Signal()
+    error = Signal(str)
 
     def run(self):
         """Run the retraining process."""

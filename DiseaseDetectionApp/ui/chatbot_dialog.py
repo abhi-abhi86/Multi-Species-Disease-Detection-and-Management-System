@@ -19,8 +19,8 @@ def check_watermark():
 
 check_watermark()
 
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTextEdit, QLineEdit, QPushButton, QLabel
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QObject
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QTextEdit, QLineEdit, QPushButton, QLabel
+from PySide6.QtCore import Qt, QThread, Signal, QObject
 import re
 import wikipedia
 
@@ -42,8 +42,8 @@ class WikipediaWorker(QObject):
     """
     A worker that fetches Wikipedia information for a disease in a background thread.
     """
-    response_ready = pyqtSignal(str)
-    finished = pyqtSignal()
+    response_ready = Signal(str)
+    finished = Signal()
 
     def __init__(self, disease_name):
         super().__init__()
@@ -75,7 +75,7 @@ class ChatbotWorker(QObject):
     relevant disease information from the database. It uses fuzzy string matching
     for better results, understands basic intents, and integrates LLM for enhanced responses.
     """
-    response_ready = pyqtSignal(str)
+    response_ready = Signal(str)
 
     def __init__(self, message, database, llm_integrator=None):
         super().__init__()
