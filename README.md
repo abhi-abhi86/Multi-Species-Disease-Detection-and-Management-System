@@ -338,8 +338,7 @@ The text-based diagnosis uses a hybrid approach:
 
 1. **Clone the Repository**
     ```sh
-    git clone https://github.com/abhi-abhi86/Multi-Species-Disease-Detection-and-Management-System.git
-    cd Multi-Species-Disease-Detection-and-Management-System
+    git clone https://github.com/abhi-abhi86/disease-scanner.git
     ```
 
 2. **Create a Virtual Environment**
