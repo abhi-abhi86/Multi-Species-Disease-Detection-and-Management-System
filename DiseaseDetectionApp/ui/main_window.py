@@ -1369,7 +1369,8 @@ class MainWindow(QMainWindow):
             msg_box.setIcon(QMessageBox.Icon.Information)
             msg_box.setWindowTitle("Update Available")
             msg_box.setText(f"A new version ({latest_version}) is available!")
-            msg_box.setInformativeText(f"<b>Release Notes:</b><br>{release_notes.replace('\n', '<br>')}")
+            formatted_notes = release_notes.replace('\n', '<br>')
+            msg_box.setInformativeText(f"<b>Release Notes:</b><br>{formatted_notes}")
             if release_url:
                 msg_box.addButton("Download", QMessageBox.ButtonRole.AcceptRole).clicked.connect(lambda: webbrowser.open(release_url))
             msg_box.addButton("Later", QMessageBox.ButtonRole.RejectRole)

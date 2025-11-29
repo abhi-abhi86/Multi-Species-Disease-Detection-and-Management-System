@@ -196,30 +196,33 @@ def generate_html_report(diagnosis_data, file_path):
 
         causes = diagnosis_data.get('causes', 'Not Available')
         if causes and causes != 'Not Available':
+            causes_html = causes.replace('\n', '<br>')
             html_content += f"""
     <div class="section">
         <h2>Common Causes</h2>
-        <p>{causes.replace('\n', '<br>')}</p>
+        <p>{causes_html}</p>
     </div>
 """
 
 
         preventive = diagnosis_data.get('preventive_measures', 'Not Available')
         if preventive and preventive != 'Not Available':
+            preventive_html = preventive.replace('\n', '<br>')
             html_content += f"""
     <div class="section">
         <h2>Preventive Measures</h2>
-        <p>{preventive.replace('\n', '<br>')}</p>
+        <p>{preventive_html}</p>
     </div>
 """
 
 
         wiki_summary = diagnosis_data.get('wiki_summary', 'Not Available')
         if wiki_summary and wiki_summary != 'Not Available':
+            wiki_html = wiki_summary.replace('\n', '<br>')
             html_content += f"""
     <div class="section">
         <h2>Wikipedia Summary</h2>
-        <p>{wiki_summary.replace('\n', '<br>')}</p>
+        <p>{wiki_html}</p>
     </div>
 """
 
@@ -235,11 +238,12 @@ def generate_html_report(diagnosis_data, file_path):
 
 
         solution = diagnosis_data.get('solution', 'No specific solution provided in the database.')
+        solution_html = solution.replace('\n', '<br>')
         html_content += f"""
     <div class="section">
         <h2>Recommended Solution / Cure</h2>
         <div class="solution">
-            {solution.replace('\n', '<br>')}
+            {solution_html}
         </div>
     </div>
 """
