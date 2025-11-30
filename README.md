@@ -282,14 +282,31 @@ disease-predictor/
 ## 🧠 How It Works
 
 ### AI Model Architecture
-
-The system uses a **MobileNetV2** convolutional neural network:
-
-1. **Input Layer**: 224x224 RGB images
-2. **Feature Extraction**: MobileNetV2 backbone (pre-trained on ImageNet)
-3. **Classification Head**: Custom fully-connected layer for 26 disease classes
-4. **Output**: Disease probabilities with softmax activation
-
+```
+┌─────────────────┐
+│  Image Input    │
+└────────┬────────┘
+         │
+    ┌────▼─────┐
+    │ Preproc  │ (Resize, Normalize, Augment)
+    └────┬─────┘
+         │
+    ┌────▼──────┐
+    │ CNN Model │ (Feature Extraction)
+    └────┬──────┘
+         │
+    ┌────▼────────┐
+    │ Classifier  │ (Disease Categories)
+    └────┬────────┘
+         │
+    ┌────▼──────────┐
+    │ Post-process  │ (Confidence, Treatment)
+    └────┬──────────┘
+         │
+    ┌────▼────────┐
+    │   Output    │
+    └─────────────┘
+```
 ### Prediction Pipeline
 
 ```
