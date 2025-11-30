@@ -692,13 +692,20 @@ class MainWindow(QMainWindow):
         self.diagnosis_worker = DiagnosisWorker(
             self.ml_processor, image_path, symptoms, domain, self.database
         )
-        self.diagnosis_worker.finished.connect(self.on_diagnosis_complete)
-        self.diagnosis_worker.error.connect(self.on_diagnosis_error)
-        self.diagnosis_worker.progress.connect(lambda msg: tab.result_display.setPlainText(msg))
+        # Use QueuedConnection to ensure UI updates happen on the main thread
+        self.diagnosis_worker.finished.connect(self.on_diagnosis_complete, Qt.ConnectionType.QueuedConnection)
+        self.diagnosis_worker.error.connect(self.on_diagnosis_error, Qt.ConnectionType.QueuedConnection)
+        self.diagnosis_worker.progress.connect(self.update_progress_text, Qt.ConnectionType.QueuedConnection)
 
         self.diagnosis_worker.moveToThread(self.worker_thread)
         QTimer.singleShot(0, self.diagnosis_worker.run)
         self.is_diagnosis_running = True
+    
+    def update_progress_text(self, domain, message):
+        """Slot to update progress text safely on the main thread"""
+        tab = self.domain_tabs.get(domain)
+        if tab:
+            tab.result_display.setPlainText(message)
         
     def animate_result_fade_in(self, tab):
         tab.result_group.setVisible(True)

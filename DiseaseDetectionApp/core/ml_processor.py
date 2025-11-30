@@ -33,13 +33,15 @@ except ImportError:
     process = None
 
 
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, '..', 'disease_model.pt')
 CLASS_MAP_PATH = os.path.join(BASE_DIR, '..', 'class_to_name.json')
 IMG_SIZE = 224
 
 
-IMAGE_CONFIDENCE_THRESHOLD = 0.40
+
+IMAGE_CONFIDENCE_THRESHOLD = 0.55  # Increased from 0.40 to reduce false positives
 SYMPTOM_CONFIDENCE_THRESHOLD_STRONG = 75
 SYMPTOM_CONFIDENCE_THRESHOLD_WEAK = 60
 HEALTHY_CLASS_NAMES = ('healthy', 'normal', 'clear_skin')
@@ -98,6 +100,64 @@ class MLProcessor:
 
         self.prediction_cache = {}
 
+    def validate_image_content(self, img):
+        """
+        Validates if the image looks like it could be a disease-related image.
+        Returns (is_valid, reason)
+        Uses PIL methods to avoid threading issues with NumPy.
+        """
+        try:
+            # Get image statistics using PIL's built-in methods
+            stat = img.convert('L').getextrema()  # Get min and max brightness
+            min_brightness, max_brightness = stat
+            
+            # Check if image is too dark or too bright
+            if max_brightness < 30:
+                return False, "Image appears to be too dark. Please upload a clear photo of the affected area."
+            
+            if min_brightness > 225:
+                return False, "Image appears to be too bright or blank. Please upload a clear photo of the affected area."
+            
+            # Check if image is mostly black or white (like text/diagrams)
+            # Convert to grayscale and get histogram
+            gray = img.convert('L')
+            histogram = gray.histogram()
+            
+            total_pixels = sum(histogram)
+            if total_pixels == 0:
+                return False, "Invalid image data. Please try a different image."
+            
+            # Count very dark pixels (0-30) and very bright pixels (225-255)
+            very_dark = sum(histogram[0:30]) / total_pixels
+            very_bright = sum(histogram[225:256]) / total_pixels
+            
+            # If more than 50% of pixels are very dark or very bright, likely not a real photo
+            if very_dark > 0.5:
+                return False, "Image appears to be a document, diagram, or screenshot. Please upload a real photo showing the disease symptoms."
+            
+            if very_bright > 0.5:
+                return False, "Image appears to be a document, diagram, or screenshot with white background. Please upload a real photo of a plant, skin condition, or animal."
+            
+            # Check color variance using PIL
+            if img.mode == 'RGB':
+                # Get extrema for each channel
+                extrema = img.getextrema()
+                # Calculate range for each channel
+                ranges = [max_val - min_val for min_val, max_val in extrema]
+                avg_range = sum(ranges) / len(ranges)
+                
+                # If color range is very low, it's likely a diagram/text
+                if avg_range < 20:
+                    return False, "Image appears to be a diagram, text, or screenshot. Please upload a real photo of a plant, skin condition, or animal."
+            
+            return True, ""
+            
+        except Exception as e:
+            # If validation fails, allow the image through but log the error
+            print(f"Warning: Image validation error: {e}")
+            return True, ""
+
+
     def predict_from_image(self, image_path, domain, database):
         if not self.model:
             return None, 0, "The AI model is not loaded.", "Error"
@@ -109,6 +169,17 @@ class MLProcessor:
 
         try:
             img = Image.open(image_path).convert('RGB')
+            
+            # Validate image content before processing
+            is_valid, validation_message = self.validate_image_content(img)
+            if not is_valid:
+                invalid_result = {
+                    'name': 'Invalid Image',
+                    'description': validation_message,
+                    'solution': 'Please upload a clear photograph of the affected plant, skin area, or animal showing visible symptoms.',
+                }
+                return invalid_result, 0, "", "Invalid Input"
+            
             img_t = self.transform(img)
             batch_t = torch.unsqueeze(img_t, 0)
 

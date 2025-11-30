@@ -47,10 +47,12 @@ class DiagnosisWorker(QObject):
 
 
 
+
     error = Signal(str, str)
 
 
-    progress = Signal(str)
+    progress = Signal(str, str)  # message, domain
+
 
     def __init__(self, ml_processor, image_path, symptoms, domain, database):
         super().__init__()
@@ -85,12 +87,12 @@ class DiagnosisWorker(QObject):
 
 
             if self.image_path:
-                self.progress.emit("Analyzing image with AI model... Please wait.")
+                self.progress.emit("Analyzing image with AI model... Please wait.", self.domain)
                 result, confidence, wiki, stage = self.ml_processor.predict_from_image(
                     self.image_path, self.domain, self.database
                 )
             elif self.symptoms:
-                self.progress.emit("Analyzing symptoms...")
+                self.progress.emit("Analyzing symptoms...", self.domain)
                 result, confidence, wiki, stage = predict_from_symptoms(
                     self.symptoms, self.domain, self.database
                 )
@@ -106,28 +108,28 @@ class DiagnosisWorker(QObject):
                 # Centralize all network calls here to leverage caching
                 cache_key = f"wiki_{disease_name}"
                 if cache_key in self._in_memory_cache:
-                    self.progress.emit("Fetching Wikipedia data from cache...")
+                    self.progress.emit("Fetching Wikipedia data from cache...", self.domain)
                     wiki_summary = self._in_memory_cache[cache_key]
                 elif cache_key in self._persistent_cache:
-                    self.progress.emit("Fetching Wikipedia data from persistent cache...")
+                    self.progress.emit("Fetching Wikipedia data from persistent cache...", self.domain)
                     wiki_summary = self._persistent_cache[cache_key]
                     self._in_memory_cache[cache_key] = wiki_summary
                 else:
-                    self.progress.emit("Fetching summary from Wikipedia...")
+                    self.progress.emit("Fetching summary from Wikipedia...", self.domain)
                     wiki_summary = get_wikipedia_summary(disease_name)
                     if wiki_summary:
                         self._add_to_cache(cache_key, wiki_summary)
 
                 cache_key = f"pubmed_{disease_name}"
                 if cache_key in self._in_memory_cache:
-                    self.progress.emit("Fetching research data from cache...")
+                    self.progress.emit("Fetching research data from cache...", self.domain)
                     pubmed_summary = self._in_memory_cache[cache_key]
                 elif cache_key in self._persistent_cache:
-                    self.progress.emit("Fetching research data from persistent cache...")
+                    self.progress.emit("Fetching research data from persistent cache...", self.domain)
                     pubmed_summary = self._persistent_cache[cache_key]
                     self._in_memory_cache[cache_key] = pubmed_summary
                 else:
-                    self.progress.emit("Fetching recent research from PubMed...")
+                    self.progress.emit("Fetching recent research from PubMed...", self.domain)
                     try:
                         pubmed_summary = get_pubmed_summary(disease_name, domain=self.domain)
                         self._add_to_cache(cache_key, pubmed_summary)
