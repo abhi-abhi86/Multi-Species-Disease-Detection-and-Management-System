@@ -206,7 +206,8 @@ class MLProcessor:
                     'description': 'The AI model could not identify a known disease with high confidence.',
                     'solution': 'Please consult a professional for a definitive diagnosis.',
                 }
-                return uncertain_result, primary_confidence * 100, "N/A", "Uncertain"
+                return uncertain_result, 0, "N/A", "Uncertain"  # Return 0 confidence for uncertain matches
+
 
 
 
