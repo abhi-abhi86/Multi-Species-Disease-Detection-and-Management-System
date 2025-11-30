@@ -549,10 +549,10 @@ If you use this project in your research, please cite:
 
 ## 🔗 Related Projects
 
-- [PlantDoc](https://github.com/plantdoc) - Plant disease detection
-- [DermNet](https://github.com/dermnet) - Skin disease classification
-- [VetAI](https://github.com/vetai) - Veterinary diagnosis system
-
+- [PlantDoc](https://github.com/abhi-abhi86/disease-predictor/tree/main/DiseaseDetectionApp/diseases/plant) - Plant disease detection
+- [VetAI](https://github.com/abhi-abhi86/disease-predictor/tree/main/DiseaseDetectionApp/diseases/animal) -  Veterinary disease classification
+- [Human](https://github.com/abhi-abhi86/disease-predictor/tree/main/DiseaseDetectionApp/diseases/human) - Human diagnosis system
+ 
 ---
 
 <div align="center">
